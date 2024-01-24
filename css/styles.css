@@ -1,0 +1,202 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  #navbar {
+    overflow: hidden;
+    background-color: #333;
+    height: 70px;
+
+  }
+
+  #navbar a {
+    float: right;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+  }
+
+  #navbar a:hover {
+    background-color: #ddd;
+    color: black;
+  }
+
+  #navbar #logo {
+   position: absolute;
+   margin-left: 300px;
+   font-size: 25px;
+   color: #ddd;
+   line-height: 50px;
+
+  }
+
+  #sidebar {
+    height: 100%;
+    width: 200px;
+   padding-top: 20px;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    background-color: #111;
+    padding-top: 20px;
+    color: white;
+    transition: left 0.3s ease;
+  }
+
+  #sidebar a {
+      margin-top: 20px;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 18px;
+    color: white;
+    display: block;
+  }
+
+  #content {
+    margin-left: 0;
+    padding: 16px;
+    transition: margin-left 0.3s ease;
+  }
+
+  #menu-toggle {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: white;
+  }
+     /* Estilos para el modal */
+    #login-modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    background-color: #e4e3e3;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+  }
+
+  #modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+  .entrada {
+width: 90%;
+height: 40px;
+line-height: 40px;
+border: none;
+border-radius: 5px;
+margin: auto;
+margin-top: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+text-align: left;
+padding-left: 30px;
+  }
+  .texto {
+width: 90%;
+border: none;
+border-radius: 5px;
+margin: auto;
+margin-top: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+text-align: left;
+padding-left: 30px
+  }
+
+form {
+width: 90%;
+}
+
+  .btn {
+width: 100%;
+height: 40px;
+line-height: 40px;
+border: none;
+border-radius: 5px;
+margin: auto;
+margin-top: 20px;
+background-color: #b6b6b6;
+  }
+  .btn:hover {
+    background-color: #111;
+    color: white;
+    cursor: pointer;
+  }
+  .caja1 {
+    width: 800px;
+    margin: auto;
+    
+  }
+
+  .izq {
+    width: 33%;
+    float: inline-start;
+    
+
+  }
+  .derecha {
+    width: 55%;
+    border-radius: 5px;
+   
+    float: right;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    
+  }
+
+  .card {
+    width: 70%;
+    margin: auto;
+    padding-bottom: 10%;
+  }
+
+  #nosotros {
+    display: none;
+  }
+  #wit {
+    color: blue;
+    font-size: 30px;
+  }
+
+  .card2 {
+  
+    width: 50%;
+    margin: auto;
+   
+    padding: auto;
+    margin-top: 50px;
+  }
+  #contacto {
+    display: none;
+  }
+  #entradaSalida {
+    display: none;
+  }
+  table {
+    width: 80%;
+    margin: auto;
+    border: 1px solid rgb(180, 180, 180);
+    border-collapse: collapse;
+    text-align: center;
+    
+   
+  }
+  th,td {
+    border: 1px solid rgb(180, 180, 180);
+    border-collapse: collapse;
+
+  }

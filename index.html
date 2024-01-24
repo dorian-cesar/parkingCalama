@@ -4,212 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sidebar Colapsable con Navbar</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 
-    #navbar {
-      overflow: hidden;
-      background-color: #333;
-
-    }
-
-    #navbar a {
-      float: right;
-      display: block;
-      color: white;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 17px;
-    }
-
-    #navbar a:hover {
-      background-color: #ddd;
-      color: black;
-    }
-
-    #navbar #logo {
-     position: absolute;
-     margin-left: 300px;
-     font-size: 25px;
-     color: #ddd;
-     line-height: 50px;
-
-    }
-
-    #sidebar {
-      height: 100%;
-      width: 200px;
-     padding-top: 20px;
-      position: fixed;
-      top: 0;
-      left: -300px;
-      background-color: #111;
-      padding-top: 20px;
-      color: white;
-      transition: left 0.3s ease;
-    }
-
-    #sidebar a {
-        margin-top: 20px;
-      padding: 10px;
-      text-decoration: none;
-      font-size: 18px;
-      color: white;
-      display: block;
-    }
-
-    #content {
-      margin-left: 0;
-      padding: 16px;
-      transition: margin-left 0.3s ease;
-    }
-
-    #menu-toggle {
-      position: fixed;
-      left: 10px;
-      top: 10px;
-      font-size: 20px;
-      cursor: pointer;
-      color: white;
-    }
-       /* Estilos para el modal */
-      #login-modal {
-      display: none;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 20px;
-      background-color: #e4e3e3;
-      z-index: 1000;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      border-radius: 5px;
-    }
-
-    #modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 999;
-    }
-    .entrada {
-width: 90%;
-height: 40px;
-line-height: 40px;
-border: none;
-border-radius: 5px;
-margin: auto;
-margin-top: 20px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-text-align: left;
-padding-left: 30px;
-    }
-    .texto {
-width: 90%;
-border: none;
-border-radius: 5px;
-margin: auto;
-margin-top: 20px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-text-align: left;
-padding-left: 30px
-    }
-
-form {
-  width: 90%;
-}
-
-    .btn {
-width: 100%;
-height: 40px;
-line-height: 40px;
-border: none;
-border-radius: 5px;
-margin: auto;
-margin-top: 20px;
-background-color: #b6b6b6;
-    }
-    .btn:hover {
-      background-color: #111;
-      color: white;
-      cursor: pointer;
-    }
-    .caja1 {
-      width: 800px;
-      margin: auto;
-      
-    }
-
-    .izq {
-      width: 33%;
-      float: inline-start;
-      
-
-    }
-    .derecha {
-      width: 55%;
-      border-radius: 5px;
-     
-      float: right;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-      
-    }
-
-    .card {
-      width: 70%;
-      margin: auto;
-      padding-bottom: 10%;
-    }
-
-    #nosotros {
-      display: none;
-    }
-    #wit {
-      color: blue;
-      font-size: 30px;
-    }
-
-    .card2 {
-    
-      width: 50%;
-      margin: auto;
-     
-      padding: auto;
-      margin-top: 50px;
-    }
-    #contacto {
-      display: none;
-    }
-    #entradaSalida {
-      display: none;
-    }
-    table {
-      width: 80%;
-      margin: auto;
-      border: 1px solid rgb(180, 180, 180);
-      border-collapse: collapse;
-      text-align: center;
-      
-     
-    }
-    th,td {
-      border: 1px solid rgb(180, 180, 180);
-      border-collapse: collapse;
-
-    }
-    
-
-
-  </style>
 </head>
 <body>
 
@@ -233,122 +33,18 @@ background-color: #b6b6b6;
 </div>
 
 <div id="content">
-  <div id="menu-toggle">&#9776; Menú</div>
+        <div id="menu-toggle">&#9776; Menú</div>
 
-<div class="caja1" id="parking">
-  <h2>Parking</h2>
-  <p>Scanee el Codigo QR de su Ticket o ingrese su Patente</p>
-  <div class="izq">
-    <input type="text" class="entrada" placeholder="Leer QR">
-    <button class="btn">Calcular</button>
-  </div>
-  <div class="derecha">
-    <div class="card">
-      <h1>Patente</h1>
-      <h3>Fecha</h3>
-      <h3>Hora de ingreso</h3>
-      <h3>Hora salida</h3>
-      <h3>Tiempo de Parking</h3>
-      <h3>valor : </h3>
-      <button class="btn">Imprimir</button>
-      <button class="btn">Pagar SII</button>
-    </div>
-  </div>
-  
+        <div id="contenedorParking"></div>
 
+        <div id="contenedorNosotros"></div>
 
-</div>
-<div class="caja1" id="nosotros">
+        <div id="contenedorContacto"></div>
 
-  <h1>Nosostros</h1>
-  <p>Acerca de nosostros</p>
-  <div id="wit">SOMOS WIT</div>
-<h2>Innovación con más de 15 años de trabajo</h2>
-
-<p>Somos una empresa de desarrollo de productos y soluciones tecnológicas para grandes, pequeñas y medianas empresas. Entre nuestras funciones destaca la creación, diseño e implementación de herramientas para la solución de problemas que permiten a nuestros clientes rentabilizar y optimizar sus procesos.
-</p>
-<p>
-  Nuestra fortaleza se basa en el Desarrollo utilizando las TIC (Tecnologías de la información y la comunicación) y NTIC (Nuevas Tecnologías de la información y la comunicación) como elementos centrales ampliando las oportunidades de desarrollo profesional y asegurando la sustentabilidad financiera del negocio.
- 
-</p>
- </div>
-
- <div class="caja1" id="contacto">
-  <h1>Formulario de contacto</h1>
-  
-<div class="card2">
-  <form action="">
-    <input type="text" class="entrada" placeholder="Nombre">
-    <input type="phone" class="entrada" placeholder="Telefono">
-    <textarea id="" name="" rows="5" class="texto" placeholder="Comentanos tus inquetudes"></textarea>
-    <button type="submit" class="btn">Enviar </button>
-  
-  </form>
-  </div>
+        <div id="contenedorTabla"></div>
 </div>
 
-<div class="caja1" id="entradaSalida">
-  <h1>Movimientos del dia Entradas y Salidas</h1>
-  <table>
-    <tr>
-      <th>id</th>
-      <th>Fecha</th>
-      <th>Hora</th>
-      <th>Patente</th>
-      <th>Entrada/salida</th>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2023-12-23</td>
-      <td>10:00</td>
-      <td>HHHH34</td>
-      <td>Salida</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2023-12-23</td>
-      <td>10:00</td>
-      <td>HHHH34</td>
-      <td>Salida</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2023-12-23</td>
-      <td>10:00</td>
-      <td>HHHH34</td>
-      <td>Salida</td>
-    </tr>
-    <tr>
-      <td>1</td>
-      <td>2023-12-23</td>
-      <td>10:00</td>
-      <td>HHHH34</td>
-      <td>Salida</td>
-    </tr>
-  </table>
-</div>
-</div>
-
-
- </div>
-
-<!-- Formulario Modal -->
-<div id="modal-overlay" onclick="closeLoginModal()"></div>
-<div id="login-modal">
-  <h2>Login</h2>
-  <form>
-    
-    <input type="email" id="email" name="email" required placeholder="Correo:" class="entrada">
-   
-    
-    <input type="password" id="password" name="password" required placeholder="Contaseña" class="entrada">
-    
-    <input type="submit" value="Iniciar Sesión" class="btn">
-  </form>
-</div>
-
-
-
+<div id="contenedorModal"></div>
 
 <script>
   document.getElementById('menu-toggle').addEventListener('click', function() {
@@ -363,53 +59,23 @@ background-color: #b6b6b6;
       content.style.marginLeft = '200px';
     }
   });
+  $(document).ready(function () {
+      $('#contenedorTabla').load('tabla.html');
+      $('#contenedorContacto').load('contacto.html');
+      $('#contenedorParking').load('parking.html');
+      $('#contenedorNosotros').load('nosotros.html');
+      $('#contenedorModal').load('modal.html');
+      $('#myTable').DataTable();
 
-  function openLoginModal() {
-    document.getElementById('login-modal').style.display = 'block';
-    document.getElementById('modal-overlay').style.display = 'block';
-  }
+    });
 
-  function closeLoginModal() {
-    document.getElementById('login-modal').style.display = 'none';
-    document.getElementById('modal-overlay').style.display = 'none';
-    document.getElementById('entradaSalida').style.display = 'none';
-  }
+    
 
-  function nosotros(){
 
-    document.getElementById('parking').style.display = 'none';
-    document.getElementById('nosotros').style.display = 'block';
-    document.getElementById('contacto').style.display = 'none';
-    document.getElementById('entradaSalida').style.display = 'none';
-  }
-
-  function parking(){
-
-document.getElementById('nosotros').style.display = 'none';
-document.getElementById('parking').style.display = 'block';
-document.getElementById('contacto').style.display = 'none';
-document.getElementById('entradaSalida').style.display = 'none';
-
-}
-
-function contacto(){
-
-document.getElementById('contacto').style.display = 'block';
-document.getElementById('nosotros').style.display = 'none';
-document.getElementById('parking').style.display = 'none';
-document.getElementById('entradaSalida').style.display = 'none';
-
-}
-
-function entradaSalida(){
-
-document.getElementById('entradaSalida').style.display = 'block';
-document.getElementById('contacto').style.display = 'none';
-document.getElementById('nosotros').style.display = 'none';
-document.getElementById('parking').style.display = 'none';
-
-}
 </script>
+
+
+
 
 </body>
 </html>

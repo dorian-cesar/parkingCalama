@@ -19,14 +19,13 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     if ($data !== null){
         // Obtener datos desde JSON
-        $user = "-";
         $mail = $data["mail"];
         $lvl = $data["lvl"];
         $pass = password_hash($data["pass"], PASSWORD_DEFAULT);
 
         // SQL Seguro
-        $stmt = $conn->prepare("INSERT INTO Usuario (user, correo, pass, nivel) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("sssi", $user,$mail,$pass, $lvl);
+        $stmt = $conn->prepare("INSERT INTO userParking (mail, pass, nivel) VALUES (?, ?, ?)");
+        $stmt->bind_param("ssi", $mail,$pass, $lvl);
 
         try{
             $stmt->execute();

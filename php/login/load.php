@@ -22,7 +22,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $mail = $data["mail"];
         $pass = $data["pass"];
 
-        $stmt = $conn->prepare("SELECT id, correo, pass, nivel FROM Usuario WHERE correo LIKE ?");
+        $stmt = $conn->prepare("SELECT iduser, mail, pass, nivel FROM userParking WHERE mail LIKE ?");
         $stmt->bind_param("s", $mail);
 
         if($stmt->execute()){
@@ -45,7 +45,7 @@ if($validCred == true){
     $expire     = $issuedAt->modify('+1 day')->getTimestamp();
     $serverName = "wit.la";
     $logon      = TRUE;
-    $user       = $retrn['correo'];
+    $user       = $retrn['mail'];
     $nivel      = $retrn['nivel'];
 
     $data = [

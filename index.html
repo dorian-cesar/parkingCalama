@@ -3,18 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Parking 1.0</title>
-
+  <title>Administrador de Parking</title>
   <link rel="stylesheet" href="css/styles.css">
-
-  <script src="js/main.js"></script>
-
-  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.4.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
-
-  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
-
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 </head>
 <body>
 
@@ -31,8 +24,8 @@
   <hr>
   <a href="#" onclick="openLoginModal()">Login</a>
   <a href="#">Configuración</a>
-  <a href="#">Enrolar</a>
-  <a href="#">Listas Blancas</a>
+  <a href="#" onclick="enrolar()">Enrolar</a>
+  <a href="#" onclick="listablanca()">Listas Blancas</a>
   <a href="#">Pagos Diarios</a>
   <a href="#" onclick="entradaSalida()">Entradas y salidas</a>
 </div>
@@ -47,12 +40,16 @@
         <div id="contenedorContacto"></div>
 
         <div id="contenedorTabla"></div>
+
+        <div id="contenedorEnrolar"></div>
+
+        <div id="contenedorWhitelist"></div>
 </div>
 
 <div id="contenedorModal"></div>
 
 <script>
-  document.getElementById('menu-toggle').addEventListener('click', function() {
+  $('#menu-toggle').on('click', function() {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
     
@@ -63,25 +60,27 @@
       sidebar.style.left = '0px';
       content.style.marginLeft = '200px';
     }
-  });
-  $(document).ready(function () {
+  })
+
+  // Genera una promesa luego de cargar todos los elementos
+  var loadPage = $.Deferred(function (dfd) {
       $('#contenedorTabla').load('tabla.html');
       $('#contenedorContacto').load('contacto.html');
       $('#contenedorParking').load('parking.html');
       $('#contenedorNosotros').load('nosotros.html');
       $('#contenedorModal').load('modal.html');
-     
-     
+      $('#contenedorWhitelist').load('listablanca.html');
+      $('#contenedorEnrolar').load('enrolar.html',dfd.resolve);
+  }).promise();
 
-    });
+  // Cargar el main.js cuando todos los elementos existan
+  $.when(loadPage).then(function() {
+    $.getScript("js/main.js");
+    $.getScript("js/login.js");
+    //$('#miTabla').DataTable();
+  })
 
-    
-
-
+  //$(document).ready(loadPage());
 </script>
-
-
-
-
 </body>
 </html>

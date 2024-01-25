@@ -1,0 +1,79 @@
+<div class="caja1" id="pageWhitelist">
+    <div class="card2">
+        <h1>Listas Blancas</h1>
+        <select name="oplistas" id="oplistas" style="margin:auto">
+            <option value="insert" class="select-items selectClass">Ingresar</option>
+            <option selected value="list" class="select-items selectClass">Listar</option>
+        </select>
+    </div>
+    <div class="card2" id="wlinsert">
+        <h1>Ingresar a Lista Blanca</h1>
+        <form action="" method="POST" id="formWLInsert">
+            <input type="text" name="patente" id="selInsPatente" class="entrada" placeholder="XX-XX-XX">
+            <input type="number" name="empresa" id="selInsEmpresa" class="entrada" placeholder="Turbus">
+            <button class="btn" id="selInsBtn">Ingresar</button>
+        </form>
+    </div>
+    <div class="caja1" id="wllist">
+        <table id="tableWhitelist">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patente</th>
+                    <th>Empresa</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<script>
+    const selWL = document.getElementById('oplistas');
+
+    var urlSave = "https://localhost/parkingCalama/php/whitelist/save.php"
+
+    blankWL();
+    document.getElementById('wl'+selWL.value).style.display = 'block';
+    
+    selWL.addEventListener('change', (e) => {
+        blankWL();
+        document.getElementById('wl'+selWL.value).style.display = 'block';
+    });
+
+    function blankWL() {
+        var paginas = document.querySelectorAll('[id^=wl]');
+
+        paginas.forEach(page => {
+            page.style.display = 'none';
+        });
+        }
+
+    const btnInsertWL = document.getElementById('selInsBtn');
+
+    btnInsertWL.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        var form = document.getElementById('formWLInsert');
+
+        const patenteStr = form.patente.value;
+        const empresaID = form.empresa.value;
+
+        datos = {
+            patente: patenteStr,
+            empresa: empresaID,
+        }
+
+        fetch(urlSave, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-type' : 'application/json'
+            },
+            body: JSON.stringify(datos)
+        })
+        .then(reply => reply.json())
+        .then(data => {
+            console.log(data);
+        })
+        .catch(error => console.log(error));
+    });
+</script>

@@ -1,47 +1,51 @@
+// Desactiva todas las paginas cuyo ID comienza con "page"
+function blankPage() {
+  var paginas = document.querySelectorAll('[id^=page]');
 
+  paginas.forEach(page => {
+    page.style.display = 'none';
+  });
+}
 
-  function openLoginModal() {
-    document.getElementById('login-modal').style.display = 'block';
-    document.getElementById('modal-overlay').style.display = 'block';
-  }
+// Inicializa la pagina en vista general
+parking();
 
-  function closeLoginModal() {
-    document.getElementById('login-modal').style.display = 'none';
-    document.getElementById('modal-overlay').style.display = 'none';
-    document.getElementById('entradaSalida').style.display = 'none';
-  }
+function openLoginModal() {
+  document.getElementById('login-modal').style.display = 'block';
+  document.getElementById('modal-overlay').style.display = 'block';
+}
 
-  function nosotros(){
+function closeLoginModal() {
+  document.getElementById('login-modal').style.display = 'none';
+  document.getElementById('modal-overlay').style.display = 'none';
+}
 
-    document.getElementById('parking').style.display = 'none';
-    document.getElementById('nosotros').style.display = 'block';
-    document.getElementById('contacto').style.display = 'none';
-    document.getElementById('entradaSalida').style.display = 'none';
-  }
+function nosotros(){
+  blankPage();
+  document.getElementById('pageNosotros').style.display = 'block';
+}
 
-  function parking(){
-
-document.getElementById('nosotros').style.display = 'none';
-document.getElementById('parking').style.display = 'block';
-document.getElementById('contacto').style.display = 'none';
-document.getElementById('entradaSalida').style.display = 'none';
-
+function parking(){
+  blankPage();
+  document.getElementById('pageParking').style.display = 'block';
 }
 
 function contacto(){
-
-document.getElementById('contacto').style.display = 'block';
-document.getElementById('nosotros').style.display = 'none';
-document.getElementById('parking').style.display = 'none';
-document.getElementById('entradaSalida').style.display = 'none';
-
+  blankPage();
+  document.getElementById('pageContacto').style.display = 'block';
 }
 
 function entradaSalida(){
+  blankPage();
+  document.getElementById('pageMovimientos').style.display = 'block';
+}
 
-document.getElementById('entradaSalida').style.display = 'block';
-document.getElementById('contacto').style.display = 'none';
-document.getElementById('nosotros').style.display = 'none';
-document.getElementById('parking').style.display = 'none';
+function enrolar(){
+  blankPage();
+  document.getElementById('pageEnrolar').style.display = 'block';
+}
 
+function listablanca(){
+  blankPage();
+  document.getElementById('pageWhitelist').style.display = 'block';
 }

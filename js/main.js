@@ -53,3 +53,8 @@ function listablanca(){
   blankPage();
   document.getElementById('pageWhitelist').style.display = 'block';
 }
+
+function buses(){
+  blankPage();
+  document.getElementById('pageBuses').style.display = 'block';
+}

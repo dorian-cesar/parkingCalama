@@ -1,79 +1,218 @@
 <div class="caja1" id="pageWhitelist">
-    <div class="card2">
+    <div class="card2" style="text-align:center">
         <h1>Listas Blancas</h1>
-        <select name="oplistas" id="oplistas" style="margin:auto">
-            <option value="insert" class="select-items selectClass">Ingresar</option>
-            <option selected value="list" class="select-items selectClass">Listar</option>
-        </select>
+        <button class="ctrlgrn" id="btnCreateWL">Registrar en Lista Blanca</button>
+        <br/>
+        <hr/>
+        <br/>
     </div>
-    <div class="card2" id="wlinsert">
-        <h1>Ingresar a Lista Blanca</h1>
-        <form action="" method="POST" id="formWLInsert">
-            <input type="text" name="patente" id="selInsPatente" class="entrada" placeholder="XX-XX-XX">
-            <input type="number" name="empresa" id="selInsEmpresa" class="entrada" placeholder="Turbus">
-            <button class="btn" id="selInsBtn">Ingresar</button>
-        </form>
-    </div>
-    <div class="caja1" id="wllist">
+    <div id="wllist">
         <table id="tableWhitelist">
             <thead>
                 <tr>
                     <th>ID</th>
                     <th>Patente</th>
                     <th>Empresa</th>
+                    <th class="no-sort">Controles</th>
                 </tr>
             </thead>
+            <tbody id="tbWlList">
+            </tbody>
         </table>
+    </div>
+    <!-- Formulario Nuevo -->
+    <div id="wlinsert-overlay" onclick="closeWLAdd()" class="mdl-overlay"></div>
+    <div id="wlinsert" class="mdl-content">
+        <h1>Ingresar a Lista Blanca</h1>
+        <form action="" method="POST" id="formWLInsert">
+            <input required type="text" name="patente" id="selInsPatente" class="entrada" placeholder="XXXXXX">
+            <select required name="empresa" id="empWlSel" class="entrada">
+            </select>
+            <button class="btn" id="empWlBtn">Ingresar</button>
+        </form>
     </div>
 </div>
 <script>
-    const selWL = document.getElementById('oplistas');
+    // Obtener la lista de empresas
+    const empWlSel = document.getElementById('empWlSel');
+    const empWlBtn = document.getElementById('empWlBtn');
+
+    var wlTable = $('#tableWhitelist').DataTable({
+        language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
+        columnDefs : [ {
+            targets: 'no-sort',
+            orderable: false,
+        }],
+        columns: [
+            { data: 'idwl'},
+            { data: 'patente'},
+            { data: 'nombre'},
+            { data: 'ctrl', className: 'no-sort'}
+        ]
+    });
+
+    function cargarWhitelist(){
+        document.getElementById('tbWlList').textContent = '';
+        getWhitelist()
+        .then(data =>{
+            wlTable.clear();
+            data.forEach(item => {
+                const btns = `<button class="ctrl">✍</button>
+                              <button class="ctrlred">✕</button>`
+                wlTable.rows.add([{
+                    'idwl' : item['idwl'],
+                    'patente' : item['patente'],
+                    'nombre' : item['nombre'],
+                    'ctrl' : btns
+                }]);
+            });
+            wlTable.draw();
+            /*
+            console.log(data);
+            var table = $('#tableWhitelist').DataTable({
+                data: data,
+                columns: [
+                    { data: 'idwl'},
+                    { data: 'patente'},
+                    { data: 'nombre'}
+                ]
+            });*/
+        //$('#tableWhitelist').DataTable().reload();
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+
+    cargarWhitelist();
+
+    async function getWhitelist(){
+        var urlGet = "https://localhost/parkingCalama/php/whitelist/getWL.php";
+        let ret = await fetch(urlGet,{
+            method: 'POST',
+            mode: 'cors',
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        return ret;
+    }
+
+    function cargarSelEmpresa(){
+        empWlSel.textContent='';
+        empWlSel.disabled = true;
+        empWlBtn.disabled = true;
+
+        getEmpresas()
+        .then(data => {
+            data.forEach(emp => {
+                var optData = document.createElement('option');
+                optData.value = emp['idemp'];
+                optData.textContent = emp['nombre'];
+                empWlSel.appendChild(optData);
+            });
+            empWlBtn.disabled = false;
+            empWlSel.disabled = false;
+        })
+        .catch(error => {
+            console.log(error);
+            btnInsertWL.disabled = false;
+            empWlSel.disabled = false;
+        });
+    }
+
+    async function getEmpresas(){
+        var urlGet = "https://localhost/parkingCalama/php/whitelist/getEmpresas.php";
+        let ret = await fetch(urlGet,{
+            method: 'POST',
+            mode: 'cors',
+        })
+        .then(response => response.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        return ret;
+    }
+
+    cargarSelEmpresa();
+
+    // Obtenemos el valor del selector
+    const selWL = document.getElementById('btnCreateWL');
 
     var urlSave = "https://localhost/parkingCalama/php/whitelist/save.php"
 
-    blankWL();
-    document.getElementById('wl'+selWL.value).style.display = 'block';
+    // Reactivamos la vista por defecto
+    document.getElementById('wllist').style.display = 'block';
     
-    selWL.addEventListener('change', (e) => {
-        blankWL();
-        document.getElementById('wl'+selWL.value).style.display = 'block';
+    // Al cambiar el selector, cambiamos la vista
+    selWL.addEventListener('click', (e) => {
+        cargarSelEmpresa();
+        document.getElementById('wlinsert-overlay').style.display = 'block';
+        document.getElementById('wlinsert').style.display = 'block';
     });
 
+    function closeWLAdd() {
+        document.getElementById('wlinsert-overlay').style.display = 'none';
+        document.getElementById('wlinsert').style.display = 'none';
+    }
+
+    // Funcion para esconder todos los elementos cuyo id comienza con wl
     function blankWL() {
         var paginas = document.querySelectorAll('[id^=wl]');
 
         paginas.forEach(page => {
             page.style.display = 'none';
         });
-        }
+    }
 
-    const btnInsertWL = document.getElementById('selInsBtn');
-
-    btnInsertWL.addEventListener('click', (e) => {
+    empWlBtn.addEventListener('click', (e) => {
         e.preventDefault();
 
+        // Obtenemos los datos
         var form = document.getElementById('formWLInsert');
 
-        const patenteStr = form.patente.value;
+        var patenteStr = form.patente.value;
         const empresaID = form.empresa.value;
 
-        datos = {
-            patente: patenteStr,
-            empresa: empresaID,
-        }
+        if(patenteStr && empresaID){
+            empWlBtn.disabled = true;
 
-        fetch(urlSave, {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-type' : 'application/json'
-            },
-            body: JSON.stringify(datos)
-        })
-        .then(reply => reply.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => console.log(error));
+            datos = {
+                patente: patenteStr,
+                empresa: empresaID,
+            }
+
+            fetch(urlSave, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-type' : 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                if(data!=false){
+                form.patente.value = '';
+                empWlBtn.disabled = false;
+                cargarWhitelist();
+                } else {
+                    alert("Vehiculo ya se encuentra registrado!");
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                empWlBtn.disabled = false;
+            });
+        } else {
+            alert('Ingrese Patente y seleccione Empresa');
+        }
     });
 </script>

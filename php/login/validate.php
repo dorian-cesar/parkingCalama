@@ -45,9 +45,9 @@ if ($token->iss !== $serverName ||
     exit;
 }
 
-$data = ["logon" = true,
-         "user" = $token->user,
-         "pass" = $token->nivel];
+$data = array(["logon" => true,
+         "user" => $token->user,
+         "lvl" => $token->nivel]);
 
 header("Content-Type: text/plain");
 echo json_encode($data);

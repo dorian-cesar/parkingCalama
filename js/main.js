@@ -8,7 +8,11 @@ function blankPage() {
 }
 
 // Inicializa la pagina en vista general
-parking();
+if(getCookie('jwt')){
+  parking();
+} else {
+  nosotros();
+}
 
 function openLoginModal() {
   document.getElementById('login-modal').style.display = 'block';

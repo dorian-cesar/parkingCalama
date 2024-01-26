@@ -33,10 +33,19 @@ function doLogin(email, pass){
     })
     .then(response => response.text())
     .then(data => {
-        document.cookie = `jwt=${data};path=/; samesite=lax`
+        document.cookie = `jwt=${data};path=/; samesite=lax`;
         closeLoginModal();
+        initUI();
+        parking();
     })
     .catch(error => console.log(error));
+}
+
+// Elimina el token JWT
+function logOut(){
+    document.cookie = 'jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; samesite=lax';
+    initUI();
+    location.reload();
 }
 
 // Inserta usuarios en la BDD
@@ -59,7 +68,6 @@ function createUser(email, pass, nivel){
     })
     .then(reply => reply.json())
     .then(data => {
-        console.log(data);
         if(data!=false){
             alert('Usuario creado correctamente!');
         } else {

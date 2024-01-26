@@ -19,21 +19,30 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
     if ($data !== null){
         // Obtener datos desde JSON
-        $estado = 1;
         $patente = $data["patente"];
         $empresa = $data["empresa"];
 
-        // SQL Seguro
-        $stmt = $conn->prepare("INSERT INTO ListaBlanca (patente, estado, idemp) VALUES (?, ?, ?)");
-        $stmt->bind_param("sii", $patente, $estado, $empresa);
+        $chck = $conn->prepare("SELECT patente FROM wlParking WHERE patente = ?");
+        $chck->bind_param("s",$patente);
+        $chck->execute();
+        $result = $chck->get_result();
 
-        if($stmt->execute()){
-            $id = $conn->insert_id;
-            header('Content-Type: application/json');
-            echo json_encode($id);
+        if($result->num_rows == 0){
+            // SQL Seguro
+            $stmt = $conn->prepare("INSERT INTO wlParking (patente, empresa) VALUES (?, ?)");
+            $stmt->bind_param("si", $patente, $empresa);
+    
+            if($stmt->execute()){
+                $id = $conn->insert_id;
+                header('Content-Type: application/json');
+                echo json_encode($id);
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode("Error: " . $conn->error);
+            }
         } else {
             header('Content-Type: application/json');
-            echo json_encode("Error: " . $conn->error);
+            echo json_encode(false);
         }
 
         $conn->close();

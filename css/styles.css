@@ -71,6 +71,11 @@ body {
     cursor: pointer;
     color: white;
   }
+
+  .logout-pos {
+    position: fixed;
+    top: 90%;
+  }
      /* Estilos para el modal */
     #login-modal {
     display: none;
@@ -95,6 +100,28 @@ body {
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
   }
+.mdl-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+.mdl-content {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #e4e3e3;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+}
   .entrada {
 width: 90%;
 height: 40px;
@@ -137,6 +164,51 @@ background-color: #b6b6b6;
     color: white;
     cursor: pointer;
   }
+
+.ctrl {
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-left: 10px;
+  background-color: #163b81;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.ctrl:hover {
+  background-color: #111;
+  color: white;
+  cursor: pointer;
+}
+.ctrlred {
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-left: 10px;
+  background-color: #cf2d2d;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+.ctrlred:hover {
+  background-color: #2e0303;
+  color: white;
+  cursor: pointer;
+}
+.ctrlgrn {
+  width: 100%;
+  height: 40px;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  background-color: #2dcf70;
+}
+.ctrlgrn:hover {
+  background-color: #0b4236;
+  color: white;
+  cursor: pointer;
+}
+
   .caja1 {
     width: 800px;
     margin: auto;

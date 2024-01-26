@@ -34,10 +34,9 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             echo json_encode($id);
         } catch(mysqli_sql_exception $e) {
             header('Content-Type: application/json');
-            echo json_encode(false);
+            echo json_encode($conn->error);
         }
 
-        $conn->close();
     } else {
         http_response_code(400);
         echo $data;
@@ -47,4 +46,5 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     http_response_code(405);
     echo "Solicitud no permitida";
 }
+$conn->close();
 ?>

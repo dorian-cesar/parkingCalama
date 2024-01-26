@@ -20,7 +20,7 @@
             </tbody>
         </table>
     </div>
-    <!-- Formulario Nuevo -->
+    <!-- Formulario Crear -->
     <div id="wlinsert-overlay" onclick="closeWLAdd()" class="mdl-overlay"></div>
     <div id="wlinsert" class="mdl-content">
         <h1>Ingresar a Lista Blanca</h1>
@@ -31,6 +31,18 @@
             <button class="btn" id="empWlBtn">Ingresar</button>
         </form>
     </div>
+    <!-- Formulario Modificar -->
+    <div id="wlupdate-overlay" onclick="closeWLUpd()" class="mdl-overlay"></div>
+    <div id="wlupdate" class="mdl-content">
+        <h1>Modificar</h1>
+        <form action="" method="POST" id="formWLUpdate">
+            <input required type="number" name="id" id="selUpdID" style="display: none">
+            <input required type="text" name="patente" id="selUpdPatente" class="entrada" placeholder="XXXXXX">
+            <select required name="empresa" id="empWlUpd" class="entrada">
+            </select>
+            <button class="btn" name="btnSubmit" id="updWlBtn">Actualizar</button>
+        </form>
+    </div>
 </div>
 <script>
     // Obtener la lista de empresas
@@ -38,6 +50,7 @@
     const empWlBtn = document.getElementById('empWlBtn');
 
     var wlTable = $('#tableWhitelist').DataTable({
+        order: [[0, 'desc']],
         language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
         columnDefs : [ {
             targets: 'no-sort',
@@ -51,8 +64,128 @@
         ]
     });
 
-    function deleteWl(id){
-        
+    function modificarWl(idIn){
+        const urlCheck = "https://localhost/parkingCalama/php/whitelist/getOne.php";
+
+        datos = {
+            id: idIn
+        }
+
+        fetch(urlCheck, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-type' : 'application/json'
+            },
+            body: JSON.stringify(datos)
+        })
+        .then(reply => reply.json())
+        .then(data => {
+            console.log(data);
+            document.getElementById('wlupdate-overlay').style.display = 'block';
+            document.getElementById('wlupdate').style.display = 'block';
+
+            const formData = document.getElementById('formWLUpdate');
+            formData.btnSubmit.disabled = true;
+
+            formData.id.value = data['idwl'];
+            formData.patente.value = data['patente'];
+            getEmpresas()
+            .then(emps => {
+                formData.empresa.textContent='';
+                emps.forEach(emp => {
+                    var optData = document.createElement('option');
+                    optData.value = emp['idemp'];
+                    optData.textContent = emp['nombre'];
+                    formData.empresa.appendChild(optData);
+                    formData.empresa.value = data['empresa'];
+                    formData.btnSubmit.disabled = false;
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+
+    const btnUpdate = document.getElementById('updWlBtn');
+    
+    btnUpdate.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const formData = document.getElementById('formWLUpdate');
+
+        const urlUpd = "https://localhost/parkingCalama/php/whitelist/update.php";
+
+        datos = {
+            id: formData.id.value,
+            patente: formData.patente.value,
+            empresa: formData.empresa.value,
+        };
+
+        if(formData.patente.value){
+            fetch(urlUpd, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-type' : 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                console.log(data);
+                if(data=='Duplicate'){
+                    alert('Ya existe un registro para esta patente!');
+                }
+                else if(data==true){
+                    closeWLUpd();
+                    cargarWhitelist();
+                } else {
+                    alert('Error al actualizar');
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        } else {
+            alert('Debe ingresar una patente!');
+        }
+    });
+
+    function updateWL(datos) {
+    }
+
+    function deleteWl(idIn){
+        let wdConf = window.confirm('Eliminar la entrada?');
+        if(wdConf){
+            const urlDel = "https://localhost/parkingCalama/php/whitelist/delete.php";
+            datos = {
+                id: idIn
+            }
+            fetch(urlDel, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-type' : 'application/json'
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                console.log(data);
+                if(data==true){
+                    alert('Datos eliminados correctamente.');
+                    cargarWhitelist();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
     }
 
     function cargarWhitelist(){
@@ -61,7 +194,7 @@
         .then(data =>{
             wlTable.clear();
             data.forEach(item => {
-                const btns = `<button class="ctrl" id="editWl-${item['idwl']}">✍</button>
+                const btns = `<button class="ctrl" onclick="modificarWl(${item['idwl']})" id="editWl-${item['idwl']}">✍</button>
                               <button class="ctrlred" onclick="deleteWl(${item['idwl']})" id="delWl-${item['idwl']}">✕</button>`
                 wlTable.rows.add([{
                     'idwl' : item['idwl'],
@@ -165,6 +298,11 @@
     function closeWLAdd() {
         document.getElementById('wlinsert-overlay').style.display = 'none';
         document.getElementById('wlinsert').style.display = 'none';
+    }
+
+    function closeWLUpd() {
+        document.getElementById('wlupdate-overlay').style.display = 'none';
+        document.getElementById('wlupdate').style.display = 'none';
     }
 
     // Funcion para esconder todos los elementos cuyo id comienza con wl

@@ -20,7 +20,10 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if ($data !== null){
         // Obtener datos desde JSON
         $id = $data["id"];
+        $patente = $data["patente"];
+        $empresa = $data["empresa"];
 
+        // Validar que la entrada existe
         $chck = $conn->prepare("SELECT idwl FROM wlParking WHERE idwl = ?");
         $chck->bind_param("i",$id);
         $chck->execute();
@@ -28,15 +31,24 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 
         if($result->num_rows >= 1){
             // SQL Seguro
-            $stmt = $conn->prepare("DELETE FROM wlParking WHERE idwl = ?");
-            $stmt->bind_param("i", $id);
+            $stmt = $conn->prepare("UPDATE wlParking SET patente = ?, empresa = ? WHERE idwl = ?");
+            $stmt->bind_param("sii", $patente, $empresa, $id);
     
-            if($stmt->execute()){
+            try{
+                if($stmt->execute()){
+                    header('Content-Type: application/json');
+                    echo json_encode(true);
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(false);
+                }
+            } catch (mysqli_sql_exception $e){
+                if(mysqli_errno($conn)==1062){
+                    header('Content-Type: application/json');
+                    echo json_encode('Duplicate');
+                }
                 header('Content-Type: application/json');
-                echo json_encode(true);
-            } else {
-                header('Content-Type: application/json');
-                echo json_encode(false);
+                echo json_encode(mysqli_errno($conn));
             }
         } else {
             header('Content-Type: application/json');

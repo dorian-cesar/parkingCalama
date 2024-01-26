@@ -5,7 +5,7 @@ CREATE TABLE `userParking` (
   `nivel` int DEFAULT NULL,
   PRIMARY KEY (`iduser`),
   UNIQUE KEY `mail_UNIQUE` (`mail`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
 
 INSERT INTO `userParking`
 (`mail`,
@@ -21,7 +21,7 @@ CREATE TABLE `empParking` (
   `nombre` varchar(20) DEFAULT NULL,
   `representante` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idemp`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1;
 
 INSERT INTO `empParking`
 (`nombre`,
@@ -38,4 +38,4 @@ CREATE TABLE `wlParking` (
   UNIQUE KEY `patente_UNIQUE` (`patente`),
   KEY `fk_wlParking_emp_idx` (`empresa`),
   CONSTRAINT `fk_wlParking_emp` FOREIGN KEY (`empresa`) REFERENCES `empParking` (`idemp`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1;

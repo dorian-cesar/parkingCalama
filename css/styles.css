@@ -169,10 +169,12 @@ background-color: #b6b6b6;
   border: none;
   border-radius: 5px;
   margin: auto;
+  margin-top: none;
+  margin-bottom: none;
   margin-left: 10px;
   background-color: #163b81;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: bold;
 }
 .ctrl:hover {
@@ -185,9 +187,11 @@ background-color: #b6b6b6;
   border-radius: 5px;
   margin: auto;
   margin-left: 10px;
+  margin-top: none;
+  margin-bottom: none;
   background-color: #cf2d2d;
   color: white;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: bold;
 }
 .ctrlred:hover {
@@ -264,11 +268,16 @@ background-color: #b6b6b6;
     border: 1px solid rgb(180, 180, 180);
     border-collapse: collapse;
     text-align: center;
-    
-   
+    padding: 0px;
   }
   th,td {
     border: 1px solid rgb(180, 180, 180);
     border-collapse: collapse;
+    padding: 0px;
+  }
 
+  table.dataTable thead th, table.dataTable tbody td {
+    padding: 0px 0px;
+    width:min-content;
+    height:min-content;
   }

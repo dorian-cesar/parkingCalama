@@ -51,14 +51,18 @@
         ]
     });
 
+    function deleteWl(id){
+        
+    }
+
     function cargarWhitelist(){
         document.getElementById('tbWlList').textContent = '';
         getWhitelist()
         .then(data =>{
             wlTable.clear();
             data.forEach(item => {
-                const btns = `<button class="ctrl">✍</button>
-                              <button class="ctrlred">✕</button>`
+                const btns = `<button class="ctrl" id="editWl-${item['idwl']}">✍</button>
+                              <button class="ctrlred" onclick="deleteWl(${item['idwl']})" id="delWl-${item['idwl']}">✕</button>`
                 wlTable.rows.add([{
                     'idwl' : item['idwl'],
                     'patente' : item['patente'],

@@ -43,19 +43,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     echo json_encode(false);
                 }
             } catch (mysqli_sql_exception $e){
-                if(mysqli_errno($conn)==1062){
-                    header('Content-Type: application/json');
-                    echo json_encode('Duplicate');
-                }
                 header('Content-Type: application/json');
                 echo json_encode(mysqli_errno($conn));
+                $conn->close();
+                return;
             }
         } else {
             header('Content-Type: application/json');
             echo json_encode(false);
         }
-
-        $conn->close();
     } else {
         http_response_code(400);
         echo $data;
@@ -65,4 +61,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     http_response_code(405);
     echo "Solicitud no permitida";
 }
+
+$conn->close();
 ?>

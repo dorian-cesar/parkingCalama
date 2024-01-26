@@ -7,6 +7,17 @@ function blankPage() {
   });
 }
 
+// modal: nombre del modal
+function openModal(modal){
+  document.getElementById(modal+'-overlay').style.display = 'block';
+  document.getElementById(modal+'-modal').style.display = 'block';
+}
+// modal: nombre del modal
+function closeModal(modal){
+  document.getElementById(modal+'-overlay').style.display = 'none';
+  document.getElementById(modal+'-modal').style.display = 'none';
+}
+
 // Inicializa la pagina en vista general
 if(getCookie('jwt')){
   parking();

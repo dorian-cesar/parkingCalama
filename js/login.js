@@ -5,7 +5,7 @@ Funciones relacionadas al sistema de login
 const formLogin = document.getElementById('formLogin');
 const btnLogin = document.getElementById('btnLogin');
 const formEnroll = document.getElementById('formEnroll');
-const btnEnroll = document.getElementById('btnEnroll');
+const btnEnroll = document.getElementById('btnUsrCreate');
 
 // PHP para validar los datos ingresados en la base de datos
 const urlLoad = "https://localhost/parkingCalama/php/login/load.php";

@@ -33,7 +33,7 @@
     </div>
     <!-- Formulario Modificar -->
     <div id="wlupdate-overlay" onclick="closeWLUpd()" class="mdl-overlay"></div>
-    <div id="wlupdate" class="mdl-content">
+    <div id="wlupdate-modal" class="mdl-content">
         <h1>Modificar</h1>
         <form action="" method="POST" id="formWLUpdate">
             <input required type="number" name="id" id="selUpdID" style="display: none">
@@ -65,7 +65,7 @@
     });
 
     function modificarWl(idIn){
-        const urlCheck = "https://localhost/parkingCalama/php/whitelist/getOne.php";
+        const urlCheck = "https://localhost/parkingCalama/php/wl/get.php";
 
         datos = {
             id: idIn
@@ -113,49 +113,6 @@
 
     const btnUpdate = document.getElementById('updWlBtn');
     
-    btnUpdate.addEventListener('click', (e) => {
-        e.preventDefault();
-
-        const formData = document.getElementById('formWLUpdate');
-
-        const urlUpd = "https://localhost/parkingCalama/php/whitelist/update.php";
-
-        datos = {
-            id: formData.id.value,
-            patente: formData.patente.value,
-            empresa: formData.empresa.value,
-        };
-
-        if(formData.patente.value){
-            fetch(urlUpd, {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Content-type' : 'application/json'
-                },
-                body: JSON.stringify(datos)
-            })
-            .then(reply => reply.json())
-            .then(data => {
-                console.log(data);
-                if(data=='Duplicate'){
-                    alert('Ya existe un registro para esta patente!');
-                }
-                else if(data==true){
-                    closeWLUpd();
-                    cargarWhitelist();
-                } else {
-                    alert('Error al actualizar');
-                }
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        } else {
-            alert('Debe ingresar una patente!');
-        }
-    });
-
     function updateWL(datos) {
     }
 
@@ -194,7 +151,7 @@
         .then(data =>{
             wlTable.clear();
             data.forEach(item => {
-                const btns = `<button class="ctrl" onclick="modificarWl(${item['idwl']})" id="editWl-${item['idwl']}">✍</button>
+                 const btns = `<button class="ctrl" onclick="modificarWl(${item['idwl']})" id="editWl-${item['idwl']}">✍</button>
                               <button class="ctrlred" onclick="deleteWl(${item['idwl']})" id="delWl-${item['idwl']}">✕</button>`
                 wlTable.rows.add([{
                     'idwl' : item['idwl'],
@@ -224,7 +181,7 @@
     cargarWhitelist();
 
     async function getWhitelist(){
-        var urlGet = "https://localhost/parkingCalama/php/whitelist/getWL.php";
+        var urlGet = "https://localhost/parkingCalama/php/wl/get.php";
         let ret = await fetch(urlGet,{
             method: 'POST',
             mode: 'cors',

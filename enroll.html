@@ -1,0 +1,54 @@
+<div class="caja1" id="pageEnrolar">
+    <div class="card2" style="text-align:center">
+        <h1>Usuarios</h1>
+        <button class="ctrlgrn" onclick="insertEnr()" id="btnCreateUsr">Registrar Usuario</button>
+        <br/>
+        <hr/>
+        <br/>
+    </div>
+    <div id="wllist">
+        <button id="refreshUsrBtn" class="ctrlyel" onclick="actualizarEnroll()">↺ Actualizar</button>
+        <br/><br/>
+        <table id="tableEnroll">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Correo</th>
+                    <th>Nivel</th>
+                    <th class="no-sort">Controles</th>
+                </tr>
+            </thead>
+            <tbody id="tbEnrList">
+            </tbody>
+        </table>
+    </div>
+    <!-- Formulario Crear -->
+    <div id="mUsrInsert-overlay" onclick="closeModal('mUsrInsert')" class="mdl-overlay"></div>
+    <div id="mUsrInsert-modal" class="mdl-content">
+        <h1>Crear Usuario</h1>
+        <form action="" method="POST" id="formUsrInsert">
+            <input required type="email" class="entrada" placeholder="Correo">
+            <input required type="password" class="entrada" placeholder="Contraseña">
+            <select required name="nivel" class="entrada">
+                <option value="1">Usuario</option>
+                <option value="10">Administrador</option>
+            </select>
+            <button id="btnUsrCreate" name="btnSubmit" class="btn">Crear Cuenta</button>
+        </form>
+    </div>
+    <!-- Formulario Modificar -->
+    <div id="mUsrUpdate-overlay" onclick="closeModal('mUsrUpdate')" class="mdl-overlay"></div>
+    <div id="mUsrUpdate-modal" class="mdl-content">
+        <h1>Modificar</h1>
+        <form action="" method="POST" id="formUsrUpdate">
+            <input required type="email" class="entrada" placeholder="Correo">
+            <input required type="password" class="entrada" placeholder="Contraseña">
+            <select required name="nivel" class="entrada">
+                <option value="1">Usuario</option>
+                <option value="10">Administrador</option>
+            </select>
+            <button id="btnUsrUpdate" name="btnSubmit" class="btn">Guardar Cambios</button>
+        </form>
+    </div>
+</div>
+<script src="js/enroll.js"></script>

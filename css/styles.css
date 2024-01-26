@@ -74,7 +74,7 @@ body {
 
   .logout-pos {
     position: fixed;
-    top: 90%;
+    bottom: 20px;
   }
      /* Estilos para el modal */
     #login-modal {
@@ -199,6 +199,24 @@ background-color: #b6b6b6;
   color: white;
   cursor: pointer;
 }
+.ctrlyel {
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-left: 40px;
+  margin-top: none;
+  margin-bottom: none;
+  background-color: #ffc31e;
+  color: rgb(0, 0, 0);
+  font-size: 1.15rem;
+  font-weight: bold;
+  float: right;
+}
+.ctrlyel:hover {
+  background-color: #411e08;
+  color: white;
+  cursor: pointer;
+}
 .ctrlgrn {
   width: 100%;
   height: 40px;
@@ -280,4 +298,9 @@ background-color: #b6b6b6;
     padding: 0px 0px;
     width:min-content;
     height:min-content;
+  }
+
+  .disabled {
+    background-color: #333;
+    color:#b6b6b6;
   }

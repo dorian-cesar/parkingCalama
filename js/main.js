@@ -44,6 +44,11 @@ function entradaSalida(){
   document.getElementById('pageMovimientos').style.display = 'block';
 }
 
+function pagos(){
+  blankPage();
+  document.getElementById('pagePagos').style.display = 'block';
+}
+
 function enrolar(){
   blankPage();
   document.getElementById('pageEnrolar').style.display = 'block';

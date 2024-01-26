@@ -27,7 +27,7 @@
   <a href="#" id="sbAdmConfig">❯ Configuración</a>
   <a href="#" id="sbAdmEnroll" onclick="enrolar()">❯ Enrolar</a>
   <a href="#" id="sbAdmWhitelist" onclick="listablanca()">❯ Listas Blancas</a>
-  <a href="#" id="sbAdmPagos">❯ Pagos Diarios</a>
+  <a href="#" id="sbAdmPagos" onclick="pagos()">❯ Pagos Diarios</a>
   <a href="#" id="sbAdmMovements" onclick="entradaSalida()">❯ Entradas y salidas</a>
   <a href="#" id="sbUsrLogout" class="logout-pos" onclick="logOut()">❯ Log Out</a>
 </div>
@@ -42,6 +42,8 @@
         <div id="contenedorContacto"></div>
 
         <div id="contenedorTabla"></div>
+
+        <div id="contenedorPagos"></div>
 
         <div id="contenedorEnrolar"></div>
 
@@ -121,6 +123,7 @@
   // Genera una promesa luego de cargar todos los elementos
   var loadPage = $.Deferred(function (dfd) {
       $('#contenedorTabla').load('tabla.html');
+      $('#contenedorPagos').load('pagos.html');
       $('#contenedorContacto').load('contacto.html');
       $('#contenedorParking').load('parking.html');
       $('#contenedorBuses').load('buses.html');

@@ -1,11 +1,36 @@
+CREATE TABLE `permParking` (
+  `idperm` int NOT NULL AUTO_INCREMENT,
+  `nivel` int DEFAULT NULL,
+  `descriptor` varchar(15) DEFAULT NULL,
+  PRIMARY KEY (`idperm`),
+  UNIQUE KEY `nivel_UNIQUE` (`nivel`)
+) ENGINE=InnoDB AUTO_INCREMENT=1;
+
+INSERT INTO `permParking`
+(`nivel`,
+`descriptor`)
+VALUES
+(1,
+'Usuario');
+
+INSERT INTO `permParking`
+(`nivel`,
+`descriptor`)
+VALUES
+(10,
+'Administrador');
+
 CREATE TABLE `userParking` (
   `iduser` int NOT NULL AUTO_INCREMENT,
   `mail` varchar(30) DEFAULT NULL,
   `pass` char(60) DEFAULT NULL,
   `nivel` int DEFAULT NULL,
   PRIMARY KEY (`iduser`),
-  UNIQUE KEY `mail_UNIQUE` (`mail`)
+  UNIQUE KEY `mail_UNIQUE` (`mail`),
+  KEY `fk_userParking_perm_idx` (`nivel`),
+  CONSTRAINT `fk_userParking_perm` FOREIGN KEY (`nivel`) REFERENCES `permParking` (`nivel`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
+
 
 INSERT INTO `userParking`
 (`mail`,
@@ -19,16 +44,17 @@ VALUES
 CREATE TABLE `empParking` (
   `idemp` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(20) DEFAULT NULL,
-  `representante` varchar(45) DEFAULT NULL,
+  `contacto` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idemp`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1;
 
+
 INSERT INTO `empParking`
 (`nombre`,
-`representante`)
+`contacto`)
 VALUES
-('Wit',
-'Administrador');
+('TurBus',
+'contacto@turbus.cl');
 
 CREATE TABLE `wlParking` (
   `idwl` int NOT NULL AUTO_INCREMENT,

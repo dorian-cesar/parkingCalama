@@ -110,6 +110,24 @@ body {
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
+.loading-overlay {
+  display: block;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255);
+  text-align: center;
+  font-size: 4rem;
+  z-index: 2000;
+}
+.loading-texto {
+  margin:auto;
+  width: 100%;
+  height:100%;
+  vertical-align: middle;
+}
 .mdl-content {
   display: none;
   position: fixed;
@@ -171,11 +189,12 @@ background-color: #b6b6b6;
   margin: auto;
   margin-top: none;
   margin-bottom: none;
-  margin-left: 10px;
-  background-color: #163b81;
-  color: white;
+  background-color: #b6b6b6;
+  color: rgb(0, 0, 0);
   font-size: 1.15rem;
   font-weight: bold;
+  width: 27px;
+  height: 27px;
 }
 .ctrl:hover {
   background-color: #111;
@@ -193,6 +212,8 @@ background-color: #b6b6b6;
   color: white;
   font-size: 1.15rem;
   font-weight: bold;
+  width: 27px;
+  height: 27px;
 }
 .ctrlred:hover {
   background-color: #2e0303;
@@ -203,17 +224,18 @@ background-color: #b6b6b6;
   border: none;
   border-radius: 5px;
   margin: auto;
-  margin-left: 40px;
   margin-top: none;
   margin-bottom: none;
-  background-color: #ffc31e;
+  background-color: #b6b6b6;
   color: rgb(0, 0, 0);
   font-size: 1.15rem;
   font-weight: bold;
   float: right;
+  width: 35px;
+  height: 35px;
 }
 .ctrlyel:hover {
-  background-color: #411e08;
+  background-color: #111;
   color: white;
   cursor: pointer;
 }
@@ -223,10 +245,10 @@ background-color: #b6b6b6;
   border: none;
   border-radius: 5px;
   margin: auto;
-  background-color: #2dcf70;
+  background-color: #b6b6b6;
 }
 .ctrlgrn:hover {
-  background-color: #0b4236;
+  background-color: #111;
   color: white;
   cursor: pointer;
 }

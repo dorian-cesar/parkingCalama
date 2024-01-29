@@ -31,7 +31,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($data!==null){
             $id = $data['id'];
 
-            $stmt = $conn->prepare("SELECT iduser, mail, nivel FROM userParking WHERE iduser = ?");
+            $stmt = $conn->prepare("SELECT idperm, nivel, descriptor FROM permParking WHERE idperm = ?");
             $stmt->bind_param("i",$id);
 
             try{
@@ -52,7 +52,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     // De lo contrario, devolver todo
     else {
-        $stmt = $conn->prepare("SELECT u.iduser, u.mail, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.nivel ORDER BY iduser");
+        $stmt = $conn->prepare("SELECT idperm, nivel, descriptor FROM permParking");
         
         try{
             $stmt->execute();

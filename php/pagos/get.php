@@ -18,7 +18,7 @@ require_once('../../vendor/autoload.php');
 
 include("../conf.php");
 
-// Obtener registros de usuarios
+// Obtener registros de listas blancas
 // id: ID a obtener (opcional)
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -31,7 +31,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         if($data!==null){
             $id = $data['id'];
 
-            $stmt = $conn->prepare("SELECT iduser, mail, nivel FROM userParking WHERE iduser = ?");
+            $stmt = $conn->prepare("SELECT idwl, patente, empresa FROM wlParking WHERE idwl = ?");
             $stmt->bind_param("i",$id);
 
             try{
@@ -52,7 +52,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     }
     // De lo contrario, devolver todo
     else {
-        $stmt = $conn->prepare("SELECT u.iduser, u.mail, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.nivel ORDER BY iduser");
+        $stmt = $conn->prepare("SELECT w.idwl, w.patente, e.nombre FROM wlParking AS w JOIN empParking AS e ON w.empresa = e.idemp ORDER BY w.idwl");
         
         try{
             $stmt->execute();

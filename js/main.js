@@ -25,6 +25,8 @@ if(getCookie('jwt')){
   nosotros();
 }
 
+document.getElementById('loadingscreen').style.display = 'none';
+
 function openLoginModal() {
   document.getElementById('login-modal').style.display = 'block';
   document.getElementById('modal-overlay').style.display = 'block';
@@ -73,4 +75,9 @@ function listablanca(){
 function buses(){
   blankPage();
   document.getElementById('pageBuses').style.display = 'block';
+}
+
+function empresas(){
+  blankPage();
+  document.getElementById('pageEmpresas').style.display = 'block';
 }

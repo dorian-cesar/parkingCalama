@@ -6,6 +6,7 @@
   <title>Administrador de Parking</title>
   <link rel="stylesheet" href="css/styles.css">
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 </head>
@@ -23,17 +24,17 @@
   <br>
   <br>
   <hr>
-  <a href="#" id="sbGstLogin" onclick="openLoginModal()">❯ Login</a>
-  <a href="#" id="sbAdmConfig">❯ Configuración</a>
-  <a href="#" id="sbAdmEnroll" onclick="enrolar()">❯ Enrolar</a>
-  <a href="#" id="sbAdmWhitelist" onclick="listablanca()">❯ Listas Blancas</a>
-  <a href="#" id="sbAdmPagos" onclick="pagos()">❯ Pagos Diarios</a>
-  <a href="#" id="sbAdmMovements" onclick="entradaSalida()">❯ Entradas y salidas</a>
-  <a href="#" id="sbUsrLogout" class="logout-pos" onclick="logOut()">❯ Log Out</a>
+  <a href="#" id="sbGstLogin" onclick="openLoginModal()"><i class="fa fa-sign-in fa-fw"></i> Login</a>
+  <a href="#" id="sbAdmConfig" onclick="empresas()"><i class="fa fa-cogs fa-fw"></i> Configuración</a>
+  <a href="#" id="sbAdmEnroll" onclick="enrolar()"><i class="fa fa-users fa-fw"></i> Usuarios</a>
+  <a href="#" id="sbAdmWhitelist" onclick="listablanca()"><i class="fa fa-list fa-fw"></i> Listas Blancas</a>
+  <a href="#" id="sbAdmPagos" onclick="pagos()"><i class="fa fa-dollar fa-fw"></i> Pagos Diarios</a>
+  <a href="#" id="sbAdmMovements" onclick="entradaSalida()"><i class="fa fa-bus fa-fw"></i> Entradas y salidas</a>
+  <a class="logout-pos" href="#" id="sbUsrLogout" onclick="logOut()"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
 </div>
 
 <div id="content">
-        <div id="menu-toggle">&#9776; Menú</div>
+        <div id="menu-toggle"><i class="fa fa-bars fa-fw"></i> Menú</div>
 
         <div id="contenedorParking"></div>
 
@@ -42,6 +43,8 @@
         <div id="contenedorContacto"></div>
 
         <div id="contenedorTabla"></div>
+
+        <div id="contenedorEmpresas"></div>
 
         <div id="contenedorPagos"></div>
 
@@ -53,6 +56,14 @@
 </div>
 
 <div id="contenedorModal"></div>
+
+<div class="loading-overlay" id="loadingscreen">
+  <br/>
+  <br/>
+  <br/>
+  <i class="fa fa-spinner fa-6"></i>
+  <div class="loading-texto">Cargando</div>
+</div>
 
 <script>
   // Funcion para desactivar controles dependiendo del nivel de acceso
@@ -130,7 +141,8 @@
       $('#contenedorNosotros').load('nosotros.html');
       $('#contenedorModal').load('modal.html');
       $('#contenedorWhitelist').load('whitelist.html');
-      $('#contenedorEnrolar').load('enrolar.html',dfd.resolve);
+      $('#contenedorEmpresas').load('empresas.html');
+      $('#contenedorEnrolar').load('enroll.html',dfd.resolve);
   }).promise();
 
   // Cargar el main.js cuando todos los elementos existan

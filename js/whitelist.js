@@ -2,23 +2,7 @@
 Funciones relacionadas al sistema de Listas Blancas
 */
 
-// Obtener uno o todos los registros
-const urlGet = "https://localhost/parkingCalama/php/wl/get.php";
-// Agregar un registro
-const urlAdd = "https://localhost/parkingCalama/php/whitelist/save.php";
-// Actualizar un registro
-const urlUpd = "https://localhost/parkingCalama/php/whitelist/update.php"
-// Eliminar un registro
-const urlDel = "https://localhost/parkingCalama/php/whitelist/delete.php";
-// Obtener empresas
-const urlEmp = "https://localhost/parkingCalama/php/whitelist/getEmpresas.php";
-
 // Elementos
-const formAdd = document.getElementById('formWLInsert');
-const formUpdate = document.getElementById('formWLUpdate');
-
-const btnRefresh = document.getElementById('refreshWLBtn');
-
 var tableWL = $('#tableWhitelist').DataTable({
     order: [[0, 'desc']],
     language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
@@ -40,23 +24,7 @@ Funciones de API
 
 // Obtener todos los registros
 async function getWhitelist(){
-    let ret = await fetch(urlGet, {
-            method: 'POST',
-            mode: 'cors'
-        })
-        .then(reply => reply.json())
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    return ret;
-}
-
-// Obtener todas las empresas
-async function getEmpresas(){
-    let ret = await fetch(urlEmp, {
+    let ret = await fetch("https://localhost/parkingCalama/php/wl/get.php", {
             method: 'POST',
             mode: 'cors'
         })
@@ -72,7 +40,7 @@ async function getEmpresas(){
 
 // Obtener un registro
 async function getWhitelistEntry(datos){
-    let ret = await fetch(urlGet, {
+    let ret = await fetch("https://localhost/parkingCalama/php/wl/get.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -96,15 +64,15 @@ Control de UI
 
 // Regenera la tabla
 function actualizarWhitelist(){
-    btnRefresh.disabled = true;
-    btnRefresh.classList.add('disabled');
+    (document.getElementById('refreshWLBtn')).disabled = true;
+    (document.getElementById('refreshWLBtn')).classList.add('disabled');
     getWhitelist()
     .then(data => {
         // Limpiamos la tabla
         tableWL.clear();
         data.forEach(item => {
             // Generamos las filas
-            const btns = `<button class="ctrl" onclick="updateWL(${item['idwl']})">✍</button><button class="ctrlred" onclick="deleteWL(${item['idwl']})">✕</button>`;
+            const btns = `<button class="ctrl fa fa-pencil" onclick="updateWL(${item['idwl']})"></button><button class="ctrlred fa fa-trash" onclick="deleteWL(${item['idwl']})"></button>`;
             tableWL.rows.add([{
                'idwl' : item['idwl'],
                'patente' : item['patente'],
@@ -114,13 +82,13 @@ function actualizarWhitelist(){
         });
         // Dibujamos la nueva tabla
         tableWL.draw();
-        btnRefresh.disabled = false;
-        btnRefresh.classList.remove('disabled');
+        (document.getElementById('refreshWLBtn')).disabled = false;
+        (document.getElementById('refreshWLBtn')).classList.remove('disabled');
     })
     .catch(error => {
         console.log(error);
-        btnRefresh.disabled = false;
-        btnRefresh.classList.remove('disabled');
+        (document.getElementById('refreshWLBtn')).disabled = false;
+        (document.getElementById('refreshWLBtn')).classList.remove('disabled');
     });
 }
 
@@ -133,7 +101,7 @@ function deleteWL(idIn){
             id: idIn
         }
 
-        fetch(urlDel, {
+        fetch("https://localhost/parkingCalama/php/whitelist/delete.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -164,23 +132,23 @@ function updateWL(idIn){
     .then(data => {
         // Abrimos el modal de Update
         openModal('mupdate');
-        formUpdate.btnSubmit.disabled = true;
-        formUpdate.idWL.value = data['idwl'];
-        formUpdate.patente.value = data['patente'];
+        (document.getElementById('formWLUpdate')).btnSubmit.disabled = true;
+        (document.getElementById('formWLUpdate')).idWL.value = data['idwl'];
+        (document.getElementById('formWLUpdate')).patente.value = data['patente'];
 
         // Obtenemos la empresas
         getEmpresas()
         .then(emps => {
-            formUpdate.empresa.textContent = '';
+            (document.getElementById('formWLUpdate')).empresa.textContent = '';
             emps.forEach(emp => {
                 var optData = document.createElement('option');
                 optData.value = emp['idemp'];
                 optData.textContent = emp['nombre'];
                 // Ingresamos el resultado al Select de empresas
-                formUpdate.empresa.appendChild(optData);
+                (document.getElementById('formWLUpdate')).empresa.appendChild(optData);
 
-                formUpdate.empresa.value = data['empresa'];
-                formUpdate.btnSubmit.disabled = false;
+                (document.getElementById('formWLUpdate')).empresa.value = data['empresa'];
+                (document.getElementById('formWLUpdate')).btnSubmit.disabled = false;
             });
         });
     })
@@ -190,35 +158,35 @@ function updateWL(idIn){
 }
 
 function insertWL(){
-    formAdd.btnSubmit.disabled = true;
+    (document.getElementById('formWLInsert')).btnSubmit.disabled = true;
     getEmpresas()
     .then(emps => {
-        formAdd.empresa.textContent = '';
+        (document.getElementById('formWLInsert')).empresa.textContent = '';
         emps.forEach(emp => {
             var optData = document.createElement('option');
             optData.value = emp['idemp'];
             optData.textContent = emp['nombre'];
             // Ingresamos el resultado al Select de empresas
-            formAdd.empresa.appendChild(optData);
-            formAdd.btnSubmit.disabled = false;
+            (document.getElementById('formWLInsert')).empresa.appendChild(optData);
+            (document.getElementById('formWLInsert')).btnSubmit.disabled = false;
         });
         openModal('minsert');
     });
 }
 
 // Igresa un registro
-formAdd.btnSubmit.addEventListener('click', (e) => {
+(document.getElementById('formWLInsert')).btnSubmit.addEventListener('click', (e) => {
     e.preventDefault();
 
-    formAdd.btnSubmit.disabled = true;
+    (document.getElementById('formWLInsert')).btnSubmit.disabled = true;
 
-    if(formAdd.patente.value){
+    if((document.getElementById('formWLInsert')).patente.value){
         datos = {
-            patente: formAdd.patente.value,
-            empresa: formAdd.empresa.value
+            patente: (document.getElementById('formWLInsert')).patente.value,
+            empresa: (document.getElementById('formWLInsert')).empresa.value
         };
 
-        fetch(urlAdd, {
+        fetch("https://localhost/parkingCalama/php/whitelist/save.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -229,17 +197,17 @@ formAdd.btnSubmit.addEventListener('click', (e) => {
         .then(reply => reply.json())
         .then(data => {
             if(data!=false){
-                formAdd.patente.value = '';
+                (document.getElementById('formWLInsert')).patente.value = '';
                 actualizarWhitelist();
-                formAdd.btnSubmit.disabled = false;
+                (document.getElementById('formWLInsert')).btnSubmit.disabled = false;
             } else {
                 alert('Error');
-                formAdd.btnSubmit.disabled = false;
+                (document.getElementById('formWLInsert')).btnSubmit.disabled = false;
             }
         })
         .catch(error => {
             console.log(error);
-            formAdd.btnSubmit.disabled = false;
+            (document.getElementById('formWLInsert')).btnSubmit.disabled = false;
         });
     } else {
         alert('Ingrese patente');
@@ -247,17 +215,17 @@ formAdd.btnSubmit.addEventListener('click', (e) => {
 });
 
 // Actualiza un registro
-formUpdate.btnSubmit.addEventListener('click', (e) => {
+(document.getElementById('formWLUpdate')).btnSubmit.addEventListener('click', (e) => {
     e.preventDefault();
 
-    if(formUpdate.patente.value&&formUpdate.idWL.value){
+    if((document.getElementById('formWLUpdate')).patente.value&&(document.getElementById('formWLUpdate')).idWL.value){
         datos = {
-            id: formUpdate.idWL.value,
-            patente: formUpdate.patente.value,
-            empresa: formUpdate.empresa.value
+            id: (document.getElementById('formWLUpdate')).idWL.value,
+            patente: (document.getElementById('formWLUpdate')).patente.value,
+            empresa: (document.getElementById('formWLUpdate')).empresa.value
         };
     
-        fetch(urlUpd, {
+        fetch("https://localhost/parkingCalama/php/whitelist/update.php", {
             method: 'POST',
             mode: 'cors',
             headers: {

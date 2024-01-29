@@ -5,7 +5,7 @@ Funciones relacionadas al sistema de login
 const formLogin = document.getElementById('formLogin');
 const btnLogin = document.getElementById('btnLogin');
 const formEnroll = document.getElementById('formEnroll');
-const btnEnroll = document.getElementById('btnUsrCreate');
+const btnEnroll = document.getElementById('formUsrInsert');
 
 // PHP para validar los datos ingresados en la base de datos
 const urlLoad = "https://localhost/parkingCalama/php/login/load.php";
@@ -79,15 +79,15 @@ function createUser(email, pass, nivel){
 
 // Llama a PHP para insertar un nuevo usuario
 
-/* Control UI */
-// Boton Login
+/* Control UI
+// Boton Login*/
 btnLogin.addEventListener('click', (e) => {
     e.preventDefault();
     const mailStr = formLogin.email.value;
     const passStr = formLogin.password.value;
     doLogin(mailStr,passStr)
 });
-
+/*
 // Boton Enroll
 btnEnroll.addEventListener('click', (e) => {
     e.preventDefault();
@@ -95,4 +95,4 @@ btnEnroll.addEventListener('click', (e) => {
     const passStr = formEnroll.password.value;
     const nivelStr = formEnroll.nivel.value;
     createUser(mailStr,passStr, nivelStr)
-});
+}); */

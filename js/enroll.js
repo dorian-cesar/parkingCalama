@@ -2,22 +2,8 @@
 Funciones relacionadas al sistema de Listas Blancas
 */
 
-// Obtener uno o todos los registros
-const urlGetEnroll = "https://localhost/parkingCalama/php/login/get.php";
-// Agregar un registro
-const urlAddEnroll = "https://localhost/parkingCalama/php/whitelist/save.php";
-// Actualizar un registro
-const urlUpdEnroll = "https://localhost/parkingCalama/php/whitelist/update.php"
-// Eliminar un registro
-const urlDelEnroll = "https://localhost/parkingCalama/php/whitelist/delete.php";
-// Obtener empresas
-const urlEmpEnroll = "https://localhost/parkingCalama/php/whitelist/getEmpresas.php";
-
 // Elementos
-const formAddEnroll = document.getElementById('formUsrInsert');
-const formUpdateEnroll = document.getElementById('formUsrUpdate');
-
-var tableEnr = $('#tableEnroll').DataTable({
+var tableUser = $('#tableEnroll').DataTable({
     order: [[0, 'desc']],
     language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
     columnDefs : [ {
@@ -38,7 +24,7 @@ Funciones de API
 
 // Obtener todos los registros
 async function getUsers(){
-    let ret = await fetch(urlGetEnroll, {
+    let ret = await fetch("https://localhost/parkingCalama/php/login/get.php", {
             method: 'POST',
             mode: 'cors'
         })
@@ -53,8 +39,8 @@ async function getUsers(){
 }
 
 // Obtener todas las empresas
-async function getEmpresas(){
-    let ret = await fetch(urlEmpEnroll, {
+async function getPermisos(){
+    let ret = await fetch("https://localhost/parkingCalama/php/login/getPermisos.php", {
             method: 'POST',
             mode: 'cors'
         })
@@ -70,7 +56,7 @@ async function getEmpresas(){
 
 // Obtener un registro
 async function getUsersEntry(datos){
-    let ret = await fetch(urlGetEnroll, {
+    let ret = await fetch("https://localhost/parkingCalama/php/login/get.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -93,37 +79,37 @@ Control de UI
 */
 
 // Regenera la tabla
-function actualizarEnroll(){
-    //btnRefresh.disabled = true;
-    //btnRefresh.classList.add('disabled');
+function actualizarUsuarios(){
+    (document.getElementById('refreshUsrBtn')).disabled = true;
+    (document.getElementById('refreshUsrBtn')).classList.add('disabled');
     getUsers()
     .then(data => {
         // Limpiamos la tabla
-        tableEnr.clear();
+        tableUser.clear();
         data.forEach(item => {
             // Generamos las filas
-            const btns = `<button class="ctrl" onclick="updateUsr(${item['iduser']})">✍</button><button class="ctrlred" onclick="deleteUsr(${item['iduser']})">✕</button>`;
-            tableEnr.rows.add([{
+            const btns = `<button class="ctrl fa fa-pencil" onclick="updateUsr(${item['iduser']})"></button><button class="ctrlred fa fa-trash" onclick="deleteUsr(${item['iduser']})"></button>`;
+            tableUser.rows.add([{
                'iduser' : item['iduser'],
                'mail' : item['mail'],
-               'nivel' : item['desc'],
+               'nivel' : item['descriptor'],
                'ctrl' : btns
            }]);
         });
         // Dibujamos la nueva tabla
-        tableEnr.draw();
-        //btnRefresh.disabled = false;
-        //btnRefresh.classList.remove('disabled');
+        tableUser.draw();
+        (document.getElementById('refreshUsrBtn')).disabled = false;
+        (document.getElementById('refreshUsrBtn')).classList.remove('disabled');
     })
     .catch(error => {
         console.log(error);
-        //btnRefresh.disabled = false;
-        //btnRefresh.classList.remove('disabled');
+        (document.getElementById('refreshUsrBtn')).disabled = false;
+        (document.getElementById('refreshUsrBtn')).classList.remove('disabled');
     });
 }
 
 // Elimina un registro por ID
-function deleteWL(idIn){
+function deleteUsr(idIn){
     let wdConf = window.confirm('¿Eliminar la entrada?');
 
     if(wdConf){
@@ -131,7 +117,7 @@ function deleteWL(idIn){
             id: idIn
         }
 
-        fetch(urlDelEnroll, {
+        fetch("https://localhost/parkingCalama/php/login/delete.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -143,7 +129,7 @@ function deleteWL(idIn){
         .then(data => {
             if(data==true){
                 alert('Registro eliminado correctamente.');
-                actualizarEnroll();
+                actualizarUsuarios();
             }
         })
         .catch(error => {
@@ -153,7 +139,7 @@ function deleteWL(idIn){
 }
 
 // Abre un modal con los datos de un ID
-function updateWL(idIn){
+function updateUsr(idIn){
     datos = {
         id: idIn
     };
@@ -161,24 +147,26 @@ function updateWL(idIn){
     getUsersEntry(datos)
     .then(data => {
         // Abrimos el modal de Update
-        openModal('mupdate');
-        formUpdateEnroll.btnSubmit.disabled = true;
-        formUpdateEnroll.idWL.value = data['idwl'];
-        formUpdateEnroll.patente.value = data['patente'];
+        openModal('mUsrUpdate');
+        (document.getElementById('formUsrUpdate')).btnSubmit.disabled = true;
+        (document.getElementById('formUsrUpdate')).idUsr.value = data['iduser'];
+        (document.getElementById('formUsrUpdate')).mail.value = data['mail'];
+        (document.getElementById('formUsrUpdate')).pass.value = '';
+        (document.getElementById('formUsrUpdate')).oldpass.value = '';
 
         // Obtenemos la empresas
-        getEmpresas()
+        getPermisos()
         .then(emps => {
-            formUpdateEnroll.empresa.textContent = '';
+            (document.getElementById('formUsrUpdate')).nivel.textContent = '';
             emps.forEach(emp => {
                 var optData = document.createElement('option');
-                optData.value = emp['idemp'];
-                optData.textContent = emp['nombre'];
+                optData.value = emp['nivel'];
+                optData.textContent = emp['descriptor'];
                 // Ingresamos el resultado al Select de empresas
-                formUpdateEnroll.empresa.appendChild(optData);
+                (document.getElementById('formUsrUpdate')).nivel.appendChild(optData);
 
-                formUpdateEnroll.empresa.value = data['empresa'];
-                formUpdateEnroll.btnSubmit.disabled = false;
+                (document.getElementById('formUsrUpdate')).nivel.value = data['nivel'];
+                (document.getElementById('formUsrUpdate')).btnSubmit.disabled = false;
             });
         });
     })
@@ -187,36 +175,37 @@ function updateWL(idIn){
     });
 }
 
-function insertWL(){
-    formAddEnroll.btnSubmit.disabled = true;
-    getEmpresas()
+function insertUsr(){
+    (document.getElementById('formUsrInsert')).btnSubmit.disabled = true;
+    getPermisos()
     .then(emps => {
-        formAddEnroll.empresa.textContent = '';
+        (document.getElementById('formUsrInsert')).nivel.textContent = '';
         emps.forEach(emp => {
             var optData = document.createElement('option');
-            optData.value = emp['idemp'];
-            optData.textContent = emp['nombre'];
+            optData.value = emp['nivel'];
+            optData.textContent = emp['descriptor'];
             // Ingresamos el resultado al Select de empresas
-            formAddEnroll.empresa.appendChild(optData);
-            formAddEnroll.btnSubmit.disabled = false;
+            (document.getElementById('formUsrInsert')).nivel.appendChild(optData);
+            (document.getElementById('formUsrInsert')).btnSubmit.disabled = false;
         });
-        openModal('minsert');
+        openModal('mUsrInsert');
     });
 }
 
 // Igresa un registro
-formAddEnroll.btnSubmit.addEventListener('click', (e) => {
+(document.getElementById('formUsrInsert')).btnSubmit.addEventListener('click', (e) => {
     e.preventDefault();
 
-    formAddEnroll.btnSubmit.disabled = true;
+    (document.getElementById('formUsrInsert')).btnSubmit.disabled = true;
 
-    if(formAddEnroll.patente.value){
+    if((document.getElementById('formUsrInsert')).mail.value&&(document.getElementById('formUsrInsert')).pass.value){
         datos = {
-            patente: formAddEnroll.patente.value,
-            empresa: formAddEnroll.empresa.value
+            mail: (document.getElementById('formUsrInsert')).mail.value,
+            pass: (document.getElementById('formUsrInsert')).pass.value,
+            lvl: (document.getElementById('formUsrInsert')).nivel.value
         };
 
-        fetch(urlAddEnroll, {
+        fetch("https://localhost/parkingCalama/php/login/enroll.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -227,35 +216,39 @@ formAddEnroll.btnSubmit.addEventListener('click', (e) => {
         .then(reply => reply.json())
         .then(data => {
             if(data!=false){
-                formAddEnroll.patente.value = '';
-                actualizarEnroll();
-                formAddEnroll.btnSubmit.disabled = false;
+                (document.getElementById('formUsrInsert')).mail.value = '';
+                (document.getElementById('formUsrInsert')).pass.value = '';
+                actualizarUsuarios();
+                (document.getElementById('formUsrInsert')).btnSubmit.disabled = false;
+                closeModal('mUsrInsert');
             } else {
                 alert('Error');
-                formAddEnroll.btnSubmit.disabled = false;
+                (document.getElementById('formUsrInsert')).btnSubmit.disabled = false;
             }
         })
         .catch(error => {
             console.log(error);
-            formAddEnroll.btnSubmit.disabled = false;
+            (document.getElementById('formUsrInsert')).btnSubmit.disabled = false;
         });
     } else {
-        alert('Ingrese patente');
+        alert('Ingrese correo y contraseña');
     }
 });
 
 // Actualiza un registro
-formUpdateEnroll.btnSubmit.addEventListener('click', (e) => {
+(document.getElementById('formUsrUpdate')).btnSubmit.addEventListener('click', (e) => {
     e.preventDefault();
 
-    if(formUpdateEnroll.patente.value&&formUpdateEnroll.idWL.value){
+    if((document.getElementById('formUsrUpdate')).mail.value&&(document.getElementById('formUsrUpdate')).pass.value&&(document.getElementById('formUsrUpdate')).idUsr.value){
         datos = {
-            id: formUpdateEnroll.idWL.value,
-            patente: formUpdateEnroll.patente.value,
-            empresa: formUpdateEnroll.empresa.value
+            id: (document.getElementById('formUsrUpdate')).idUsr.value,
+            mail: (document.getElementById('formUsrUpdate')).mail.value,
+            passOld: (document.getElementById('formUsrUpdate')).oldpass.value,
+            pass: (document.getElementById('formUsrUpdate')).pass.value,
+            lvl: (document.getElementById('formUsrUpdate')).nivel.value
         };
     
-        fetch(urlUpdEnroll, {
+        fetch("https://localhost/parkingCalama/php/login/update.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -265,22 +258,19 @@ formUpdateEnroll.btnSubmit.addEventListener('click', (e) => {
         })
         .then(reply => reply.json())
         .then(data => {
-            console.log(data);
-            if(data=='1062'){
-                alert('Ya existe un registro para esta patente!');
-            }
-            else if(data==true){
-                closeModal('mupdate');
-                actualizarEnroll();
+            if(data==true){
+                closeModal('mUsrUpdate');
+                actualizarUsuarios();
+                alert('Actualizado correctamente!')
             } else {
-                alert('Error al actualizar');
+                alert('Contraseña incorrecta!');
             }
         })
         .catch(error => {
             console.log(error);
         });
     } else {
-        alert('Ingrese una patente')
+        alert('Ingrese un correo y contraseña!')
     }
 });
 
@@ -289,4 +279,4 @@ formUpdateEnroll.btnSubmit.addEventListener('click', (e) => {
 Inicializadores
 */
 
-actualizarEnroll();
+actualizarUsuarios();

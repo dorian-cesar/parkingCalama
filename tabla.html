@@ -4,33 +4,46 @@
     });
   </script>
 <div class="caja1" id="pageMovimientos">
-    <h1>Movimientos del dia Entradas y Salidas</h1>
-    <table id="miTabla">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Fecha</th>
-            <th>Patente</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>2024-01-01</td>
-            <td>HHHH-24</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>2024-01-01</td>
-            <td>FHFH-01</td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td>2024-01-01</td>
-            <td>BFGT-07</td>
-          </tr>
-     
-        </tbody>
-      </table>
+  <div class="card2" style="text-align: center;">
+    <h1>Entradas y Salidas del día</h1>
+    <hr>
+    <br>
+  </div>
+  <button id="refreshPagoBtn" class="ctrlyel fa fa-refresh" onclick="actualizarMovimientos()"></button>
+  <table id="miTabla">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Ingreso</th>
+          <th>Salida</th>
+          <th>Patente</th>
+          <th class="no-sort">Imprimir</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>2024-01-01 10:00:00</td>
+          <td>2024-01-01 10:30:00</td>
+          <td>HHHH-24</td>
+          <td><button class="ctrl fa fa-print"></button></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>2024-01-01 10:00:00</td>
+          <td>-</td>
+          <td>FHFH-01</td>
+          <td><button class="ctrl fa fa-print"></button></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>2024-01-01 10:00:00</td>
+          <td>-</td>
+          <td>BFGT-07</td>
+          <td><button class="ctrl fa fa-print"></button></td>
+        </tr>
     
+      </tbody>
+    </table>
+  
   </div>

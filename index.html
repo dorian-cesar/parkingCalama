@@ -4,26 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Administrador de Parking</title>
+  <!-- Enlaces a archivos CSS -->
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Enlaces a archivos JS externos -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <!-- Enlaces a archivos de estilos externos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+  <!-- Enlaces a archivos JS externos -->
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
 </head>
 <body>
 
+<!-- Barra de navegación -->
 <div id="navbar">
   <div id="logo">Logo</div>
+  <!-- Enlaces de navegación -->
   <a href="#" onclick="contacto()">Contáctenos</a>
   <a href="#" onclick="nosotros()">Nosotros</a>
   <a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
   <a href="#" id="nbUsrbuses" onclick="buses()">Buses</a>
 </div>
 
+<!-- Barra lateral -->
 <div id="sidebar">
   <br>
   <br>
   <hr>
+  <!-- Enlaces de la barra lateral -->
   <a href="#" id="sbGstLogin" onclick="openLoginModal()"><i class="fa fa-sign-in fa-fw"></i> Login</a>
   <a href="#" id="sbAdmConfig" onclick="empresas()"><i class="fa fa-cogs fa-fw"></i> Configuración</a>
   <a href="#" id="sbAdmEnroll" onclick="enrolar()"><i class="fa fa-users fa-fw"></i> Usuarios</a>
@@ -33,30 +41,25 @@
   <a class="logout-pos" href="#" id="sbUsrLogout" onclick="logOut()"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
 </div>
 
+<!-- Contenido principal -->
 <div id="content">
-        <div id="menu-toggle"><i class="fa fa-bars fa-fw"></i> Menú</div>
-
-        <div id="contenedorParking"></div>
-
-        <div id="contenedorNosotros"></div>
-
-        <div id="contenedorContacto"></div>
-
-        <div id="contenedorTabla"></div>
-
-        <div id="contenedorEmpresas"></div>
-
-        <div id="contenedorPagos"></div>
-
-        <div id="contenedorEnrolar"></div>
-
-        <div id="contenedorWhitelist"></div>
-
-        <div id="contenedorBuses"></div>
+    <div id="menu-toggle"><i class="fa fa-bars fa-fw"></i> Menú</div>
+    <!-- Contenedores para diferentes secciones -->
+    <div id="contenedorParking"></div>
+    <div id="contenedorNosotros"></div>
+    <div id="contenedorContacto"></div>
+    <div id="contenedorTabla"></div>
+    <div id="contenedorEmpresas"></div>
+    <div id="contenedorPagos"></div>
+    <div id="contenedorEnrolar"></div>
+    <div id="contenedorWhitelist"></div>
+    <div id="contenedorBuses"></div>
 </div>
 
+<!-- Contenedor para modales -->
 <div id="contenedorModal"></div>
 
+<!-- Pantalla de carga -->
 <div class="loading-overlay" id="loadingscreen">
   <br/>
   <br/>
@@ -65,13 +68,14 @@
   <div class="loading-texto">Cargando</div>
 </div>
 
+<!-- Script -->
 <script>
-  // Funcion para desactivar controles dependiendo del nivel de acceso
+  // Función para desactivar controles dependiendo del nivel de acceso
   function initUI() {
-    // Elementos que solo deban verse por usuarios y administradores
+    // Elementos que solo deben verse por usuarios y administradores
     var sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=sbAdm],[id^=nbUsr],[id^=nbAdm]');
 
-    // Elementos que solo deban verse por usuarios no registrados
+    // Elementos que solo deben verse por usuarios no registrados
     var guestCtl = document.querySelectorAll('[id^=sbGst],[id^=nbGst]');
 
     sideBarCtl.forEach(item => {
@@ -84,40 +88,41 @@
 
     var urlValidate = "https://localhost/parkingCalama/php/login/validate.php";
 
-    if(getCookie('jwt')){
-      fetch(urlValidate,  {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-          'Authorization': `Bearer ${getCookie('jwt')}`
-        }
-      })
-    .then(response => response.json())
-    .then(data => {
-      guestCtl.forEach(item => {
-        item.style.display = 'none';
-      });
-      if(data[0]['lvl']<=10){
-        sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=nbUsr]');
+    if (getCookie('jwt')) {
+      fetch(urlValidate, {
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+            'Authorization': `Bearer ${getCookie('jwt')}`
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          guestCtl.forEach(item => {
+            item.style.display = 'none';
+          });
+          if (data[0]['lvl'] <= 10) {
+            sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=nbUsr]');
 
-        sideBarCtl.forEach(item => {
-          item.style.display = 'block';
-        });
-      }
-      if(data[0]['lvl']>=10){
-        sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
+            sideBarCtl.forEach(item => {
+              item.style.display = 'block';
+            });
+          }
+          if (data[0]['lvl'] >= 10) {
+            sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
 
-        sideBarCtl.forEach(item => {
-          item.style.display = 'block';
-        });
-      }
-    })
-    .catch(error => console.log(error));
+            sideBarCtl.forEach(item => {
+              item.style.display = 'block';
+            });
+          }
+        })
+        .catch(error => console.log(error));
     }
   }
 
   initUI();
 
+  // Función para alternar la visibilidad de la barra lateral
   $('#menu-toggle').on('click', function() {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
@@ -142,33 +147,31 @@
       $('#contenedorModal').load('modal.html');
       $('#contenedorWhitelist').load('whitelist.html');
       $('#contenedorEmpresas').load('empresas.html');
-      $('#contenedorEnrolar').load('enroll.html',dfd.resolve);
+      $('#contenedorEnrolar').load('enroll.html', dfd.resolve);
   }).promise();
 
   // Cargar el main.js cuando todos los elementos existan
   $.when(loadPage).then(function() {
     $.getScript("js/main.js");
     $.getScript("js/login.js");
-    //$('#miTabla').DataTable();
   })
 
+  // Función para obtener el valor de una cookie
   function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
     }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
+    return "";
   }
-  return "";
-}
-
-  //$(document).ready(loadPage());
 </script>
 </body>
 </html>

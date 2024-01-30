@@ -24,11 +24,11 @@
     <!-- Formulario Crear -->
     <div id="mUsrInsert-overlay" onclick="closeModal('mUsrInsert')" class="mdl-overlay"></div>
     <div id="mUsrInsert-modal" class="mdl-content">
-        <h1>Crear Usuario</h1>
+        <h1 class="tituloModal">Crear Usuario</h1>
         <form action="" method="POST" id="formUsrInsert">
             <input required id="mail" name="mail" type="email" class="entrada" placeholder="Correo">
             <input required id="pass" name="pass" type="password" class="entrada" placeholder="Contraseña">
-            <select required id="nivel" name="nivel" class="entrada">
+            <select required id="nivel" name="nivel" class="entrada2">
             </select>
             <button id="formUsrInsert" name="btnSubmit" class="btn">Crear Cuenta</button>
         </form>
@@ -36,13 +36,13 @@
     <!-- Formulario Modificar -->
     <div id="mUsrUpdate-overlay" onclick="closeModal('mUsrUpdate')" class="mdl-overlay"></div>
     <div id="mUsrUpdate-modal" class="mdl-content">
-        <h1>Modificar</h1>
+        <h1 class="tituloModal">Modificar</h1>
         <form action="" method="POST" id="formUsrUpdate">
             <input required id="idUsr" name="idUsr" type="number" style="display: none;">
             <input required id="mail" name="mail" type="email" class="entrada" placeholder="Correo">
             <input required id="oldpass" name="oldpass" type="password" class="entrada" placeholder="Contraseña Antigua">
             <input required id="pass" name="pass" type="password" class="entrada" placeholder="Contraseña">
-            <select required id="nivel" name="nivel" name="nivel" class="entrada">
+            <select required id="nivel" name="nivel" name="nivel" class="entrada2">
             </select>
             <button id="btnUsrUpdate" name="btnSubmit" class="btn">Guardar Cambios</button>
         </form>

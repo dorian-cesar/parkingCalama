@@ -1,52 +1,47 @@
 <div class="caja1" id="pageWhitelist">
-    <!-- Encabezado de la página de Listas Blancas -->
     <div class="card2" style="text-align:center">
-        <h1>Listas Blancas</h1> <!-- Título de la página -->
-        <!-- Botón para registrar en Lista Blanca -->
+        <h1>Listas Blancas</h1>
         <button class="ctrlgrn" onclick="insertWL()" id="btnCreateWL">Registrar en Lista Blanca</button>
         <br/>
         <hr/>
         <br/>
     </div>
-    <!-- Contenedor de la lista blanca -->
     <div id="wllist">
-        <!-- Botón para actualizar la lista blanca -->
         <button id="refreshWLBtn" class="ctrlyel fa fa-refresh" onclick="actualizarWhitelist()"></button>
-        <!-- Tabla de la lista blanca -->
         <table id="tableWhitelist">
             <thead>
                 <tr>
-                    <th>ID</th> <!-- Encabezado de ID -->
-                    <th>Patente</th> <!-- Encabezado de Patente -->
-                    <th>Empresa</th> <!-- Encabezado de Empresa -->
-                    <th class="no-sort">Controles</th> <!-- Encabezado de Controles -->
+                    <th>ID</th>
+                    <th>Patente</th>
+                    <th>Empresa</th>
+                    <th class="no-sort">Controles</th>
                 </tr>
             </thead>
-            <tbody id="tbWlList"> <!-- Cuerpo de la tabla -->
+            <tbody id="tbWlList">
             </tbody>
         </table>
     </div>
-    <!-- Formulario para crear una nueva entrada en la lista blanca -->
+    <!-- Formulario Crear -->
     <div id="minsert-overlay" onclick="closeModal('minsert')" class="mdl-overlay"></div>
     <div id="minsert-modal" class="mdl-content">
         <h1>Ingresar a Lista Blanca</h1>
         <form action="" method="POST" id="formWLInsert">
-            <input required type="text" name="patente" id="selInsPatente" class="entrada" placeholder="XXXXXX"> <!-- Campo de patente -->
-            <select required name="empresa" id="empWlSel" class="entrada3"> <!-- Selección de empresa -->
+            <input required type="text" name="patente" id="selInsPatente" class="entrada" placeholder="XXXXXX">
+            <select required name="empresa" id="empWlSel" class="entrada">
             </select>
-            <button class="btn" name="btnSubmit">Ingresar</button> <!-- Botón para enviar el formulario -->
+            <button class="btn" name="btnSubmit">Ingresar</button>
         </form>
     </div>
-    <!-- Formulario para modificar una entrada en la lista blanca -->
+    <!-- Formulario Modificar -->
     <div id="mupdate-overlay" onclick="closeModal('mupdate')" class="mdl-overlay"></div>
     <div id="mupdate-modal" class="mdl-content">
-        <h1 class="tituloModal">Modificar</h1>
+        <h1>Modificar</h1>
         <form action="" method="POST" id="formWLUpdate">
-            <input required type="number" name="idWL" id="selUpdID" style="display: none"> <!-- Campo oculto para el ID -->
-            <input required type="text" name="patente" id="selUpdPatente" class="entrada" placeholder="XXXXXX"> <!-- Campo de patente -->
-            <select required name="empresa" id="empWlUpd" class="entrada3"> <!-- Selección de empresa -->
+            <input required type="number" name="idWL" id="selUpdID" style="display: none">
+            <input required type="text" name="patente" id="selUpdPatente" class="entrada" placeholder="XXXXXX">
+            <select required name="empresa" id="empWlUpd" class="entrada">
             </select>
-            <button type="button" class="btn" name="btnSubmit" id="updWlBtn">Guardar Cambios</button> <!-- Botón para guardar cambios -->
+            <button type="button" class="btn" name="btnSubmit" id="updWlBtn">Guardar Cambios</button>
         </form>
     </div>
 </div>

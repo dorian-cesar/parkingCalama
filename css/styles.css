@@ -20,6 +20,7 @@ body {
     text-decoration: none;
     font-size: 17px;
   }
+  
 
   #navbar a:hover {
     background-color: #ddd;
@@ -48,11 +49,21 @@ body {
     transition: left 0.3s ease;
   }
 
-  #sidebar a {
-      margin-top: 20px;
+  .mainside {
+    margin-top: 20px;
+  padding: 10px;
+  text-decoration: none;
+  font-size: 18px;
+  color: white;
+  display: block;
+  }
+
+  .subside {
+    margin-top: 8px;
+    margin-left: 30px;
     padding: 10px;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 16px;
     color: white;
     display: block;
   }
@@ -74,7 +85,12 @@ body {
 
   .logout-pos {
     position: fixed;
+    right: 20px;
     bottom: 20px;
+    color: black;
+    background-color: #b6b6b6;
+    border-radius: 5px;
+    z-index: 999;
   }
      /* Estilos para el modal */
     #login-modal {
@@ -139,48 +155,20 @@ body {
   z-index: 1000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 5px;
-  text-align: center;
 }
-.entrada {
-  width: 90%;
-  height: 40px;
-  line-height: 40px;
-  border: none;
-  border-radius: 5px;
-  margin: auto;
-  margin-left:7%;
-  margin-top: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  text-align: left;
-  padding-left: 30px;
-}
-.entrada2 {
-  width: 97%;
-  height: 40px;
-  line-height: 40px;
-  border: none;
-  border-radius: 5px;
-  margin: auto;
-  margin-left:7%;
-  margin-top: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  text-align: left;
-  padding-left: 30px;
-}
-.entrada3 {
-  width: 98%;
-  height: 40px;
-  line-height: 40px;
-  border: none;
-  border-radius: 5px;
-  margin: auto;
-  margin-left:7%;
-  margin-top: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  text-align: left;
-  padding-left: 30px;
-}
-.texto {
+  .entrada {
+width: 90%;
+height: 40px;
+line-height: 40px;
+border: none;
+border-radius: 5px;
+margin: auto;
+margin-top: 20px;
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+text-align: left;
+padding-left: 30px;
+  }
+  .texto {
 width: 90%;
 border: none;
 border-radius: 5px;
@@ -203,14 +191,32 @@ width: 90%;
   border-radius: 5px;
   margin: auto;
   margin-top: 20px;
-  margin-left: 5.5%;
   background-color: #b6b6b6;
-  }
-  .btn:hover {
-    background-color: #111;
-    color: white;
-    cursor: pointer;
-  }
+}
+.btn:hover {
+  background-color: #111;
+  color: white;
+  cursor: pointer;
+}
+
+.confP {
+  height: 40px;
+  float: left;
+}
+
+.btnconf {
+  width: 70%;
+  height: 40px;
+  border: none;
+  margin: auto;
+  border-radius: 5px;
+  background-color: #b6b6b6;
+}
+.btnconf:hover {
+  background-color: #111;
+  color: white;
+  cursor: pointer;
+}
 
 .ctrl {
   border: none;
@@ -355,7 +361,3 @@ width: 90%;
     background-color: #333;
     color:#b6b6b6;
   }
-.tituloModal{
-  text-align: center;
-
-}

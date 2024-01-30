@@ -1,58 +1,53 @@
 <?php
-//Valida Token 
+declare(strict_types=1);
 
-declare(strict_types=1); // Declaración de tipos estrictos para mejorar la seguridad
-
-header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
-header("Access-Control-Allow-Methods: POST"); // Permitir solicitudes POST
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     // El navegador está realizando una solicitud de pre-vuelo OPTIONS
-    header('Access-Control-Allow-Headers: Content-Type, Authorization'); // Permitir los encabezados Content-Type y Authorization
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Max-Age: 86400'); // Cache preflight request for 1 day
     header("HTTP/1.1 200 OK");
     exit;
 }
 
-use Firebase\JWT\JWT; // Importar la clase JWT desde la biblioteca Firebase
+use Firebase\JWT\JWT;
 
-require_once('../../vendor/autoload.php'); // Cargar la biblioteca JWT
-require_once('../conf.php'); // Incluir el archivo de configuración de la base de datos
+require_once('../../vendor/autoload.php');
 
-$headers = apache_request_headers(); // Obtener los encabezados de la solicitud
+require_once('../conf.php');
 
-// Verificar si el encabezado Authorization contiene un token JWT
+$headers = apache_request_headers();
+
 if (! preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
     header('HTTP/1.0 400 Bad Request');
-    echo 'Token not found in request'; // Devolver un mensaje de error si el token no se encuentra en la solicitud
+    echo 'Token not found in request';
     exit;
 }
 
-$jwt = $matches[1]; // Obtener el token JWT
+$jwt = $matches[1];
 
 if (! $jwt) {
     header('HTTP/1.0 400 Bad Request');
     exit;
 }
 
-$token = JWT::decode($jwt, $secretkey, ['HS512']); // Decodificar el token JWT utilizando la clave secreta
-$now = new DateTimeImmutable(); // Obtener la fecha y hora actual
-$serverName = "wit.la"; // Nombre del servidor
+$token = JWT::decode($jwt, $secretkey, ['HS512']);
+$now = new DateTimeImmutable();
+$serverName = "wit.la";
 
-// Verificar la validez del token JWT
 if ($token->iss !== $serverName ||
     $token->nbf > $now->getTimestamp() ||
     $token->exp < $now->getTimestamp())
 {
-    header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+    header('HTTP/1.1 401 Unauthorized');
     exit;
 }
 
-// Construir los datos de respuesta con la información del usuario autenticado
 $data = array(["logon" => true,
          "user" => $token->user,
          "lvl" => $token->nivel]);
 
 header("Content-Type: text/plain");
-echo json_encode($data); // Devolver los datos de respuesta en formato JSON
-?>
+echo json_encode($data);

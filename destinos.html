@@ -1,0 +1,44 @@
+<div class="caja1" id="pageDestinos">
+    <div class="card2" style="text-align:center">
+        <h1>Destinos</h1>
+        <button onclick="openDestIns()" class="ctrlgrn" id="btnCreateEmp">Crear Destino</button>
+        <br>
+        <hr>
+        <br>
+    </div>
+    <button onclick="actualizarDest()" class="ctrlyel fa fa-refresh"></button>
+    <table id="tableDestinos">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Ciudad</th>
+                <th>Valor</th>
+                <th>Controles</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<!--Modal Insert-->
+<div class="mdl-overlay" id="destins-overlay" onclick="closeModal('destins')"></div>
+<div class="mdl-content" id="destins-modal">
+    <h1>Ingresar Empresa</h1>
+    <form action="" method="post" id="formDestInsert">
+        <input type="text" name="ciudad" id="ciudad" class="entrada" placeholder="Ciudad" required/>
+        <input type="number" name="valor" id="valor" class="entrada" placeholder="Valor" required/>
+        <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
+    </form>
+</div>
+<!--Modal Update-->
+<div class="mdl-overlay" id="destupd-overlay" onclick="closeModal('destupd')"></div>
+<div class="mdl-content" id="destupd-modal">
+    <h1>Ingresar Empresa</h1>
+    <form action="" method="post" id="formDestUpdate">
+        <input type="number" name="iddest" id="iddest" required style="display: none;"/>
+        <input type="text" name="ciudad" id="ciudad" class="entrada" placeholder="Ciudad" required/>
+        <input type="number" name="valor" id="valor" class="entrada" placeholder="Valor" required/>
+        <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
+    </form>
+</div>
+<script src="js/destinos.js"></script>

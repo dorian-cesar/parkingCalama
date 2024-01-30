@@ -7,7 +7,6 @@
         <br>
     </div>
     <button onclick="actualizarEmp()" id="refreshEmpBtn" class="ctrlyel fa fa-refresh"></button>
-    <!-- Tabla para mostrar las empresas -->
     <table id="tableEmp">
         <thead>
             <tr>
@@ -18,34 +17,28 @@
             </tr>
         </thead>
         <tbody>
-        <!-- Los datos de las empresas se mostrarán aquí dinámicamente -->
         </tbody>
     </table>
 </div>
-
-<!-- Modal Insert: Formulario para ingresar una nueva empresa -->
+<!--Modal Insert-->
 <div class="mdl-overlay" id="empins-overlay" onclick="closeModal('empins')"></div>
 <div class="mdl-content" id="empins-modal">
-    <h1 class="tituloModal">Ingresar Empresa</h1>
+    <h1>Ingresar Empresa</h1>
     <form action="" method="post" id="formEmpInsert">
         <input type="text" name="nombre" id="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
         <input type="text" name="contemp" id="contemp" class="entrada" placeholder="Contacto" required/>
         <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
     </form>
 </div>
-
-<!-- Modal Update: Formulario para actualizar una empresa existente -->
+<!--Modal Update-->
 <div class="mdl-overlay" id="empupd-overlay" onclick="closeModal('empupd')"></div>
 <div class="mdl-content" id="empupd-modal">
-    <h1>Actualizar Empresa</h1>
+    <h1>Ingresar Empresa</h1>
     <form action="" method="post" id="formEmpUpdate">
-        <!-- Campo oculto para almacenar el ID de la empresa a actualizar -->
         <input type="number" name="idemp" id="idemp" required style="display: none;"/>
         <input type="text" name="nombre" id="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
         <input type="text" name="contemp" id="contemp" class="entrada" placeholder="Contacto" required/>
-        <button type="submit" class="btn" name="btnSubmit">Actualizar</button>
+        <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
     </form>
 </div>
-
-<!-- Script para manejar la lógica relacionada con las empresas -->
 <script src="js/empresas.js"></script>

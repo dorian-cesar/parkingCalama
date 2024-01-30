@@ -1,23 +1,23 @@
 /*
-CRUD Tabla usuarios 
+Funciones relacionadas al sistema de Listas Blancas
 */
 
 // Elementos
 var tableUser = $('#tableEnroll').DataTable({
-    // Configuración inicial de la tabla
-    order: [[0, 'desc']], // Orden inicial por la primera columna en orden descendente
-    language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" }, // Configuración del idioma de la tabla
+    order: [[0, 'desc']],
+    language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
     columnDefs : [ {
-        targets: 'no-sort', // Selector de columnas que no se pueden ordenar
-        orderable: false, // Desactiva la capacidad de ordenar para esas columnas
+        targets: 'no-sort',
+        orderable: false,
     }],
     columns: [
-        { data: 'iduser'}, // Columna de ID de usuario
-        { data: 'mail'}, // Columna de correo electrónico
-        { data: 'nivel'}, // Columna de nivel de usuario
-        { data: 'ctrl', className: 'no-sort'} // Columna de controles con clases de estilo
+        { data: 'iduser'},
+        { data: 'mail'},
+        { data: 'nivel'},
+        { data: 'ctrl', className: 'no-sort'}
     ]
 });
+
 /*
 Funciones de API
 */
@@ -28,18 +28,17 @@ async function getUsers(){
             method: 'POST',
             mode: 'cors'
         })
-        .then(reply => reply.json()) // Convierte la respuesta a JSON
+        .then(reply => reply.json())
         .then(data => {
-            return data; // Retorna los datos obtenidos
+            return data;
         })
         .catch(error => {
-            console.log(error); // Manejo de errores
+            console.log(error);
         });
-    return ret; // Retorna los datos obtenidos
+    return ret;
 }
 
 // Obtener todas las empresas
-// Similar a getUsers pero con una URL diferente
 async function getPermisos(){
     let ret = await fetch("https://localhost/parkingCalama/php/login/getPermisos.php", {
             method: 'POST',
@@ -55,10 +54,8 @@ async function getPermisos(){
     return ret;
 }
 
-// Obtener un registro de usuario específico
-// Similar a getUsers pero con datos específicos y una URL diferente
+// Obtener un registro
 async function getUsersEntry(datos){
-    
     let ret = await fetch("https://localhost/parkingCalama/php/login/get.php", {
             method: 'POST',
             mode: 'cors',
@@ -82,23 +79,16 @@ Control de UI
 */
 
 // Regenera la tabla
-// Función para actualizar la tabla de usuarios
 function actualizarUsuarios(){
-    // Deshabilita el botón de actualización y aplica estilos
     (document.getElementById('refreshUsrBtn')).disabled = true;
     (document.getElementById('refreshUsrBtn')).classList.add('disabled');
-    
-    // Obtiene los datos de usuarios
     getUsers()
     .then(data => {
         // Limpiamos la tabla
         tableUser.clear();
-        
-        // Itera sobre los datos y agrega filas a la tabla
         data.forEach(item => {
-            // Genera los botones de control
+            // Generamos las filas
             const btns = `<button class="ctrl fa fa-pencil" onclick="updateUsr(${item['iduser']})"></button><button class="ctrlred fa fa-trash" onclick="deleteUsr(${item['iduser']})"></button>`;
-            // Agrega la fila a la tabla
             tableUser.rows.add([{
                'iduser' : item['iduser'],
                'mail' : item['mail'],
@@ -106,17 +96,13 @@ function actualizarUsuarios(){
                'ctrl' : btns
            }]);
         });
-        
-        // Dibuja la tabla con los nuevos datos
+        // Dibujamos la nueva tabla
         tableUser.draw();
-        
-        // Habilita nuevamente el botón de actualización y aplica estilos
         (document.getElementById('refreshUsrBtn')).disabled = false;
         (document.getElementById('refreshUsrBtn')).classList.remove('disabled');
     })
     .catch(error => {
-        console.log(error); // Manejo de errores
-        // Habilita nuevamente el botón de actualización y aplica estilos en caso de error
+        console.log(error);
         (document.getElementById('refreshUsrBtn')).disabled = false;
         (document.getElementById('refreshUsrBtn')).classList.remove('disabled');
     });
@@ -124,33 +110,34 @@ function actualizarUsuarios(){
 
 // Elimina un registro por ID
 function deleteUsr(idIn){
-    // Muestra un mensaje de confirmación antes de eliminar
     let wdConf = window.confirm('¿Eliminar la entrada?');
 
-    // Si el usuario confirma, procede con la eliminación
     if(wdConf){
-        // Prepara los datos para enviar al servidor
         datos = {
             id: idIn
         }
 
-        // Realiza una solicitud para eliminar el usuario del servidor
         fetch("https://localhost/parkingCalama/php/login/delete.php", {
-            // Configuración de la solicitud
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-type' : 'application/json'
+            },
+            body: JSON.stringify(datos)
         })
-        .then(reply => reply.json()) // Convierte la respuesta a JSON
+        .then(reply => reply.json())
         .then(data => {
-            // Si la eliminación es exitosa, muestra un mensaje y actualiza la tabla de usuarios
             if(data==true){
                 alert('Registro eliminado correctamente.');
                 actualizarUsuarios();
             }
         })
         .catch(error => {
-            console.log(error); // Manejo de errores
+            console.log(error);
         });
     }
 }
+
 // Abre un modal con los datos de un ID
 function updateUsr(idIn){
     datos = {
@@ -188,7 +175,6 @@ function updateUsr(idIn){
     });
 }
 
-// Función para insertar un nuevo usuario
 function insertUsr(){
     (document.getElementById('formUsrInsert')).btnSubmit.disabled = true;
     getPermisos()
@@ -207,7 +193,6 @@ function insertUsr(){
 }
 
 // Igresa un registro
-// Listener de evento para el botón de envío en el formulario de inserción
 (document.getElementById('formUsrInsert')).btnSubmit.addEventListener('click', (e) => {
     e.preventDefault();
 
@@ -251,10 +236,9 @@ function insertUsr(){
 });
 
 // Actualiza un registro
-// Listener de evento para el botón de envío en el formulario de actualización
 (document.getElementById('formUsrUpdate')).btnSubmit.addEventListener('click', (e) => {
     e.preventDefault();
-     // Manejo del evento de clic en el botón de envío
+
     if((document.getElementById('formUsrUpdate')).mail.value&&(document.getElementById('formUsrUpdate')).pass.value&&(document.getElementById('formUsrUpdate')).idUsr.value){
         datos = {
             id: (document.getElementById('formUsrUpdate')).idUsr.value,
@@ -294,5 +278,5 @@ function insertUsr(){
 /*
 Inicializadores
 */
-// Llama a la función de actualización de usuarios para cargar la tabla inicialmente
+
 actualizarUsuarios();

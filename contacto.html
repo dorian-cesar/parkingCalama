@@ -2,12 +2,43 @@
     <h1>Formulario de contacto</h1>
     
   <div class="card2">
-    <form action="">
-      <input type="text" class="entrada" placeholder="Nombre">
-      <input type="phone" class="entrada" placeholder="Telefono">
-      <textarea id="" name="" rows="5" class="texto" placeholder="Comentanos tus inquetudes"></textarea>
-      <button type="submit" class="btn">Enviar </button>
-    
+    <form action="" type="POST" id="formContacto">
+      <input required type="text" class="entrada" name="contNombre" id="contNombre" placeholder="Nombre">
+      <input required type="phone" class="entrada" name="contTel" id="contTel" placeholder="Teléfono">
+      <textarea required id="contMess" name="contMess" rows="5" class="texto" placeholder="Comentanos tus inquetudes"></textarea>
+      <button type="submit" name="btnSubmit" class="btn">Enviar</button>
     </form>
     </div>
   </div>
+  <script>
+    document.getElementById('formContacto').addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      curForm = document.getElementById('formContacto');
+
+      datos = {
+        nombre: curForm.contNombre.value,
+        telefono: curForm.contTel.value,
+        mensaje: curForm.contMess.value
+      }
+
+      fetch('https://localhost/parkingCalama/php/contacto/mail.php', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-type' : 'application/json'
+        },
+        body: JSON.stringify(datos)
+      })
+      .then(reply => reply.text())
+      .then(msg => {
+          alert('Enviado correctamente');
+          curForm.contNombre.value = '';
+          curForm.contTel.value = '';
+          curForm.contMess.value = '';
+      })
+      .catch(error => {
+          console.log(error);
+      });
+    });
+  </script>

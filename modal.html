@@ -1,14 +1,18 @@
-<!-- Formulario Modal -->
+<!-- Formulario Modal Login-->
 <div id="modal-overlay" onclick="closeLoginModal()"></div>
+<!-- Capa transparente para cubrir el fondo -->
 <div id="login-modal">
-  <h2>Login</h2>
-  <form id="formLogin" method="POST">
+  <!-- Contenedor del formulario de inicio de sesión -->
+  <h2>Login</h2> <!-- Título del formulario -->
+  <form id="formLogin" method="POST"> <!-- Formulario de inicio de sesión -->
     
+    <!-- Campo de entrada para el correo electrónico -->
     <input type="email" id="email" name="email" required placeholder="Correo:" class="entrada">
-   
     
+    <!-- Campo de entrada para la contraseña -->
     <input type="password" id="password" name="password" required placeholder="Contaseña" class="entrada">
     
+    <!-- Botón para enviar el formulario de inicio de sesión -->
     <button id="btnLogin" class="btn">Iniciar Sesión</button>
   </form>
 </div>

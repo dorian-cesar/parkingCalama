@@ -1,41 +1,47 @@
 <div class="caja1" id="pageBuses">
+    <!-- Título de la sección -->
     <h2>Loza - buses</h2>
+    <!-- Descripción -->
     <p>Scanee el Codigo QR de su Ticket o ingrese su Patente</p>
+    <!-- Columna izquierda con formularios -->
     <div class="izq">
-      <input type="text" class="entrada" placeholder="Leer QR">
-      
-      <select name="" id="empresas" class="entrada">
-        <option >Ingrese Cia. de Transporte</option>
-        <option value="">AndesMar</option>
-        <option value="">TurBus</option>
-        <option value="">PullmanBus</option>
-      </select>
-
-       <select name="" id="origen" class="entrada">
-        <option >Ingrese Origen</option>
-        <option value="">Santiago</option>
-        <option value="">Valparaiso</option>
-        <option value="">San Felipe</option>
-        <option value="">Calama</option>
-       </select>
-
-       <select id="destinoBuses" class="entrada">
-       </select>
-      <button class="btn">Calcular</button>
+        <!-- Input para leer el código QR -->
+        <input type="text" class="entrada" placeholder="Leer QR">
+        <!-- Select para seleccionar la compañía de transporte -->
+        <select name="" id="empresas" class="entrada">
+            <option>Ingrese Cia. de Transporte</option>
+            <option value="">AndesMar</option>
+            <option value="">TurBus</option>
+            <option value="">PullmanBus</option>
+        </select>
+        <!-- Select para seleccionar el origen -->
+        <select name="" id="origen" class="entrada">
+            <option>Ingrese Origen</option>
+            <option value="">Santiago</option>
+            <option value="">Valparaiso</option>
+            <option value="">San Felipe</option>
+            <option value="">Calama</option>
+        </select>
+        <!-- Select para seleccionar el destino de los buses -->
+        <select id="destinoBuses" class="entrada">
+        </select>
+        <!-- Botón para calcular -->
+        <button class="btn">Calcular</button>
     </div>
+    <!-- Columna derecha con información -->
     <div class="derecha">
-      <div class="card">
-        <h1>Patente</h1>
-        <h3>Fecha</h3>
-        <h3>Hora de ingreso</h3>
-        <h3>Hora salida</h3>
-        <h3>Tiempo de Parking</h3>
-        <h3>Valor</h3>
-        <button class="btn">Imprimir</button>
-        <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a>
-      </div>
+        <!-- Card con información sobre el estacionamiento -->
+        <div class="card">
+            <h1>Patente</h1>
+            <h3>Fecha</h3>
+            <h3>Hora de ingreso</h3>
+            <h3>Hora salida</h3>
+            <h3>Tiempo de Parking</h3>
+            <h3>Valor</h3>
+            <!-- Botón para imprimir -->
+            <button class="btn">Imprimir</button>
+            <!-- Enlace para pagar en el SII -->
+            <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a>
+        </div>
     </div>
-    
-  
-  
-  </div>
+</div>

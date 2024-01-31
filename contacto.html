@@ -1,44 +1,58 @@
 <div class="caja1" id="pageContacto">
-    <h1>Formulario de contacto</h1>
-    
+  <!-- Encabezado de la sección de formulario de contacto -->
+  <h1>Formulario de contacto</h1>
+  
+  <!-- Contenedor de formulario de contacto -->
   <div class="card2">
-    <form action="" type="POST" id="formContacto">
-      <input required type="text" class="entrada" name="contNombre" id="contNombre" placeholder="Nombre">
-      <input required type="phone" class="entrada" name="contTel" id="contTel" placeholder="Teléfono">
-      <textarea required id="contMess" name="contMess" rows="5" class="texto" placeholder="Comentanos tus inquetudes"></textarea>
-      <button type="submit" name="btnSubmit" class="btn">Enviar</button>
-    </form>
-    </div>
+      <!-- Formulario de contacto -->
+      <form action="" type="POST" id="formContacto">
+          <!-- Campo de entrada para el nombre -->
+          <input required type="text" class="entrada" name="contNombre" id="contNombre" placeholder="Nombre">
+          <!-- Campo de entrada para el teléfono -->
+          <input required type="phone" class="entrada" name="contTel" id="contTel" placeholder="Teléfono">
+          <!-- Campo de entrada para el mensaje -->
+          <textarea required id="contMess" name="contMess" rows="5" class="texto" placeholder="Comentanos tus inquietudes"></textarea>
+          <!-- Botón de enviar formulario -->
+          <button type="submit" name="btnSubmit" class="btn">Enviar</button>
+      </form>
   </div>
-  <script>
-    document.getElementById('formContacto').addEventListener('submit', (e) => {
-      e.preventDefault();
+</div>
 
+<!-- Script para enviar el formulario de contacto -->
+<script>
+  // Agrega un event listener para el evento de submit del formulario
+  document.getElementById('formContacto').addEventListener('submit', (e) => {
+      e.preventDefault(); // Evita que el formulario se envíe automáticamente
+
+      // Obtiene el formulario actual
       curForm = document.getElementById('formContacto');
 
+      // Obtiene los datos del formulario y los coloca en un objeto
       datos = {
-        nombre: curForm.contNombre.value,
-        telefono: curForm.contTel.value,
-        mensaje: curForm.contMess.value
+          nombre: curForm.contNombre.value,
+          telefono: curForm.contTel.value,
+          mensaje: curForm.contMess.value
       }
 
+      // Realiza una solicitud fetch para enviar los datos del formulario a un archivo PHP en el servidor
       fetch('https://localhost/parkingCalama/php/contacto/mail.php', {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-type' : 'application/json'
-        },
-        body: JSON.stringify(datos)
+          method: 'POST',
+          mode: 'cors',
+          headers: {
+              'Content-type': 'application/json'
+          },
+          body: JSON.stringify(datos) // Convierte los datos a formato JSON y los envía en el cuerpo de la solicitud
       })
-      .then(reply => reply.text())
+      .then(reply => reply.text()) // Convierte la respuesta a texto
       .then(msg => {
-          alert('Enviado correctamente');
+          alert('Enviado correctamente'); // Muestra una alerta indicando que el formulario se envió correctamente
+          // Limpia los campos del formulario después de enviarlo
           curForm.contNombre.value = '';
           curForm.contTel.value = '';
           curForm.contMess.value = '';
       })
       .catch(error => {
-          console.log(error);
+          console.log(error); // Si hay un error, lo muestra en la consola del navegador
       });
-    });
-  </script>
+  });
+</script>

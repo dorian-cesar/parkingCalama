@@ -1,12 +1,17 @@
 <div class="caja1" id="pageDestinos">
+    <!-- Encabezado de la sección de destinos -->
     <div class="card2" style="text-align:center">
+        <!-- Título de la sección -->
         <h1>Destinos</h1>
+        <!-- Botón para crear un nuevo destino -->
         <button onclick="openDestIns()" class="ctrlgrn" id="btnCreateEmp">Crear Destino</button>
         <br>
         <hr>
         <br>
     </div>
+    <!-- Botón para actualizar la lista de destinos -->
     <button onclick="actualizarDest()" class="ctrlyel fa fa-refresh"></button>
+    <!-- Tabla para mostrar la lista de destinos -->
     <table id="tableDestinos">
         <thead>
             <tr>
@@ -20,25 +25,40 @@
         </tbody>
     </table>
 </div>
-<!--Modal Insert-->
+
+<!-- Modal Insert -->
 <div class="mdl-overlay" id="destins-overlay" onclick="closeModal('destins')"></div>
 <div class="mdl-content" id="destins-modal">
-    <h1>Ingresar Empresa</h1>
+    <!-- Encabezado del modal para insertar un destino -->
+    <h1>Ingresar Destino</h1>
+    <!-- Formulario para insertar un nuevo destino -->
     <form action="" method="post" id="formDestInsert">
+        <!-- Campo de entrada para la ciudad del nuevo destino -->
         <input type="text" name="ciudad" id="ciudad" class="entrada" placeholder="Ciudad" required/>
+        <!-- Campo de entrada para el valor del nuevo destino -->
         <input type="number" name="valor" id="valor" class="entrada" placeholder="Valor" required/>
+        <!-- Botón para enviar el formulario de inserción -->
         <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
     </form>
 </div>
-<!--Modal Update-->
+
+<!-- Modal Update -->
 <div class="mdl-overlay" id="destupd-overlay" onclick="closeModal('destupd')"></div>
 <div class="mdl-content" id="destupd-modal">
-    <h1>Ingresar Empresa</h1>
+    <!-- Encabezado del modal para actualizar un destino -->
+    <h1>Actualizar Destino</h1>
+    <!-- Formulario para actualizar un destino -->
     <form action="" method="post" id="formDestUpdate">
+        <!-- Campo oculto para almacenar el ID del destino a actualizar -->
         <input type="number" name="iddest" id="iddest" required style="display: none;"/>
+        <!-- Campo de entrada para la ciudad del destino a actualizar -->
         <input type="text" name="ciudad" id="ciudad" class="entrada" placeholder="Ciudad" required/>
+        <!-- Campo de entrada para el valor del destino a actualizar -->
         <input type="number" name="valor" id="valor" class="entrada" placeholder="Valor" required/>
+        <!-- Botón para enviar el formulario de actualización -->
         <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
     </form>
 </div>
+
+<!-- Script para manejar la lógica de destinos -->
 <script src="js/destinos.js"></script>

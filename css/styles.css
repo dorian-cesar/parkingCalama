@@ -1,25 +1,25 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-  }
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
 
-  #navbar {
-    overflow: hidden;
-    background-color: #333;
-    height: 50px;
+#navbar {
+  overflow: hidden;
+  background-color: #333;
+  height: 50px;
 
-  }
+}
 
-  #navbar a {
-    float: right;
-    display: block;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-  }
+#navbar a {
+  float: right;
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
   
 
   #navbar a:hover {
@@ -155,6 +155,7 @@ body {
   z-index: 1000;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   border-radius: 5px;
+  text-align: center;
 }
   .entrada {
 width: 90%;
@@ -164,9 +165,37 @@ border: none;
 border-radius: 5px;
 margin: auto;
 margin-top: 20px;
+margin-left:7%;
 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 text-align: left;
 padding-left: 30px;
+  }
+
+  .entrada2 {
+    width: 97%;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    border-radius: 5px;
+    margin: auto;
+    margin-left:7%;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    padding-left: 30px;
+  }
+  .entrada3 {
+    width: 98%;
+    height: 40px;
+    line-height: 40px;
+    border: none;
+    border-radius: 5px;
+    margin: auto;
+    margin-left:7%;
+    margin-top: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    padding-left: 30px;
   }
   .texto {
 width: 90%;
@@ -191,6 +220,7 @@ width: 90%;
   border-radius: 5px;
   margin: auto;
   margin-top: 20px;
+  margin-left: 5.5%;
   background-color: #b6b6b6;
 }
 .btn:hover {
@@ -360,4 +390,8 @@ width: 90%;
   .disabled {
     background-color: #333;
     color:#b6b6b6;
+  }
+  .tituloModal{
+    text-align: center;
+  
   }

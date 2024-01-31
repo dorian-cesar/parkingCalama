@@ -10,11 +10,11 @@ const btnEnroll = document.getElementById('formUsrInsert'); // Botón de registr
 
 // URLs para las solicitudes al backend
 // PHP para validar los datos ingresados en la base de datos
-const urlLoad = "https://localhost/parkingCalama/php/login/load.php";
+const urlLoad = "/parkingCalama/php/login/load.php";
 // PHP para validar la sesion actual
-const urlValidate = "https://localhost/parkingCalama/php/login/validate.php";
+const urlValidate = "/parkingCalama/php/login/validate.php";
 // PHP para enrolar usuarios
-const urlEnroll = "https://localhost/parkingCalama/php/login/enroll.php";
+const urlEnroll = "/parkingCalama/php/login/enroll.php";
 
 /* Funciones */
 
@@ -39,17 +39,19 @@ function doLogin(email, pass){
     .then(response => response.text())
     .then(data => {
         // Guardar el token JWT en una cookie
-        document.cookie = `jwt=${data};path=/; samesite=lax`;
-         // Cerrar el modal de login
-        closeLoginModal();
-        // Inicializar la interfaz de usuario
-        initUI();
-        // Ejecutar una función relacionada con el sistema de parking
-        parking();
-      
+        document.cookie = `jwt=${data};path=/; samesite=lax; secure;`;
+        // Recargar la pagina
+        location.reload();
     })
     // Manejar errores en la solicitud
     .catch(error => console.log(error));
+}
+
+// Elimina el token JWT
+function logOut(){
+    document.cookie = 'jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; samesite=lax';
+    initUI();
+    location.reload();
 }
 
 // Inserta usuarios en la BDD
@@ -96,5 +98,5 @@ btnLogin.addEventListener('click', (e) => {
     const mailStr = formLogin.email.value;
     const passStr = formLogin.password.value;
     // Llamar a la función doLogin con los datos proporcionados
-    doLogin(mailStr,passStr)
+    doLogin(mailStr,passStr);
 });

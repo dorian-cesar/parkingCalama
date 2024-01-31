@@ -1,19 +1,30 @@
 <?php
-//Crea nuevos registros en la lista blanca 
+// Declaración estricta de tipos para garantizar la coherencia en el tipo de datos
+declare(strict_types=1);
 
-header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
-header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST y OPTIONS
+// Establece los encabezados CORS para permitir solicitudes desde cualquier origen y métodos POST
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST");
 
-// Manejo de solicitudes OPTIONS (preflight)
+// Verifica si la solicitud es OPTIONS (solicitud de pre-vuelo)
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
-    // El navegador está realizando una solicitud de pre-vuelo OPTIONS
-    header('Access-Control-Allow-Headers: Content-Type'); // Permitir el encabezado Content-Type
+    // El navegador está realizando una solicitud de pre-vuelo OPTIONS, se establecen los encabezados permitidos
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Max-Age: 86400'); // Cache preflight request for 1 day
-    header("HTTP/1.1 200 OK"); // Envía un código de respuesta HTTP 200 OK
-    exit; // Sale del script
+    header("HTTP/1.1 200 OK");
+    exit;
 }
 
-include("../conf.php"); // Incluir el archivo de configuración
+// Incluye el archivo de configuración de la base de datos
+include("../conf.php");
+
+include('../auth.php');
+
+if($token->nivel < $LVLADMIN){
+    header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+    echo json_encode(['error' => 'Autoridad insuficiente']);
+    exit;
+}
 
 // Manejo de solicitudes POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

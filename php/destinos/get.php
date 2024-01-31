@@ -9,20 +9,22 @@ header("Access-Control-Allow-Methods: POST");
 // Verifica si la solicitud es OPTIONS (solicitud de pre-vuelo)
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     // El navegador está realizando una solicitud de pre-vuelo OPTIONS, se establecen los encabezados permitidos
-    header('Access-Control-Allow-Headers: Content-Type, Authorize');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization');
     header('Access-Control-Max-Age: 86400'); // Cache preflight request for 1 day
     header("HTTP/1.1 200 OK");
     exit;
 }
 
-// Usa la clase JWT de Firebase para manejar tokens JWT
-use Firebase\JWT\JWT;
-
-// Incluye el archivo autoload.php que contiene las clases necesarias
-require_once('../../vendor/autoload.php');
-
 // Incluye el archivo de configuración de la base de datos
 include("../conf.php");
+
+include('../auth.php');
+
+if($token->nivel < $LVLUSER){
+    header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+    echo json_encode(['error' => 'Autoridad insuficiente']);
+    exit;
+}
 
 // Verifica si la solicitud es POST
 if($_SERVER["REQUEST_METHOD"] == "POST"){

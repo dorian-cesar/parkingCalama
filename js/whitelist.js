@@ -25,9 +25,12 @@ Funciones de API
 // Obtener todos los registros de  lista blanca
 async function getWhitelist(){
     // Realiza una solicitud POST para obtener los datos de la lista blanca desde el servidor 
-    let ret = await fetch("https://localhost/parkingCalama/php/wl/get.php", {
+    let ret = await fetch("/parkingCalama/php/whitelist/get.php", {
             method: 'POST',
-            mode: 'cors'
+            mode: 'cors',
+            headers: {
+            'Authorization': `Bearer ${getCookie('jwt')}`
+            }
         })
         // y los devuelve en formato JSON
         .then(reply => reply.json())
@@ -44,11 +47,12 @@ async function getWhitelist(){
 async function getWhitelistEntry(datos){
     // Realiza una solicitud POST para obtener un registro específico de lista blanca
     // y lo devuelve en formato JSON
-    let ret = await fetch("https://localhost/parkingCalama/php/wl/get.php", {
+    let ret = await fetch("/parkingCalama/php/whitelist/get.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
@@ -69,35 +73,39 @@ Control de UI
 // Regenera la tabla
 // Función para actualizar la tabla de lista blanca
 function actualizarWhitelist(){
-    // Deshabilita el botón de actualización para evitar múltiples clics
-    (document.getElementById('refreshWLBtn')).disabled = true;
-    (document.getElementById('refreshWLBtn')).classList.add('disabled');
-    getWhitelist()
-    // Realiza una solicitud para obtener los registros de lista blanca
-    .then(data => {
-        // Limpiamos la tabla
-        tableWL.clear();
-        data.forEach(item => {
-            // Generamos las filas
-            const btns = `<button class="ctrl fa fa-pencil" onclick="updateWL(${item['idwl']})"></button><button class="ctrlred fa fa-trash" onclick="deleteWL(${item['idwl']})"></button>`;
-            tableWL.rows.add([{
-               'idwl' : item['idwl'],
-               'patente' : item['patente'],
-               'nombre' : item['nombre'],
-               'ctrl' : btns
-           }]);
+    if(getCookie('jwt')){
+        // Deshabilita el botón de actualización para evitar múltiples clics
+        (document.getElementById('refreshWLBtn')).disabled = true;
+        (document.getElementById('refreshWLBtn')).classList.add('disabled');
+        getWhitelist()
+        // Realiza una solicitud para obtener los registros de lista blanca
+        .then(data => {
+            if(data){
+                // Limpiamos la tabla
+                tableWL.clear();
+                data.forEach(item => {
+                    // Generamos las filas
+                    const btns = `<button class="ctrl fa fa-pencil" onclick="updateWL(${item['idwl']})"></button><button class="ctrlred fa fa-trash" onclick="deleteWL(${item['idwl']})"></button>`;
+                    tableWL.rows.add([{
+                    'idwl' : item['idwl'],
+                    'patente' : item['patente'],
+                    'nombre' : item['nombre'],
+                    'ctrl' : btns
+                }]);
+                });
+                // Actualiza la tabla con los nuevos datos obtenidos
+                // Dibujamos la nueva tabla
+                tableWL.draw();
+                (document.getElementById('refreshWLBtn')).disabled = false;
+                (document.getElementById('refreshWLBtn')).classList.remove('disabled');
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            (document.getElementById('refreshWLBtn')).disabled = false;
+            (document.getElementById('refreshWLBtn')).classList.remove('disabled');
         });
-        // Actualiza la tabla con los nuevos datos obtenidos
-        // Dibujamos la nueva tabla
-        tableWL.draw();
-        (document.getElementById('refreshWLBtn')).disabled = false;
-        (document.getElementById('refreshWLBtn')).classList.remove('disabled');
-    })
-    .catch(error => {
-        console.log(error);
-        (document.getElementById('refreshWLBtn')).disabled = false;
-        (document.getElementById('refreshWLBtn')).classList.remove('disabled');
-    });
+    }
 }
 
 // Elimina un registro  de Lista blanca por ID
@@ -111,20 +119,23 @@ function deleteWL(idIn){
            id: idIn
        }
 
-       fetch("https://localhost/parkingCalama/php/whitelist/delete.php", {
+       fetch("/parkingCalama/php/whitelist/delete.php", {
            method: 'POST',
            mode: 'cors',
            headers: {
-               'Content-type' : 'application/json'
+               'Content-type' : 'application/json',
+               'Authorization': `Bearer ${getCookie('jwt')}`
            },
            body: JSON.stringify(datos)
        })
        .then(reply => reply.json())
        .then(data => {
-            if(data==true){
+            if(data['error']){
+                alert(data['error']);
+            } else if (data==true){
                alert('Registro eliminado correctamente.');
                actualizarWhitelist();// Actualiza la tabla de lista blanca después de la eliminación
-           }
+            }
        })
        .catch(error => {
            console.log(error);
@@ -205,17 +216,21 @@ function insertWL(){
             empresa: (document.getElementById('formWLInsert')).empresa.value
         };
 
-        fetch("https://localhost/parkingCalama/php/whitelist/save.php", {
+        fetch("/parkingCalama/php/whitelist/save.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
         .then(data => {
-            if(data!=false){
+            if(data['error']){
+                alert(data['error']);
+            }
+            else if(data!=false){
                 (document.getElementById('formWLInsert')).patente.value = '';
                 actualizarWhitelist();
                 (document.getElementById('formWLInsert')).btnSubmit.disabled = false;
@@ -246,17 +261,21 @@ function insertWL(){
             empresa: (document.getElementById('formWLUpdate')).empresa.value
         };
     
-        fetch("https://localhost/parkingCalama/php/whitelist/update.php", {
+        fetch("/parkingCalama/php/whitelist/update.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
-        .then(data => {
-            if(data=='1062'){
+        .then(data =>  {
+            if(data['error']){
+                alert(data['error']);
+            }
+            else if(data=='1062'){
                 alert('Ya existe un registro para esta patente!');
             }
             else if(data==true){

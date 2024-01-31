@@ -15,29 +15,32 @@ var tableEmp = $('#tableEmp').DataTable({
         { data: 'ctrl', className: 'no-sort'} // Columna de control con botones de edición/eliminación
     ]
 });
+
 //Regenrar la tabla
 function actualizarEmp(){
     // Función para actualizar la tabla con datos de empresas
     getEmpresas()
     .then(data => {
-        // Limpiar la tabla antes de actualizar
-        tableEmp.clear();
-        // Iterar sobre los datos obtenidos y agregar filas a la tabla
-        data.forEach(item => {
-            // Crear botones de edición y eliminación para cada fila
-            const btnUpd = `<button class="ctrl fa fa-pencil" onclick="openEmpUpd(${item['idemp']})"></button>`;
-            const btnDel = `<button class="ctrlred fa fa-trash" onclick="deleteEmp(${item['idemp']})"></button>`;
-
-            // Agregar fila a la tabla con los datos y los botones de control
-            tableEmp.rows.add([{
-                'idemp' : item['idemp'],
-                'nombre' : item['nombre'],
-                'contacto' : item['contacto'],
-                'ctrl' : btnUpd + btnDel
-            }]);
-        });
-        // Dibujar la tabla con los datos actualizados
-        tableEmp.draw();
+        if(data){
+            // Limpiar la tabla antes de actualizar
+            tableEmp.clear();
+            // Iterar sobre los datos obtenidos y agregar filas a la tabla
+            data.forEach(item => {
+                // Crear botones de edición y eliminación para cada fila
+                const btnUpd = `<button class="ctrl fa fa-pencil" onclick="openEmpUpd(${item['idemp']})"></button>`;
+                const btnDel = `<button class="ctrlred fa fa-trash" onclick="deleteEmp(${item['idemp']})"></button>`;
+    
+                // Agregar fila a la tabla con los datos y los botones de control
+                tableEmp.rows.add([{
+                    'idemp' : item['idemp'],
+                    'nombre' : item['nombre'],
+                    'contacto' : item['contacto'],
+                    'ctrl' : btnUpd + btnDel
+                }]);
+            });
+            // Dibujar la tabla con los datos actualizados
+            tableEmp.draw();
+        }
     })
     .catch(error => {
         console.log(error);
@@ -64,11 +67,12 @@ function openEmpUpd(idIn){
         id: idIn
     }
 
-    fetch("https://localhost/parkingCalama/php/empresas/get.php", {
+    fetch("/parkingCalama/php/empresas/get.php", {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -95,18 +99,23 @@ function deleteEmp(idIn){
 
     if(winconf){
         // Si el usuario confirma, enviar una solicitud para eliminar la empresa
-        fetch('https://localhost/parkingCalama/php/empresas/delete.php', {
+        fetch('/parkingCalama/php/empresas/delete.php', {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
-        .then(() => {
-            // Actualizar la tabla después de la eliminación
-            actualizarEmp();
+        .then(data => {
+            if(data['error']){
+                alert(data['error']);
+            } else {
+                // Actualizar la tabla después de la eliminación
+                actualizarEmp();
+            }
         })
         .catch(error => {
             console.log(error);
@@ -127,26 +136,31 @@ document.getElementById('formEmpUpdate').addEventListener('submit', (e) => {
         contacto: curform.contemp.value
     };
 
-    fetch('https://localhost/parkingCalama/php/empresas/update.php', {
+    fetch('/parkingCalama/php/empresas/update.php', {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
     .then(reply => reply.json())
     .then(data => {
-        // Manejar la respuesta del servidor
-        if(data=='1062'){
-            alert('Ya existe un registro para esta empresa!');
-        }
-        else if(data!=false){
-            // Si la actualización es exitosa, actualizar la tabla y cerrar el modal
-            actualizarEmp();
-            closeModal('empupd');
+        if(data['error']){
+            alert(data['error']);
         } else {
-            alert('Error');
+            // Manejar la respuesta del servidor
+            if(data=='1062'){
+                alert('Ya existe un registro para esta empresa!');
+            }
+            else if(data!=false){
+                // Si la actualización es exitosa, actualizar la tabla y cerrar el modal
+                actualizarEmp();
+                closeModal('empupd');
+            } else {
+                alert('Error');
+            }
         }
     })
     .catch(error => {
@@ -166,23 +180,28 @@ document.getElementById('formEmpInsert').addEventListener('submit', (e) => {
         contacto: curform.contemp.value
     }
 
-    fetch('https://localhost/parkingCalama/php/empresas/insert.php', {
+    fetch('/parkingCalama/php/empresas/insert.php', {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
     .then(reply => reply.json())
     .then(data => {
-        // Manejar la respuesta del servidor
-        if(data!=false){
-            // Si la inserción es exitosa, actualizar la tabla y cerrar el modal
-            actualizarEmp();
-            closeModal('empins');
+        if(data['error']){
+            alert(data['error']);
         } else {
-            alert('Error');
+            // Manejar la respuesta del servidor
+            if(data!=false){
+                // Si la inserción es exitosa, actualizar la tabla y cerrar el modal
+                actualizarEmp();
+                closeModal('empins');
+            } else {
+                alert('Error');
+            }
         }
     })
     .catch(error => {
@@ -192,19 +211,24 @@ document.getElementById('formEmpInsert').addEventListener('submit', (e) => {
 
 // Obtener todas las empresas
 async function getEmpresas(){
-    // Función para obtener todas las empresas
-    let ret = await fetch("https://localhost/parkingCalama/php/empresas/get.php", {
-            method: 'POST',
-            mode: 'cors'
-        })
-        .then(reply => reply.json())
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    return ret;
+    if(getCookie('jwt')){
+        // Función para obtener todas las empresas
+        let ret = await fetch("/parkingCalama/php/empresas/get.php", {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${getCookie('jwt')}`
+                }
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        return ret;
+    }
 }
 
 // Actualizar la tabla al cargar la página

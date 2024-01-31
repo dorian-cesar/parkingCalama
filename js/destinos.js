@@ -18,19 +18,21 @@ var tableDest = $('#tableDestinos').DataTable({
 function actualizarDest(){
     getDestinos()
     .then(data => {
-        tableDest.clear();
-        data.forEach(item => {
-            const btnUpd = `<button class="ctrl fa fa-pencil" onclick="openDestUpd(${item['iddest']})"></button>`;
-            const btnDel = `<button class="ctrlred fa fa-trash" onclick="deleteDest(${item['iddest']})"></button>`;
-
-            tableDest.rows.add([{
-                'iddest' : item['iddest'],
-                'ciudad' : item['ciudad'],
-                'valor' : item['valor'],
-                'ctrl' : btnUpd+btnDel
-            }]);
-        });
-        tableDest.draw();
+        if(data){
+            tableDest.clear();
+            data.forEach(item => {// Crear botones de edición y eliminación para cada fila
+                const btnUpd = `<button class="ctrl fa fa-pencil" onclick="openDestUpd(${item['iddest']})"></button>`;
+                const btnDel = `<button class="ctrlred fa fa-trash" onclick="deleteDest(${item['iddest']})"></button>`;
+    
+                tableDest.rows.add([{
+                    'iddest' : item['iddest'],
+                    'ciudad' : item['ciudad'],
+                    'valor' : item['valor'],
+                    'ctrl' : btnUpd+btnDel
+                }]);
+            });
+            tableDest.draw();
+        }
     })
     .catch(error => {
         console.log(error);
@@ -54,11 +56,12 @@ function openDestUpd(idIn){
         id: idIn
     }
 
-    fetch("https://localhost/parkingCalama/php/destinos/get.php", {
+    fetch("/parkingCalama/php/destinos/get.php", {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -82,17 +85,22 @@ function deleteDest(idIn){
     }
 
     if(winconf){
-        fetch('https://localhost/parkingCalama/php/destinos/delete.php', {
+        fetch('/parkingCalama/php/destinos/delete.php', {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
-        .then(() => {
-            actualizarDest();
+        .then(data => {
+            if(data['error']){
+                alert(data['error']);
+            } else {
+                actualizarDest();
+            }
         })
         .catch(error => {
             console.log(error);
@@ -111,11 +119,12 @@ document.getElementById('formDestUpdate').addEventListener('submit', (e) => {
         valor: curform.valor.value
     };
 
-    fetch('https://localhost/parkingCalama/php/destinos/update.php', {
+    fetch('/parkingCalama/php/destinos/update.php', {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -147,11 +156,12 @@ document.getElementById('formDestInsert').addEventListener('submit', (e) => {
         valor: curform.valor.value
     }
 
-    fetch('https://localhost/parkingCalama/php/destinos/insert.php', {
+    fetch('/parkingCalama/php/destinos/insert.php', {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/json'
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -171,36 +181,43 @@ document.getElementById('formDestInsert').addEventListener('submit', (e) => {
 
 // Obtener todas las empresas
 async function getDestinos(){
-    let ret = await fetch("https://localhost/parkingCalama/php/destinos/get.php", {
-            method: 'POST',
-            mode: 'cors'
-        })
-        .then(reply => reply.json())
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    return ret;
+    if(getCookie('jwt')){
+        let ret = await fetch("/parkingCalama/php/destinos/get.php", {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                  'Authorization': `Bearer ${getCookie('jwt')}`
+                }
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        return ret;
+    }
 }
 
 function listarDestinos(){
     getDestinos()
     .then(data => {
-        const lista = document.getElementById('destinoBuses');
-        lista.textContent = '';
-        let nullData = document.createElement('option');
-        nullData.value = 0;
-        nullData.textContent = 'Seleccione Destino';
-        lista.appendChild(nullData);
-        data.forEach(itm => {
-            let optData = document.createElement('option');
-            optData.value = itm['iddest'];
-            optData.textContent = itm['ciudad'] + ' ($' + itm['valor'] + ')';
-            lista.appendChild(optData);
-        });
-    })
+        if(data){
+            const lista = document.getElementById('destinoBuses');
+            lista.textContent = '';
+            let nullData = document.createElement('option');
+            nullData.value = 0;
+            nullData.textContent = 'Seleccione Destino';
+            lista.appendChild(nullData);
+            data.forEach(itm => {
+                let optData = document.createElement('option');
+                optData.value = itm['iddest'];
+                optData.textContent = itm['ciudad'] + ' ($' + itm['valor'] + ')';
+                lista.appendChild(optData);
+            });
+        }
+    });
 }
 
 //

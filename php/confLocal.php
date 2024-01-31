@@ -2,6 +2,10 @@
 //To-Do: Transformar a objeto
 $secretkey = "aqui no va a estar";
 
+$LVLADMIN = 10;
+$LVLAUDIT = 5;
+$LVLUSER = 1;
+
 $server = "localhost";
 $user = "root";
 $pass = "";

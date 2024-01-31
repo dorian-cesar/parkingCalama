@@ -26,58 +26,70 @@ Funciones de API
 
 // Obtener todos los registros
 async function getUsers(){
-    let ret = await fetch("https://localhost/parkingCalama/php/login/get.php", {
-            method: 'POST',
-            mode: 'cors'
-        })
-        .then(reply => reply.json()) // Convierte la respuesta a JSON
-        .then(data => {
-            return data; // Retorna los datos obtenidos
-        })
-        .catch(error => {
-            console.log(error); // Manejo de errores
-        });
-    return ret; // Retorna los datos obtenidos
+    if(getCookie('jwt')){
+        let ret = await fetch("/parkingCalama/php/login/get.php", {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${getCookie('jwt')}`
+                }
+            })
+            .then(reply => reply.json()) // Convierte la respuesta a JSON
+            .then(data => {
+                return data; // Retorna los datos obtenidos
+            })
+            .catch(error => {
+                console.log(error); // Manejo de errores
+            });
+        return ret; // Retorna los datos obtenidos
+    }
 }
 
 
 // Obtener todas las empresas
 // Similar a getUsers pero con una URL diferente
 async function getPermisos(){
-    let ret = await fetch("https://localhost/parkingCalama/php/login/getPermisos.php", {
-            method: 'POST',
-            mode: 'cors'
-        })
-        .then(reply => reply.json())
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    return ret;
+    if(getCookie('jwt')){
+        let ret = await fetch("/parkingCalama/php/login/getPermisos.php", {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Authorization': `Bearer ${getCookie('jwt')}`
+                }
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        return ret;
+    }
 }
 
 // Obtener un registro de usuario específico
 // Similar a getUsers pero con datos específicos y una URL diferente
 async function getUsersEntry(datos){
-    
-    let ret = await fetch("https://localhost/parkingCalama/php/login/get.php", {
-            method: 'POST',
-            mode: 'cors',
-            headers: {
-                'Content-type' : 'application/json'
-            },
-            body: JSON.stringify(datos)
-        })
-        .then(reply => reply.json())
-        .then(data => {
-            return data;
-        })
-        .catch(error => {
-            console.log(error);
-        });
-    return ret;
+    if(getCookie('jwt')){
+        let ret = await fetch("/parkingCalama/php/login/get.php", {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'Content-type' : 'application/json',
+                    'Authorization': `Bearer ${getCookie('jwt')}`
+                },
+                body: JSON.stringify(datos)
+            })
+            .then(reply => reply.json())
+            .then(data => {
+                return data;
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        return ret;
+    }
 }
 
 /*
@@ -94,28 +106,30 @@ function actualizarUsuarios(){
     // Obtiene los datos de usuarios
     getUsers()
     .then(data => {
-        // Limpiamos la tabla
-        tableUser.clear();
-        
-        // Itera sobre los datos y agrega filas a la tabla
-        data.forEach(item => {
-            // Genera los botones de control
-            const btns = `<button class="ctrl fa fa-pencil" onclick="updateUsr(${item['iduser']})"></button><button class="ctrlred fa fa-trash" onclick="deleteUsr(${item['iduser']})"></button>`;
-            // Agrega la fila a la tabla
-            tableUser.rows.add([{
-               'iduser' : item['iduser'],
-               'mail' : item['mail'],
-               'nivel' : item['descriptor'],
-               'ctrl' : btns
-           }]);
-        });
-        
-        // Dibuja la tabla con los nuevos datos
-        tableUser.draw();
-        
-        // Habilita nuevamente el botón de actualización y aplica estilos
-        (document.getElementById('refreshUsrBtn')).disabled = false;
-        (document.getElementById('refreshUsrBtn')).classList.remove('disabled');
+        if(data){
+            // Limpiamos la tabla
+            tableUser.clear();
+            
+            // Itera sobre los datos y agrega filas a la tabla
+            data.forEach(item => {
+                // Genera los botones de control
+                const btns = `<button class="ctrl fa fa-pencil" onclick="updateUsr(${item['iduser']})"></button><button class="ctrlred fa fa-trash" onclick="deleteUsr(${item['iduser']})"></button>`;
+                // Agrega la fila a la tabla
+                tableUser.rows.add([{
+                   'iduser' : item['iduser'],
+                   'mail' : item['mail'],
+                   'nivel' : item['descriptor'],
+                   'ctrl' : btns
+               }]);
+            });
+            
+            // Dibuja la tabla con los nuevos datos
+            tableUser.draw();
+            
+            // Habilita nuevamente el botón de actualización y aplica estilos
+            (document.getElementById('refreshUsrBtn')).disabled = false;
+            (document.getElementById('refreshUsrBtn')).classList.remove('disabled');
+        }
     })
     .catch(error => {
         console.log(error); // Manejo de errores
@@ -136,18 +150,20 @@ function deleteUsr(idIn){
             id: idIn
         }
         // Realiza una solicitud para eliminar el usuario del servidor
-        fetch("https://localhost/parkingCalama/php/login/delete.php", {
+        fetch("/parkingCalama/php/login/delete.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
         .then(data => {
-            // Si la eliminación es exitosa, muestra un mensaje y actualiza la tabla de usuarios
-            if(data==true){
+            if(data['error']){
+                alert(data['error']);
+            } else if(data==true){
                 alert('Registro eliminado correctamente.');
                 actualizarUsuarios();
             }
@@ -226,17 +242,20 @@ function insertUsr(){
             lvl: (document.getElementById('formUsrInsert')).nivel.value
         };
 
-        fetch("https://localhost/parkingCalama/php/login/enroll.php", {
+        fetch("/parkingCalama/php/login/enroll.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
         .then(data => {
-            if(data!=false){
+            if(data['error']){
+                alert(data['error']);
+            } else if(data!=false){
                 (document.getElementById('formUsrInsert')).mail.value = '';
                 (document.getElementById('formUsrInsert')).pass.value = '';
                 actualizarUsuarios();
@@ -270,17 +289,20 @@ function insertUsr(){
             lvl: (document.getElementById('formUsrUpdate')).nivel.value
         };
     
-        fetch("https://localhost/parkingCalama/php/login/update.php", {
+        fetch("/parkingCalama/php/login/update.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Content-type' : 'application/json'
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
             },
             body: JSON.stringify(datos)
         })
         .then(reply => reply.json())
         .then(data => {
-            if(data==true){
+            if(data['error']){
+                alert(data['error']);
+            } else if(data==true){
                 closeModal('mUsrUpdate');
                 actualizarUsuarios();
                 alert('Actualizado correctamente!')

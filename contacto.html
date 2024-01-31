@@ -1,6 +1,6 @@
 <div class="caja1" id="pageContacto">
   <!-- Encabezado de la sección de formulario de contacto -->
-  <h1>Formulario de contacto</h1>
+  <h1 class="tituloContacto">Formulario de contacto</h1>
   
   <!-- Contenedor de formulario de contacto -->
   <div class="card2">
@@ -18,41 +18,63 @@
   </div>
 </div>
 
+  
+<!-- Pantalla de carga -->
+<div class="loading-overlay" id="loadingscreencontacto">
+    <br/>
+    <br/>
+    <br/>
+    <i class="fa fa-spinner fa-6"></i>
+    <div class="loading-texto">Cargando</div>
+</div>
+
+
 <!-- Script para enviar el formulario de contacto -->
 <script>
-  // Agrega un event listener para el evento de submit del formulario
-  document.getElementById('formContacto').addEventListener('submit', (e) => {
-      e.preventDefault(); // Evita que el formulario se envíe automáticamente
+    // Agrega un event listener para el evento de submit del formulario
+    document.getElementById('formContacto').addEventListener('submit', (e) => {
+        e.preventDefault(); // Evita que el formulario se envíe automáticamente
 
-      // Obtiene el formulario actual
-      curForm = document.getElementById('formContacto');
+        // Muestra la pantalla de carga
+        document.getElementById('loadingscreencontacto').style.display = 'block';
 
-      // Obtiene los datos del formulario y los coloca en un objeto
-      datos = {
-          nombre: curForm.contNombre.value,
-          telefono: curForm.contTel.value,
-          mensaje: curForm.contMess.value
-      }
+        // Obtiene el formulario actual
+        curForm = document.getElementById('formContacto');
 
-      // Realiza una solicitud fetch para enviar los datos del formulario a un archivo PHP en el servidor
-      fetch('https://localhost/parkingCalama/php/contacto/mail.php', {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-              'Content-type': 'application/json'
-          },
-          body: JSON.stringify(datos) // Convierte los datos a formato JSON y los envía en el cuerpo de la solicitud
-      })
-      .then(reply => reply.text()) // Convierte la respuesta a texto
-      .then(msg => {
-          alert('Enviado correctamente'); // Muestra una alerta indicando que el formulario se envió correctamente
-          // Limpia los campos del formulario después de enviarlo
-          curForm.contNombre.value = '';
-          curForm.contTel.value = '';
-          curForm.contMess.value = '';
-      })
-      .catch(error => {
-          console.log(error); // Si hay un error, lo muestra en la consola del navegador
-      });
-  });
+        // Obtiene los datos del formulario y los coloca en un objeto
+        datos = {
+            nombre: curForm.contNombre.value,
+            telefono: curForm.contTel.value,
+            mensaje: curForm.contMess.value
+        }
+
+        // Realiza una solicitud fetch para enviar los datos del formulario a un archivo PHP en el servidor
+        fetch('https://localhost/parkingCalama/php/contacto/mail.php', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: JSON.stringify(datos) // Convierte los datos a formato JSON y los envía en el cuerpo de la solicitud
+        })
+        .then(reply => {
+            // Oculta la pantalla de carga
+            document.getElementById('loadingscreencontacto').style.display = 'none';
+            return reply.text(); // Convierte la respuesta a texto
+        })
+        .then(msg => {
+            alert('Enviado correctamente'); // Muestra una alerta indicando que el formulario se envió correctamente
+            // Limpia los campos del formulario después de enviarlo
+            curForm.contNombre.value = '';
+            curForm.contTel.value = '';
+            curForm.contMess.value = '';
+        })
+        .catch(error => {
+            // Oculta la pantalla de carga en caso de error
+            document.getElementById('loadingscreencontacto').style.display = 'none';
+            console.log(error); // Si hay un error, lo muestra en la consola del navegador
+        });
+    });
 </script>
+
+

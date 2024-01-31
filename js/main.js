@@ -37,6 +37,9 @@ if(getCookie('jwt')){
 // Oculta el elemento de pantalla de carga
 document.getElementById('loadingscreen').style.display = 'none';
 
+// Oculta el elemento de pantalla de carga
+document.getElementById('loadingscreencontacto').style.display = 'none';
+
 //Abre el modal de inicio de sesión
 function openLoginModal() {
   document.getElementById('login-modal').style.display = 'block';

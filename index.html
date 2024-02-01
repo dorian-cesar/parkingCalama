@@ -157,6 +157,7 @@
   // Generar una promesa luego de cargar todos los elementos
   var loadPage = $.Deferred(function(dfd) {
     $('#contenedorMovimientos').load('movimientos.html');
+    $('#contenedorPagos').load('pagos.html');
     $('#contenedorContacto').load('contacto.html');
     $('#contenedorParking').load('parking.html');
     $('#contenedorBuses').load('buses.html');
@@ -166,7 +167,6 @@
     $('#contenedorEmpresas').load('empresas.html');
     $('#contenedorDestinos').load('destinos.html');
     $('#contenedorConfig').load('config.html');
-    $('#contenedorPagos').load('pagos.html');
     $('#contenedorEnrolar').load('enroll.html', dfd.resolve);
   }).promise();
 

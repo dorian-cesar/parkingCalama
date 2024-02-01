@@ -1,3 +1,5 @@
+const apiPagos = "http://localhost/parkingCalama/php/movimientos/api.php";
+
 var tablePagos = $('#tablaPagos').DataTable({
     order: [[0, 'desc']],
     language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
@@ -16,27 +18,45 @@ var tablePagos = $('#tablaPagos').DataTable({
 });
 
 function actualizarPagos() {
-    getMovimientos()
+    getPagos()
     .then(data => {
         if(data){
             tablePagos.clear();
             data.forEach(item => {
-                var fechaent = new Date(item['fechaent']+'T'+item['horaent']);
-                var fechasal = new Date(item['fechasal']+'T'+item['horasal']);
-                var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
-                var minutos = differencia / 60;
-                tablePagos.rows.add([{
-                    'idmov' : item['idmov'],
-                    'tiempo' : minutos+' min.',
-                    'patente' : item['patente'],
-                    'empresa' : item['empresa'],
-                    'tipo' : item['tipo'],
-                    'valor' : item['valor'],
-                }]);
+                if(item['valor']>0){
+                    var fechaent = new Date(item['fechaent']+'T'+item['horaent']);
+                    var fechasal = new Date(item['fechasal']+'T'+item['horasal']);
+                    var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
+                    var minutos = Math.floor(differencia / 60);
+                    tablePagos.rows.add([{
+                        'idmov' : item['idmov'],
+                        'tiempo' : minutos+' min.',
+                        'patente' : item['patente'],
+                        'empresa' : item['empresa'],
+                        'tipo' : item['tipo'],
+                        'valor' : item['valor'],
+                    }]);
+                }
             });
             tablePagos.draw();
         }
     });
+}
+
+async function getPagos(){
+    if(getCookie('jwt')){
+        let ret = await fetch(apiPagos, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Authorization' : `Bearer ${getCookie('jwt')}`
+            }
+        })
+        .then(reply => reply.json())
+        .then(data => {return data})
+        .catch(error => {console.log(error)});
+        return ret;
+    }
 }
 
 function impPagos(){

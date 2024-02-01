@@ -17,6 +17,8 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
+include("../conf.php");
+
 // Incluye el archivo autoload.php que contiene las clases de PHPMailer
 require_once('../../vendor/autoload.php');
 
@@ -46,7 +48,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $phpmailer->SMTPAuth = true;
             $phpmailer->Port = 465;
             $phpmailer->Username = 'dgonzalez@ringring.cl';
-            $phpmailer->Password = 'Wit2023#';
+            $phpmailer->Password = $mailpass;
             $phpmailer->CharSet = "UTF-8";
             $phpmailer->Encoding = 'base64';
             $phpmailer->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;

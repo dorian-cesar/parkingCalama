@@ -67,7 +67,7 @@ function openEmpUpd(idIn){
         id: idIn
     }
 
-    fetch("/parkingCalama/php/empresas/get.php", {
+    fetch("http://localhost/parkingCalama/php/empresas/get.php", {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -99,7 +99,7 @@ function deleteEmp(idIn){
 
     if(winconf){
         // Si el usuario confirma, enviar una solicitud para eliminar la empresa
-        fetch('/parkingCalama/php/empresas/delete.php', {
+        fetch('http://localhost/parkingCalama/php/empresas/delete.php', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -136,7 +136,7 @@ document.getElementById('formEmpUpdate').addEventListener('submit', (e) => {
         contacto: curform.contemp.value
     };
 
-    fetch('/parkingCalama/php/empresas/update.php', {
+    fetch('http://localhost/parkingCalama/php/empresas/update.php', {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -180,7 +180,7 @@ document.getElementById('formEmpInsert').addEventListener('submit', (e) => {
         contacto: curform.contemp.value
     }
 
-    fetch('/parkingCalama/php/empresas/insert.php', {
+    fetch('http://localhost/parkingCalama/php/empresas/insert.php', {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -213,7 +213,7 @@ document.getElementById('formEmpInsert').addEventListener('submit', (e) => {
 async function getEmpresas(){
     if(getCookie('jwt')){
         // Función para obtener todas las empresas
-        let ret = await fetch("/parkingCalama/php/empresas/get.php", {
+        let ret = await fetch("http://localhost/parkingCalama/php/empresas/get.php", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {

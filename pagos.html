@@ -1,45 +1,22 @@
 <div class="caja1" id="pagePagos">
   <div class="card2" style="text-align: center;">
-    <h1>Pagos del día</h1>
+    <h1>Pagos del Día</h1>
+    <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
     <hr>
     <br>
   </div>
   <button id="refreshPagoBtn" class="ctrlyel fa fa-refresh" onclick="actualizarPagos()"></button>
-  <table id="tablePagos">
+  <table id="tablaPagos">
       <thead>
         <tr>
           <th>ID</th>
           <th>Tiempo</th>
           <th>Patente</th>
+          <th>Empresa</th>
+          <th>Tipo</th>
           <th>Valor</th>
-          <th class="no-sort">Imprimir</th>
         </tr>
       </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>00:10:00</td>
-          <td>HHHH-24</td>
-          <td>5000</td>
-          <td><button class="ctrl fa fa-print"></button></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>00:15:00</td>
-          <td>FHFH-01</td>
-          <td>1200</td>
-          <td><button class="ctrl fa fa-print"></button></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>00:10:00</td>
-          <td>BFGT-07</td>
-          <td>3200</td>
-          <td><button class="ctrl fa fa-print"></button></td>
-        </tr>
-    
-      </tbody>
     </table>
     
   </div>
-  <script src="js/pagos.js"></script>

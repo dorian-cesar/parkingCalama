@@ -25,7 +25,7 @@ Funciones de API
 // Obtener todos los registros de  lista blanca
 async function getWhitelist(){
     // Realiza una solicitud POST para obtener los datos de la lista blanca desde el servidor 
-    let ret = await fetch("/parkingCalama/php/whitelist/get.php", {
+    let ret = await fetch("http://localhost/parkingCalama/php/whitelist/get.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -47,7 +47,7 @@ async function getWhitelist(){
 async function getWhitelistEntry(datos){
     // Realiza una solicitud POST para obtener un registro específico de lista blanca
     // y lo devuelve en formato JSON
-    let ret = await fetch("/parkingCalama/php/whitelist/get.php", {
+    let ret = await fetch("http://localhost/parkingCalama/php/whitelist/get.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -119,7 +119,7 @@ function deleteWL(idIn){
            id: idIn
        }
 
-       fetch("/parkingCalama/php/whitelist/delete.php", {
+       fetch("http://localhost/parkingCalama/php/whitelist/delete.php", {
            method: 'POST',
            mode: 'cors',
            headers: {
@@ -216,7 +216,7 @@ function insertWL(){
             empresa: (document.getElementById('formWLInsert')).empresa.value
         };
 
-        fetch("/parkingCalama/php/whitelist/save.php", {
+        fetch("http://localhost/parkingCalama/php/whitelist/save.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -233,6 +233,7 @@ function insertWL(){
             else if(data!=false){
                 (document.getElementById('formWLInsert')).patente.value = '';
                 actualizarWhitelist();
+                closeModal('minsert');
                 (document.getElementById('formWLInsert')).btnSubmit.disabled = false;
             } else {
                 alert('Error');
@@ -261,7 +262,7 @@ function insertWL(){
             empresa: (document.getElementById('formWLUpdate')).empresa.value
         };
     
-        fetch("/parkingCalama/php/whitelist/update.php", {
+        fetch("http://localhost/parkingCalama/php/whitelist/update.php", {
             method: 'POST',
             mode: 'cors',
             headers: {

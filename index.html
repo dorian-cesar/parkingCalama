@@ -56,7 +56,7 @@
     <div id="contenedorParking"></div>
     <div id="contenedorNosotros"></div>
     <div id="contenedorContacto"></div>
-    <div id="contenedorTabla"></div>
+    <div id="contenedorMovimientos"></div>
     <div id="contenedorEmpresas"></div>
     <div id="contenedorDestinos"></div>
     <div id="contenedorConfig"></div>
@@ -98,7 +98,7 @@
     });
 
     // URL para validar el token de autenticación
-    var urlValidate = "/parkingCalama/php/login/validate.php";
+    var urlValidate = "http://localhost/parkingCalama/php/login/validate.php";
 
     if (getCookie('jwt')) {
       // Validar el token de autenticación
@@ -156,7 +156,7 @@
 
   // Generar una promesa luego de cargar todos los elementos
   var loadPage = $.Deferred(function(dfd) {
-    $('#contenedorTabla').load('tabla.html');
+    $('#contenedorMovimientos').load('movimientos.html');
     $('#contenedorPagos').load('pagos.html');
     $('#contenedorContacto').load('contacto.html');
     $('#contenedorParking').load('parking.html');

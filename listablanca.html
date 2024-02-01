@@ -65,7 +65,7 @@
     });
 
     function modificarWl(idIn){
-        const urlCheck = "/parkingCalama/php/wl/get.php";
+        const urlCheck = "http://localhost/parkingCalama/php/wl/get.php";
 
         datos = {
             id: idIn
@@ -119,7 +119,7 @@
     function deleteWl(idIn){
         let wdConf = window.confirm('Eliminar la entrada?');
         if(wdConf){
-            const urlDel = "/parkingCalama/php/whitelist/delete.php";
+            const urlDel = "http://localhost/parkingCalama/php/whitelist/delete.php";
             datos = {
                 id: idIn
             }
@@ -181,7 +181,7 @@
     cargarWhitelist();
 
     async function getWhitelist(){
-        var urlGet = "/parkingCalama/php/wl/get.php";
+        var urlGet = "http://localhost/parkingCalama/php/wl/get.php";
         let ret = await fetch(urlGet,{
             method: 'POST',
             mode: 'cors',
@@ -220,7 +220,7 @@
     }
 
     async function getEmpresas(){
-        var urlGet = "/parkingCalama/php/whitelist/getEmpresas.php";
+        var urlGet = "http://localhost/parkingCalama/php/whitelist/getEmpresas.php";
         let ret = await fetch(urlGet,{
             method: 'POST',
             mode: 'cors',
@@ -240,7 +240,7 @@
     // Obtenemos el valor del selector
     const selWL = document.getElementById('btnCreateWL');
 
-    var urlSave = "/parkingCalama/php/whitelist/save.php"
+    var urlSave = "http://localhost/parkingCalama/php/whitelist/save.php"
 
     // Reactivamos la vista por defecto
     document.getElementById('wllist').style.display = 'block';

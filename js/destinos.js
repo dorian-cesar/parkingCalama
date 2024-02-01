@@ -1,3 +1,5 @@
+const apiDestinos = "http://localhost/parkingCalama/php/destinos/api.php";
+
 // Elementos
 var tableDest = $('#tableDestinos').DataTable({
     order: [[0, 'desc']],
@@ -52,18 +54,15 @@ function openDestUpd(idIn){
     openModal('destupd');
     const curmodal = document.getElementById('formDestUpdate');
 
-    datos = {
+    fetch(apiDestinos + '?' + new URLSearchParams({
         id: idIn
-    }
-
-    fetch("/parkingCalama/php/destinos/get.php", {
-        method: 'POST',
+    }), {
+        method: 'GET',
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
             'Authorization': `Bearer ${getCookie('jwt')}`
-        },
-        body: JSON.stringify(datos)
+        }
     })
     .then(reply => reply.json())
     .then(data => {
@@ -85,8 +84,8 @@ function deleteDest(idIn){
     }
 
     if(winconf){
-        fetch('/parkingCalama/php/destinos/delete.php', {
-            method: 'POST',
+        fetch(apiDestinos, {
+            method: 'DELETE',
             mode: 'cors',
             headers: {
                 'Content-type' : 'application/json',
@@ -119,8 +118,8 @@ document.getElementById('formDestUpdate').addEventListener('submit', (e) => {
         valor: curform.valor.value
     };
 
-    fetch('/parkingCalama/php/destinos/update.php', {
-        method: 'POST',
+    fetch(apiDestinos, {
+        method: 'PUT',
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
@@ -156,7 +155,7 @@ document.getElementById('formDestInsert').addEventListener('submit', (e) => {
         valor: curform.valor.value
     }
 
-    fetch('/parkingCalama/php/destinos/insert.php', {
+    fetch(apiDestinos, {
         method: 'POST',
         mode: 'cors',
         headers: {
@@ -179,11 +178,11 @@ document.getElementById('formDestInsert').addEventListener('submit', (e) => {
     });
 });
 
-// Obtener todas las empresas
+// Obtener todos los destinos
 async function getDestinos(){
     if(getCookie('jwt')){
-        let ret = await fetch("/parkingCalama/php/destinos/get.php", {
-                method: 'POST',
+        let ret = await fetch(apiDestinos, {
+                method: 'GET',
                 mode: 'cors',
                 headers: {
                   'Authorization': `Bearer ${getCookie('jwt')}`

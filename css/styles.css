@@ -382,6 +382,10 @@ width: 90%;
     padding: 0px;
   }
 
+  .printTable {
+    padding: 5px;
+  }
+
   table.dataTable thead th, table.dataTable tbody td {
     padding: 0px 0px;
     width:min-content;

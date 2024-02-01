@@ -10,11 +10,11 @@ const btnEnroll = document.getElementById('formUsrInsert'); // Botón de registr
 
 // URLs para las solicitudes al backend
 // PHP para validar los datos ingresados en la base de datos
-const urlLoad = "/parkingCalama/php/login/load.php";
+const urlLoad = "http://localhost/parkingCalama/php/login/load.php";
 // PHP para validar la sesion actual
-const urlValidate = "/parkingCalama/php/login/validate.php";
+const urlValidate = "http://localhost/parkingCalama/php/login/validate.php";
 // PHP para enrolar usuarios
-const urlEnroll = "/parkingCalama/php/login/enroll.php";
+const urlEnroll = "http://localhost/parkingCalama/php/login/enroll.php";
 
 /* Funciones */
 

@@ -27,7 +27,7 @@ Funciones de API
 // Obtener todos los registros
 async function getUsers(){
     if(getCookie('jwt')){
-        let ret = await fetch("/parkingCalama/php/login/get.php", {
+        let ret = await fetch("http://localhost/parkingCalama/php/login/get.php", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -50,7 +50,7 @@ async function getUsers(){
 // Similar a getUsers pero con una URL diferente
 async function getPermisos(){
     if(getCookie('jwt')){
-        let ret = await fetch("/parkingCalama/php/login/getPermisos.php", {
+        let ret = await fetch("http://localhost/parkingCalama/php/login/getPermisos.php", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -72,7 +72,7 @@ async function getPermisos(){
 // Similar a getUsers pero con datos específicos y una URL diferente
 async function getUsersEntry(datos){
     if(getCookie('jwt')){
-        let ret = await fetch("/parkingCalama/php/login/get.php", {
+        let ret = await fetch("http://localhost/parkingCalama/php/login/get.php", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -150,7 +150,7 @@ function deleteUsr(idIn){
             id: idIn
         }
         // Realiza una solicitud para eliminar el usuario del servidor
-        fetch("/parkingCalama/php/login/delete.php", {
+        fetch("http://localhost/parkingCalama/php/login/delete.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -242,7 +242,7 @@ function insertUsr(){
             lvl: (document.getElementById('formUsrInsert')).nivel.value
         };
 
-        fetch("/parkingCalama/php/login/enroll.php", {
+        fetch("http://localhost/parkingCalama/php/login/enroll.php", {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -289,7 +289,7 @@ function insertUsr(){
             lvl: (document.getElementById('formUsrUpdate')).nivel.value
         };
     
-        fetch("/parkingCalama/php/login/update.php", {
+        fetch("http://localhost/parkingCalama/php/login/update.php", {
             method: 'POST',
             mode: 'cors',
             headers: {

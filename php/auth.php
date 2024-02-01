@@ -5,6 +5,10 @@ use Firebase\JWT\JWT;
 
 $headers = apache_request_headers(); // Obtener los encabezados de la solicitud
 
+$LVLADMIN = 10;
+$LVLAUDIT = 5;
+$LVLUSER = 1;
+
 if(! $headers['Authorization']) {
     echo json_encode(['error' => 'No se envió un token']);
     exit;

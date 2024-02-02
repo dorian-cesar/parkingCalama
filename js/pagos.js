@@ -23,18 +23,19 @@ function actualizarPagos() {
         if(data){
             tablePagos.clear();
             data.forEach(item => {
-                if(item['valor']>0){
+                if(item['fechasal']!="0000-00-00"){
                     var fechaent = new Date(item['fechaent']+'T'+item['horaent']);
                     var fechasal = new Date(item['fechasal']+'T'+item['horasal']);
                     var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
-                    var minutos = Math.floor(differencia / 60);
+                    var minutos = Math.ceil(differencia / 60);
+                    if(item['tipo']==='Anden') { minutos = Math.ceil((differencia / 60) / 25)*25; }
                     tablePagos.rows.add([{
                         'idmov' : item['idmov'],
                         'tiempo' : minutos+' min.',
                         'patente' : item['patente'],
                         'empresa' : item['empresa'],
                         'tipo' : item['tipo'],
-                        'valor' : item['valor'],
+                        'valor' : '$'+item['valor'],
                     }]);
                 }
             });
@@ -72,17 +73,20 @@ function impPagos(){
     .then(data => {
         if(data){
             data.forEach(itm => {
-                var fechaent = new Date(itm['fechaent']+'T'+itm['horaent']);
-                var fechasal = new Date(itm['fechasal']+'T'+itm['horasal']);
-                var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
-                var minutos = differencia / 60;
-                ventanaImpr.document.write('<tr>');
-                ventanaImpr.document.write(`<td style="padding:5px">${minutos}</td>`);
-                ventanaImpr.document.write(`<td style="padding:5px">${itm['patente']}</td>`);
-                ventanaImpr.document.write(`<td style="padding:5px">${itm['empresa']}</td>`);
-                ventanaImpr.document.write(`<td style="padding:5px">${itm['tipo']}</td>`);
-                ventanaImpr.document.write(`<td style="padding:5px">${itm['valor']}</td>`);
-                ventanaImpr.document.write('</tr>');
+                if(itm['fechasal']!="0000-00-00"){
+                    var fechaent = new Date(itm['fechaent']+'T'+itm['horaent']);
+                    var fechasal = new Date(itm['fechasal']+'T'+itm['horasal']);
+                    var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
+                    var minutos = Math.ceil(differencia / 60);
+                    if(itm['tipo']==='Anden') { minutos = Math.ceil((differencia / 60) / 25)*25; }
+                    ventanaImpr.document.write('<tr>');
+                    ventanaImpr.document.write(`<td style="padding:5px">${minutos} min.</td>`);
+                    ventanaImpr.document.write(`<td style="padding:5px">${itm['patente']}</td>`);
+                    ventanaImpr.document.write(`<td style="padding:5px">${itm['empresa']}</td>`);
+                    ventanaImpr.document.write(`<td style="padding:5px">${itm['tipo']}</td>`);
+                    ventanaImpr.document.write(`<td style="padding:5px">${itm['valor']}</td>`);
+                    ventanaImpr.document.write('</tr>');
+                }
             });
             ventanaImpr.document.write('</tbody></table>');
             ventanaImpr.document.close();

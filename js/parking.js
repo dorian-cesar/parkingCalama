@@ -1,61 +1,73 @@
-function calcParking(){
+async function calcParking(){
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
 
     if(!/^[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}$/.test(input)){
         console.log('No es patente, leer QR');
         return; //To-Do leer QR o Codigo de Barra
-    } else {
-        // To-Do: Limpiar guiones correctamente
-        input = input.replace('-','');
-        input = input.replace('-','');
-        getByPatente(input)
-        .then(data => {
-            if(data){
-                if(data['tipo']=='Parking'){
-                    if(data['valor']==0){
-                        cont.textContent = '';
-                        var date = new Date();
-                        
-                        var fechaent = new Date(data['fechaent']+'T'+data['horaent']);
-                        var differencia = (date.getTime() - fechaent.getTime()) / 1000;
-                        var minutos = Math.floor(differencia / 60);
-        
-                        var elemPat = document.createElement('h1');
-                        var fechaPat = document.createElement('h3');
-                        var horaentPat = document.createElement('h3');
-                        var horasalPat = document.createElement('h3');
-                        var tiempPat = document.createElement('h3');
-                        var valPat = document.createElement('h3');
-        
-                        elemPat.textContent = `Patente: ${data['patente']}`;
-                        fechaPat.textContent = `Fecha: ${data['fechaent']}`;
-                        horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
-                        horasalPat.textContent = 'Hora salida: '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds() ;
-                        tiempPat.textContent = `Tiempo de Parking: ${minutos} min.`;
-                        // To-Do: Traer valor x minuto desde la BDD
-                        valPat.textContent = `Valor: $${20*minutos}`;
-        
-                        cont.appendChild(elemPat);
-                        cont.appendChild(fechaPat);
-                        cont.appendChild(horaentPat);
-                        cont.appendChild(horasalPat);
-                        cont.appendChild(tiempPat);
-                        cont.appendChild(valPat);
-                    } else {
-                        alert('Esta patente ya fue cobrada');
-                    }
-                } else {
-                    alert('Esta patente figura en Andenes');
+    }
+    try {
+        const data = await getMovByPatente(input);
+
+        if(!data) {
+            alert('Patente no encontrada');
+            return;
+        }
+
+        if(data['tipo'] === 'Parking') {
+            if(data['fechasal'] === "0000-00-00") {
+                cont.textContent = '';
+                const date = new Date();
+                
+                var fechaent = new Date(data['fechaent']+'T'+data['horaent']);
+                var differencia = (date.getTime() - fechaent.getTime()) / 1000;
+                var minutos = Math.ceil(differencia / 60);
+
+                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
+
+                const ret = await getWLByPatente(data['patente']);
+
+                let valorTot = 20*minutos;
+                if (ret !== null) {
+                    valorTot = 0;
                 }
+
+                elemPat.textContent = `Patente: ${data['patente']}`;
+                fechaPat.textContent = `Fecha: ${data['fechaent']}`;
+                horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
+                horasalPat.textContent = 'Hora salida: '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds() ;
+                tiempPat.textContent = `Tiempo de Parking: ${minutos} min.`;
+                // To-Do: Traer valor x minuto desde la BDD
+                valPat.textContent = `Valor: $${valorTot}`;
+                
+                cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
+
+                datos = {
+                    id: data['idmov'],
+                    fecha: date.toISOString().split('T')[0],
+                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+                    valor: valorTot,
+                };
+
+                await closeMovimiento(datos);
+                actualizarMovimientos();
+                actualizarPagos();
+                alert('Pago registrado!');
+                document.getElementById('parkingQRPat').value = '';
             } else {
-                alert('Patente no encontrada');
+                alert('Esta patente ya fue cobrada');
             }
-        });
+        } else {
+            buses();
+            document.getElementById('andenQRPat').value = input;
+        }
+    } catch (error) {
+        console.error('Error:', error.message);
     }
 }
 
-async function getByPatente(patente){
+async function getMovByPatente(patente){
     if(getCookie('jwt')){
         let ret = await fetch(apiMovimientos+'?'+ new URLSearchParams({
             patente: patente

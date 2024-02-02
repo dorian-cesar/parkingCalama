@@ -39,7 +39,6 @@ function actualizarDest(){
     .catch(error => {
         console.log(error);
     });
-    listarDestinos();
 }
 
 // Abrir modal insertar
@@ -54,24 +53,11 @@ function openDestUpd(idIn){
     openModal('destupd');
     const curmodal = document.getElementById('formDestUpdate');
 
-    fetch(apiDestinos + '?' + new URLSearchParams({
-        id: idIn
-    }), {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
-        }
-    })
-    .then(reply => reply.json())
+    getDestinoByID(idIn)
     .then(data => {
         curmodal.ciudad.value = data['ciudad'];
         curmodal.iddest.value = data['iddest'];
         curmodal.valor.value = data['valor'];
-    })
-    .catch(error => {
-        console.log(error);
     });
 }
 
@@ -199,24 +185,28 @@ async function getDestinos(){
     }
 }
 
-function listarDestinos(){
-    getDestinos()
-    .then(data => {
-        if(data){
-            const lista = document.getElementById('destinoBuses');
-            lista.textContent = '';
-            let nullData = document.createElement('option');
-            nullData.value = 0;
-            nullData.textContent = 'Seleccione Destino';
-            lista.appendChild(nullData);
-            data.forEach(itm => {
-                let optData = document.createElement('option');
-                optData.value = itm['iddest'];
-                optData.textContent = itm['ciudad'] + ' ($' + itm['valor'] + ')';
-                lista.appendChild(optData);
-            });
-        }
-    });
+// Obtener todos los destinos
+async function getDestinoByID(idIn){
+    if(getCookie('jwt')){
+        let ret = await fetch(apiDestinos + '?' + new URLSearchParams({
+            id: idIn
+        }), {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Content-type' : 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
+            }
+        })
+        .then(reply => reply.json())
+        .then(data => {
+            return data;
+        })
+        .catch(error => {
+            console.log(error);
+        });
+        return ret;
+    }
 }
 
 //

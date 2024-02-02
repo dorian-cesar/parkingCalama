@@ -6,27 +6,15 @@
     <!-- Columna izquierda con formularios -->
     <div class="izq">
         <!-- Input para leer el código QR -->
-        <input type="text" class="entrada" placeholder="Leer QR">
+        <input type="text" class="entrada" id="andenQRPat" placeholder="Leer QR">
         <!-- Select para seleccionar la compañía de transporte -->
-        <select name="" id="empresas" class="entrada">
-            <option>Ingrese Cia. de Transporte</option>
-            <option value="">AndesMar</option>
-            <option value="">TurBus</option>
-            <option value="">PullmanBus</option>
-        </select>
-        <!-- Select para seleccionar el origen -->
-        <select name="" id="origen" class="entrada">
-            <option>Ingrese Origen</option>
-            <option value="">Santiago</option>
-            <option value="">Valparaiso</option>
-            <option value="">San Felipe</option>
-            <option value="">Calama</option>
-        </select>
+        <!-- <select id="empresaBuses" class="entrada">
+        </select>-->
         <!-- Select para seleccionar el destino de los buses -->
         <select id="destinoBuses" class="entrada">
         </select>
         <!-- Botón para calcular -->
-        <button class="btn">Calcular</button>
+        <button class="btn" onclick="calcAndenes()">Calcular</button>
     </div>
     <!-- Columna derecha con información -->
     <div class="derecha">

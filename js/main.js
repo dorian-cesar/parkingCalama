@@ -11,6 +11,8 @@ function blankPage() {
   });
 }
 
+refreshWL();
+
 // Abre el modal especificado
 // modal: nombre del modal
 function openModal(modal){
@@ -90,6 +92,8 @@ function listablanca(){
 // Muestra la página "Buses" y oculta las demás
 function buses(){
   blankPage();// Oculta todas las páginas
+  listarAndenesDestinos();
+  //listarAndenesEmpresas();
   document.getElementById('pageBuses').style.display = 'block';
 }
 // Muestra la página "Empresas" y oculta las demás

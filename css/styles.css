@@ -393,8 +393,8 @@ width: 90%;
   }
 
   .disabled {
-    background-color: #333;
-    color:#b6b6b6;
+    background-color: #cf2d2d;
+    color: rgb(255, 255, 255);
   }
   .tituloModal{
     text-align: center;

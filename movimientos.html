@@ -3,9 +3,11 @@
     <h1>Entradas y Salidas del día</h1>
     <button class="ctrlgrn" onclick="impMovimientos()">Imprimir</button>
     <hr>
+    <button class="ctrlgrn" onclick="openMovModal()">Crear Movimiento (DEV)</button>
+    <hr>
     <br>
   </div>
-  <button id="refreshPagoBtn" class="ctrlyel fa fa-refresh" onclick="actualizarMovimientos()"></button>
+  <button id="refreshPagoBtn" class="ctrlyel" onclick="actualizarMovimientos()"><i id="spinMovTable" class="fa fa-refresh"></i></button>
   <table id="tablaMovimientos">
     <thead>
       <tr>
@@ -20,5 +22,23 @@
     <tbody>
     </tbody>
   </table>
+
+  <!-- Formulario para insertar un movimiento de prueba -->
+  <div id="MovInsert-overlay" onclick="closeModal('MovInsert')" class="mdl-overlay"></div>
+  <div id="MovInsert-modal" class="mdl-content">
+      <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
+      <form action="" method="POST" id="formMovInsert">
+        <input required type="text" name="inPatente" id="inPatente" class="entrada" placeholder="Patente">
+        <select required id="inEmpresa" name="inEmpresa" class="entrada2">
+          <option value="1">TurBus</option>
+        </select>
+        <select required id="inTipo" name="inTipo" class="entrada2">
+          <option value="Parking">Parking</option>
+          <option value="Anden">Anden</option>
+        </select>
+        <button id="btnMovInsert" name="btnSubmit" class="btn">Crear</button>
+      </form>
+  </div>
+
 </div>
 <script src="js/movimientos.js"></script>

@@ -113,7 +113,7 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
                 // Si la inserción es exitosa, devuelve el ID del nuevo registro en formato JSON
                 $id = $conn->insert_id;
                 header('Content-Type: application/json');
-                echo json_encode($id);
+                echo json_encode(['id' => $id, 'msg' => 'Insertado correctamente']);
             } else {
                 // Si hay un error en la inserción, devuelve un mensaje de error en formato JSON
                 header('Content-Type: application/json');

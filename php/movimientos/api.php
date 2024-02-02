@@ -62,8 +62,9 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo json_encode(['error' => $e]);
         }
     } else {
+        $date = date('Y-m-d');
         $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor FROM movParking as m JOIN empParking as e ON m.empresa = e.idemp WHERE m.fechaent = ? ORDER BY m.idmov");
-        $stmt->bind_param("s",date('Y-m-d'));
+        $stmt->bind_param("s",$date);
     
         try {
             $stmt->execute();

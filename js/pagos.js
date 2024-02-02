@@ -23,7 +23,7 @@ function actualizarPagos() {
         if(data){
             tablePagos.clear();
             data.forEach(item => {
-                if(item['fechasal']!="0000-00-00"){
+                if(item['fechasal']&&item['fechasal']!="0000-00-00"){
                     var fechaent = new Date(item['fechaent']+'T'+item['horaent']);
                     var fechasal = new Date(item['fechasal']+'T'+item['horasal']);
                     var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
@@ -73,7 +73,7 @@ function impPagos(){
     .then(data => {
         if(data){
             data.forEach(itm => {
-                if(itm['fechasal']!="0000-00-00"){
+                if(itm['fechasal']&&itm['fechasal']!="0000-00-00"){
                     var fechaent = new Date(itm['fechaent']+'T'+itm['horaent']);
                     var fechasal = new Date(itm['fechasal']+'T'+itm['horasal']);
                     var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;

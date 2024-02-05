@@ -50,7 +50,7 @@ body {
   }
 
   .mainside {
-    margin-top: 20px;
+    margin-top: 12px;
   padding: 10px;
   text-decoration: none;
   font-size: 18px;
@@ -59,7 +59,7 @@ body {
   }
 
   .subside {
-    margin-top: 8px;
+    margin-top: 6px;
     margin-left: 30px;
     padding: 10px;
     text-decoration: none;
@@ -210,6 +210,7 @@ padding-left: 30px
   }
 
 form {
+  text-align: center;
 width: 90%;
 }
 

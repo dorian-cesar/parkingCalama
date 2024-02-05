@@ -1,12 +1,10 @@
 <div class="caja1" id="pageEmpresas">
     <div class="card2" style="text-align:center">
         <h1>Empresas</h1>
-        <button onclick="openEmpIns()" class="ctrlgrn" id="btnCreateEmp">Registrar Empresa</button>
-        <br>
+        <button onclick="modalEmpInsert()" class="ctrlgrn" id="btnCreateEmp">Registrar Empresa</button>
         <hr>
-        <br>
     </div>
-    <button onclick="actualizarEmp()" id="refreshEmpBtn" class="ctrlyel fa fa-refresh"></button>
+    <button onclick="refreshEmp()" id="btnRefreshEmp" class="ctrlyel fa fa-refresh"></button>
     <!-- Tabla para mostrar las empresas -->
     <table id="tableEmp">
         <thead>
@@ -24,28 +22,28 @@
 </div>
 
 <!-- Modal Insert: Formulario para ingresar una nueva empresa -->
-<div class="mdl-overlay" id="empins-overlay" onclick="closeModal('empins')"></div>
-<div class="mdl-content" id="empins-modal">
+<div class="mdl-overlay" id="empinsert-overlay" onclick="closeModal('empinsert')"></div>
+<div class="mdl-content" id="empinsert-modal">
     <h1 class="tituloModal">Ingresar Empresa</h1>
-    <form action="" method="post" id="formEmpInsert">
-        <input type="text" name="nombre" id="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
-        <input type="text" name="contemp" id="contemp" class="entrada" placeholder="Contacto" required/>
-        <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
+    <form onsubmit="doInsertEmp(event)" method="post" id="formInsertEmp">
+        <input type="text" name="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
+        <input type="text" name="contacto" class="entrada" placeholder="Contacto" required/>
+        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>
 
 <!-- Modal Update: Formulario para actualizar una empresa existente -->
-<div class="mdl-overlay" id="empupd-overlay" onclick="closeModal('empupd')"></div>
-<div class="mdl-content" id="empupd-modal">
-    <h1>Actualizar Empresa</h1>
-    <form action="" method="post" id="formEmpUpdate">
+<div class="mdl-overlay" id="empupdate-overlay" onclick="closeModal('empupdate')"></div>
+<div class="mdl-content" id="empupdate-modal">
+    <h1>Modificar Empresa</h1>
+    <form onsubmit="doUpdateEmp(event)" method="post" id="formUpdateEmp">
         <!-- Campo oculto para almacenar el ID de la empresa a actualizar -->
-        <input type="number" name="idemp" id="idemp" required style="display: none;"/>
-        <input type="text" name="nombre" id="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
-        <input type="text" name="contemp" id="contemp" class="entrada" placeholder="Contacto" required/>
-        <button type="submit" class="btn" name="btnSubmit">Actualizar</button>
+        <input type="hidden" name="idemp"/>
+        <input type="text" name="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
+        <input type="text" name="contacto" class="entrada" placeholder="Contacto" required/>
+        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>
 
-<!-- Script para manejar la lógica relacionada con las empresas -->
-<script src="js/empresas.js"></script>
+<script src="js/Data/empDA.js"></script>
+<script src="js/empUI.js"></script>

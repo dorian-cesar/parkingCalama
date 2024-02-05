@@ -2,7 +2,7 @@ async function calcParking(){
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
 
-    if(!/^[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}$/.test(input)){
+    if(!patRegEx.test(input)){
         console.log('No es patente, leer QR');
         return; //To-Do leer QR o Codigo de Barra
     }
@@ -23,8 +23,8 @@ async function calcParking(){
                 var differencia = (date.getTime() - fechaent.getTime()) / 1000;
                 var minutos = Math.ceil(differencia / 60);
 
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
+                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
                 const ret = await getWLByPatente(data['patente']);
 
@@ -34,6 +34,7 @@ async function calcParking(){
                 }
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
+                empPat.textContent = `Empresa: ${data['empresa']}`;
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = 'Hora salida: '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds() ;
@@ -41,7 +42,7 @@ async function calcParking(){
                 // To-Do: Traer valor x minuto desde la BDD
                 valPat.textContent = `Valor: $${valorTot}`;
                 
-                cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
+                cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
                 datos = {
                     id: data['idmov'],
@@ -50,9 +51,9 @@ async function calcParking(){
                     valor: valorTot,
                 };
 
-                await closeMovimiento(datos);
-                actualizarMovimientos();
-                actualizarPagos();
+                await updateMov(datos);
+                refreshMov();
+                refreshPagos();
                 alert('Pago registrado!');
                 document.getElementById('parkingQRPat').value = '';
             } else {

@@ -25,7 +25,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $pass = $data["pass"]; // Obtener la contraseña del usuario
 
         // Preparar y ejecutar la consulta SQL para obtener el usuario por su correo electrónico
-        $stmt = $conn->prepare("SELECT iduser, mail, pass, nivel FROM userParking WHERE mail LIKE ?");
+        $stmt = $conn->prepare("SELECT u.iduser, u.mail, u.pass, p.nivel FROM userParking AS u JOIN permParking AS p on u.nivel = p.idperm WHERE u.mail LIKE ?");
         $stmt->bind_param("s", $mail);
 
         if($stmt->execute()){

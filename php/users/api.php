@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         $id = $_GET['id'];
 
         // Prepara y ejecuta una consulta SQL para obtener el registro por ID
-        $stmt = $conn->prepare("SELECT iddest, ciudad, valor FROM destParking WHERE iddest = ?");
+        $stmt = $conn->prepare("SELECT iduser, mail, nivel FROM userParking WHERE iduser = ?");
         $stmt->bind_param("i",$id);
 
         try{
@@ -50,7 +50,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     // Si no hay datos JSON, devolver todos los registros
     else {
         // Prepara y ejecuta una consulta SQL para obtener todos los registros
-        $stmt = $conn->prepare("SELECT iddest, ciudad, valor FROM destParking");
+        $stmt = $conn->prepare("SELECT u.iduser, u.mail, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm ORDER BY iduser");
         
         try{
             $stmt->execute();
@@ -82,25 +82,20 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
     // Verifica si la decodificación de JSON fue exitosa
     if ($data !== null){
         // Obtener datos desde JSON
-        $ciudad = $data["ciudad"];
-        $valor = $data["valor"];
+        $mail = $data["mail"];
+        $lvl = $data["lvl"];
+        $pass = password_hash($data["pass"], PASSWORD_DEFAULT); // Hashear la contraseña
 
-        if($valor < 0){
-            echo json_encode(['error' => 'Valor no puede ser negativo']);
-            exit();
-        }
-
-        // Prepara y ejecuta una consulta SQL para verificar si ya existe una ciudad en la tabla
-        $chck = $conn->prepare("SELECT ciudad FROM destParking WHERE ciudad = ?");
-        $chck->bind_param("s",$ciudad);
+                // Prepara y ejecuta una consulta SQL para verificar si ya existe una ciudad en la tabla
+        $chck = $conn->prepare("SELECT mail FROM userParking WHERE mail = ?");
+        $chck->bind_param("s",$mail);
         $chck->execute();
         $result = $chck->get_result();
 
         // Verifica si no existe ya una ciudad con el mismo nombre en la tabla
         if($result->num_rows == 0){
-            // Si no existe, prepara y ejecuta una consulta SQL para insertar una nueva ciudad y su valor en la tabla
-            $stmt = $conn->prepare("INSERT INTO destParking (ciudad, valor) VALUES (?, ?)");
-            $stmt->bind_param("si", $ciudad, $valor);
+            $stmt = $conn->prepare("INSERT INTO userParking (mail, pass, nivel) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $mail,$pass, $lvl);
     
             // Ejecuta la consulta SQL para insertar los datos
             if($stmt->execute()){
@@ -134,35 +129,51 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
 
     // Verifica si la decodificación de JSON fue exitosa
     if ($data !== null){
-        // Obtener datos desde JSON
-        $id = $data["id"];
-        $ciudad = $data["ciudad"];
-        $valor = $data["valor"];
+        $id = $data["id"]; // ID del usuario
+        $mail = $data["mail"]; // Correo electrónico
+        $lvl = $data["lvl"]; // Nivel
+        $passOld = $data['passOld']; // Contraseña antigua
+        $passHash = password_hash($data["pass"], PASSWORD_DEFAULT); // Hash de la nueva contraseña
 
         // Prepara y ejecuta una consulta SQL para verificar si existe un registro con el ID dado
-        $chck = $conn->prepare("SELECT ciudad FROM destParking WHERE iddest = ?");
-        $chck->bind_param("i",$id);
+        $chck = $conn->prepare("SELECT mail, pass FROM userParking WHERE mail = ?");
+        $chck->bind_param("s",$mail);
         $chck->execute();
         $result = $chck->get_result();
 
-        // Verifica si existe al menos un registro con el ID dado
-        if($result->num_rows >= 1){
-            // Si existe, prepara y ejecuta una consulta SQL para actualizar el registro
-            $stmt = $conn->prepare("UPDATE destParking SET ciudad = ?, valor = ? WHERE iddest = ?");
-            $stmt->bind_param("sii", $ciudad, $valor, $id);
-    
-            // Ejecuta la consulta SQL de actualización
+        $accountExists = false;
+
+        if($chck->execute()){
+            $result = $chck->get_result(); // Obtener el resultado de la consulta
+
+            if($result->num_rows > 0){
+                $retrn = $result->fetch_Assoc(); // Obtener los datos del usuario como un array asociativo
+
+                // Verificar si la contraseña antigua proporcionada coincide con la almacenada en la base de datos
+                if(password_verify($passOld,$retrn['pass'])){
+                    $accountExists = true; // La cuenta existe si la contraseña coincide
+                } else {
+                    echo json_encode(['error' => 'Contraseña incorrecta']);
+                    exit;
+                }
+            } else {
+                echo json_encode(['error' => 'ID no existe!']);
+            }
+        }
+
+        if($accountExists == true ){
+            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, pass = ?, nivel = ? WHERE iduser = ?");
+            $stmt->bind_param("ssii", $mail,$passHash, $lvl, $id);
+
             try{
                 if($stmt->execute()){
                     echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente']);
                 } else {
                     echo json_encode(['error' => $conn->error]);
                 }
-            } catch (mysqli_sql_exception $e){
+            } catch(mysqli_sql_exception $e) {
                 echo json_encode(['error' => mysqli_errno($conn)]);
             }
-        } else {
-            echo json_encode(['error' => 'ID no existe!']);
         }
     } else {
         echo json_encode(['error' => 'Error al decodificar JSON']);
@@ -188,7 +199,7 @@ else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
         $id = $data;
 
         // Preparar y ejecutar consulta SQL para verificar la existencia del registro
-        $chck = $conn->prepare("SELECT ciudad FROM destParking WHERE iddest = ?");
+        $chck = $conn->prepare("SELECT iduser FROM userParking WHERE iduser = ?");
         $chck->bind_param("i",$id);
         $chck->execute();
         $result = $chck->get_result();
@@ -196,7 +207,7 @@ else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
         // Verificar si hay al menos una fila devuelta
         if($result->num_rows >= 1){
             // Preparar y ejecutar consulta SQL para eliminar el registro
-            $stmt = $conn->prepare("DELETE FROM destParking WHERE iddest = ?");
+            $stmt = $conn->prepare("DELETE FROM userParking WHERE iduser = ?");
             $stmt->bind_param("i", $id);
     
             // Ejecutar la consulta SQL para eliminar el registro

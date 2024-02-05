@@ -1,64 +1,41 @@
 <div class="caja1" id="pageDestinos">
-    <!-- Encabezado de la sección de destinos -->
-    <div class="card2" style="text-align:center">
-        <!-- Título de la sección -->
+    <div class="card" style="text-align:center">
         <h1>Destinos</h1>
-        <!-- Botón para crear un nuevo destino -->
-        <button onclick="openDestIns()" class="ctrlgrn" id="btnCreateEmp">Crear Destino</button>
-        <br>
+        <button onclick="modalDestInsert()" class="ctrlgrn" id="btnCreateDest">Crear Destino</button>
         <hr>
-        <br>
     </div>
-    <!-- Botón para actualizar la lista de destinos -->
-    <button onclick="actualizarDest()" class="ctrlyel fa fa-refresh"></button>
-    <!-- Tabla para mostrar la lista de destinos -->
-    <table id="tableDestinos">
+    <button onclick="refreshDest()" class="ctrlyel fa fa-refresh" id="btnRefreshDest"></button>
+    <table id="tabelDest">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Ciudad</th>
+                <th>Patente</th>
                 <th>Valor</th>
-                <th>Controles</th>
+                <th class="no-sort">Controles</th>
             </tr>
         </thead>
-        <tbody>
-        </tbody>
     </table>
 </div>
-
-<!-- Modal Insert -->
-<div class="mdl-overlay" id="destins-overlay" onclick="closeModal('destins')"></div>
-<div class="mdl-content" id="destins-modal">
-    <!-- Encabezado del modal para insertar un destino -->
+<!-- Insertar -->
+<div id="destinsert-overlay" onclick="closeModal('destinsert')" class="mdl-overlay"></div>
+<div id="destinsert-modal" class="mdl-content">
     <h1>Ingresar Destino</h1>
-    <!-- Formulario para insertar un nuevo destino -->
-    <form action="" method="post" id="formDestInsert">
-        <!-- Campo de entrada para la ciudad del nuevo destino -->
-        <input type="text" name="ciudad" id="ciudad" class="entrada" placeholder="Ciudad" required/>
-        <!-- Campo de entrada para el valor del nuevo destino -->
-        <input type="number" name="valor" id="valor" class="entrada" placeholder="Valor" required/>
-        <!-- Botón para enviar el formulario de inserción -->
-        <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
+    <form onsubmit="doInsertDest(event)" method="POST" id="formInsertDest">
+        <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
+        <input required type="number" name="valor" class="entrada" placeholder="0">
+        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>
-
-<!-- Modal Update -->
-<div class="mdl-overlay" id="destupd-overlay" onclick="closeModal('destupd')"></div>
-<div class="mdl-content" id="destupd-modal">
-    <!-- Encabezado del modal para actualizar un destino -->
-    <h1>Actualizar Destino</h1>
-    <!-- Formulario para actualizar un destino -->
-    <form action="" method="post" id="formDestUpdate">
-        <!-- Campo oculto para almacenar el ID del destino a actualizar -->
-        <input type="number" name="iddest" id="iddest" required style="display: none;"/>
-        <!-- Campo de entrada para la ciudad del destino a actualizar -->
-        <input type="text" name="ciudad" id="ciudad" class="entrada" placeholder="Ciudad" required/>
-        <!-- Campo de entrada para el valor del destino a actualizar -->
-        <input type="number" name="valor" id="valor" class="entrada" placeholder="Valor" required/>
-        <!-- Botón para enviar el formulario de actualización -->
-        <button type="submit" class="btn" name="btnSubmit">Ingresar</button>
+<!-- Modificar -->
+<div id="destupdate-overlay" onclick="closeModal('destupdate')" class="mdl-overlay"></div>
+<div id="destupdate-modal" class="mdl-content">
+    <h1>Modificar Destino</h1>
+    <form onsubmit="doUpdateDest(event)" method="POST" id="formUpdateDest">
+        <input type="hidden" name="iddest">
+        <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
+        <input required type="number" name="valor" class="entrada" placeholder="0">
+        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>
-
-<!-- Script para manejar la lógica de destinos -->
-<script src="js/destinos.js"></script>
+<script src="js/Data/destDA.js"></script>
+<script src="js/destUI.js"></script>

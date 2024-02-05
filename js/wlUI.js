@@ -1,5 +1,3 @@
-const apiWhitelist = "http://localhost/parkingCalama/php/whitelist/api.php";
-
 // Nota: Buscar como validar patentes antiguas
 const patRegEx = /^[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}$/;
 
@@ -55,10 +53,11 @@ async function modalWLDelete(idIn){
 
 async function refreshWL(){
     if(getCookie('jwt')){
-        document.getElementById('btnRefreshWL').disabled = true;
-        document.getElementById('btnRefreshWL').classList.remove('fa-refresh');
-        document.getElementById('btnRefreshWL').classList.add('fa-hourglass');
-        document.getElementById('btnRefreshWL').classList.add('disabled');
+        const refreshBtn = document.getElementById('btnRefreshWL');
+        refreshBtn.disabled = true;
+        refreshBtn.classList.remove('fa-refresh');
+        refreshBtn.classList.add('fa-hourglass');
+        refreshBtn.classList.add('disabled');
 
         let data = await getWL();
 
@@ -75,10 +74,10 @@ async function refreshWL(){
             });
             tableWL.draw();
         }
-        document.getElementById('btnRefreshWL').disabled = false;
-        document.getElementById('btnRefreshWL').classList.add('fa-refresh');
-        document.getElementById('btnRefreshWL').classList.remove('fa-hourglass');
-        document.getElementById('btnRefreshWL').classList.remove('disabled');
+        refreshBtn.disabled = false;
+        refreshBtn.classList.add('fa-refresh');
+        refreshBtn.classList.remove('fa-hourglass');
+        refreshBtn.classList.remove('disabled');
     }
 }
 
@@ -95,7 +94,7 @@ async function doInsertWL(e) {
         return;
     }
 
-    form.btnSubmit.disable = true;
+    form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
     datos = { patente: form.patente.value, empresa: 1 };
@@ -106,7 +105,7 @@ async function doInsertWL(e) {
     } else {
         closeModal('wlinsert');
     }
-    form.btnSubmit.disable = false;
+    form.btnSubmit.disabled = false;
     form.btnSubmit.classList.remove('disabled');
     refreshWL();
 }
@@ -124,7 +123,7 @@ async function doUpdateWL(e) {
         return;
     }
 
-    form.btnSubmit.disable = true;
+    form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
     datos = { id: form.idwl.value, patente: form.patente.value, empresa: 1 };
@@ -139,7 +138,7 @@ async function doUpdateWL(e) {
     } else {
         closeModal('wlupdate');
     }
-    form.btnSubmit.disable = false;
+    form.btnSubmit.disabled = false;
     form.btnSubmit.classList.remove('disabled');
     refreshWL();
 }

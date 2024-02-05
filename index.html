@@ -12,6 +12,7 @@
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <!-- Inclusión de DataTables -->
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+  <script src="js/Data/validDA.js"></script>
 </head>
 <body>
 
@@ -98,7 +99,7 @@
     });
 
     // URL para validar el token de autenticación
-    var urlValidate = "http://localhost/parkingCalama/php/login/validate.php";
+    const urlValidate = "http://localhost/parkingCalama/php/login/validate.php";
 
     if (getCookie('jwt')) {
       // Validar el token de autenticación

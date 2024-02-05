@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `movParking`;
 CREATE TABLE `movParking` (
   `idmov` int NOT NULL AUTO_INCREMENT,
   `fechaent` date DEFAULT NULL,

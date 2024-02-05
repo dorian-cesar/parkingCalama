@@ -3,59 +3,53 @@
     <div class="card2" style="text-align:center">
         <h1>Usuarios</h1>
         <!-- Botón para registrar un nuevo usuario -->
-        <button class="ctrlgrn" onclick="insertUsr()" id="btnCreateUsr">Registrar Usuario</button>
-        <br/>
+        <button class="ctrlgrn" onclick="modalUsrInsert()">Registrar Usuario</button>
         <hr/>
-        <br/>
     </div>
     
-    <!-- Contenedor de la lista de usuarios -->
-    <div id="wllist">
-        <!-- Botón para actualizar la lista de usuarios -->
-        <button id="refreshUsrBtn" class="ctrlyel fa fa-refresh" onclick="actualizarUsuarios()"></button>
-        <!-- Tabla para mostrar la lista de usuarios -->
-        <table id="tableEnroll">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Correo</th>
-                    <th>Nivel</th>
-                    <th class="no-sort">Controles</th>
-                </tr>
-            </thead>
-            <tbody id="tbEnrList">
-            </tbody>
-        </table>
-    </div>
+    <!-- Botón para actualizar la lista de usuarios -->
+    <button id="btnRefreshUsr" class="ctrlyel fa fa-refresh" onclick="refreshUsr()"></button>
+    <!-- Tabla para mostrar la lista de usuarios -->
+    <table id="tableUsr">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Correo</th>
+                <th>Nivel</th>
+                <th class="no-sort">Controles</th>
+            </tr>
+        </thead>
+    </table>
     
     <!-- Formulario para crear un nuevo usuario -->
-    <div id="mUsrInsert-overlay" onclick="closeModal('mUsrInsert')" class="mdl-overlay"></div>
-    <div id="mUsrInsert-modal" class="mdl-content">
-        <h1 class="tituloModal">Crear Usuario</h1>
-        <form action="" method="POST" id="formUsrInsert">
-            <input required id="mail" name="mail" type="email" class="entrada" placeholder="Correo">
-            <input required id="pass" name="pass" type="password" class="entrada" placeholder="Contraseña">
-            <select required id="nivel" name="nivel" class="entrada2">
+    <div id="usrinsert-overlay" onclick="closeModal('usrinsert')" class="mdl-overlay"></div>
+    <div id="usrinsert-modal" class="mdl-content">
+        <h1>Crear Usuario</h1>
+        <form onsubmit="doInsertUsr(event)" method="POST" id="formInsertUsr">
+            <input required name="mail" type="email" class="entrada" placeholder="Correo">
+            <input required name="pass" type="password" class="entrada" placeholder="Contraseña">
+            <select required name="nivel" class="entrada2">
             </select>
-            <button id="formUsrInsert" name="btnSubmit" class="btn">Crear Cuenta</button>
+            <button id="formUsrInsert" name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
         </form>
     </div>
     
     <!-- Formulario para modificar un usuario existente -->
-    <div id="mUsrUpdate-overlay" onclick="closeModal('mUsrUpdate')" class="mdl-overlay"></div>
-    <div id="mUsrUpdate-modal" class="mdl-content">
-        <h1 class="tituloModal">Modificar</h1>
-        <form action="" method="POST" id="formUsrUpdate">
-            <input required id="idUsr" name="idUsr" type="number" style="display: none;">
-            <input required id="mail" name="mail" type="email" class="entrada" placeholder="Correo">
-            <input required id="oldpass" name="oldpass" type="password" class="entrada" placeholder="Contraseña Antigua">
-            <input required id="pass" name="pass" type="password" class="entrada" placeholder="Contraseña">
-            <select required id="nivel" name="nivel" name="nivel" class="entrada2">
+    <div id="usrupdate-overlay" onclick="closeModal('usrupdate')" class="mdl-overlay"></div>
+    <div id="usrupdate-modal" class="mdl-content">
+        <h1>Modificar</h1>
+        <form onsubmit="doUpdateUsr(event)" method="POST" id="formUpdateUsr">
+            <input type="hidden" name="idusr">
+            <input required name="mail" type="email" class="entrada" placeholder="Correo">
+            <input required name="oldpass" type="password" class="entrada" placeholder="Contraseña Antigua">
+            <input required name="pass" type="password" class="entrada" placeholder="Contraseña">
+            <select required name="nivel" name="nivel" class="entrada2">
             </select>
-            <button id="btnUsrUpdate" name="btnSubmit" class="btn">Guardar Cambios</button>
+            <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
         </form>
     </div>
 </div>
 
-<!-- Script para la funcionalidad de la sección Usuarios -->
-<script src="js/enroll.js"></script>
+<script src="js/Data/permDA.js"></script>
+<script src="js/Data/usrDA.js"></script>
+<script src="js/usrUI.js"></script>

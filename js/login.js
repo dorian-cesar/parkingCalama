@@ -10,11 +10,7 @@ const btnEnroll = document.getElementById('formUsrInsert'); // Botón de registr
 
 // URLs para las solicitudes al backend
 // PHP para validar los datos ingresados en la base de datos
-const urlLoad = "http://localhost/parkingCalama/php/login/load.php";
-// PHP para validar la sesion actual
-const urlValidate = "http://localhost/parkingCalama/php/login/validate.php";
-// PHP para enrolar usuarios
-const urlEnroll = "http://localhost/parkingCalama/php/login/enroll.php";
+const apiLogin = "http://localhost/parkingCalama/php/login/api.php";
 
 /* Funciones */
 
@@ -28,7 +24,7 @@ function doLogin(email, pass){
         pass: pass,
     };
     // Realizar solicitud POST al backend para validar credenciales
-    fetch(urlLoad, {
+    fetch(apiLogin, {
         method: 'POST',
         headers: {
             'Content-type' : 'application/x-www-form-urlencoded; charset=UTF-8'
@@ -54,38 +50,7 @@ function logOut(){
     location.reload();
 }
 
-// Inserta usuarios en la BDD
-// Nivel 1 - Usuario
-// Nivel 10 - Administrador
-function createUser(email, pass, nivel){
-    // Objeto con los datos del nuevo usuario
-    datos = {
-        mail: email,
-        pass: pass,
-        lvl: nivel,
-    };
-    // Realizar solicitud POST al backend para registrar usuario
-    fetch(urlEnroll, {
-        method: 'POST',
-        mode: 'cors',
-        headers: {
-            'Content-type' : 'application/json'
-        },
-        body: JSON.stringify(datos)
-    })
-    // Manejar la respuesta del servidor
-    .then(reply => reply.json())
-    .then(data => {
-        // Mostrar un mensaje de alerta dependiendo de la respuesta del servidor
-        if(data!=false){
-            alert('Usuario creado correctamente!');
-        } else {
-            alert('Usuario ya existe!');
-        }
-    })
-    // Manejar errores en la solicitud
-    .catch(error => console.log(error));
-}
+
 
 // Llama a PHP para insertar un nuevo usuario
 

@@ -9,9 +9,9 @@ async function calcAndenes() {
         return;
     }
 
-    if (!/^[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}$/.test(input)) {
+    if(!patRegEx.test(input)){
         console.log('No es patente, leer QR');
-        return; // To-Do: leer QR o Codigo de Barra
+        return; //To-Do leer QR o Codigo de Barra
     }
 
     try {
@@ -31,11 +31,11 @@ async function calcAndenes() {
                 const diferencia = (date.getTime() - fechaent.getTime()) / 1000;
                 const minutos = Math.ceil((diferencia / 60) / 25);
 
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
+                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
                 const ret = await getWLByPatente(data['patente']);
-                const destInfo = await getDestinoByID(dest.value);
+                const destInfo = await getDestByID(dest.value);
 
                 let valorTot = minutos * destInfo['valor'];
                 if (ret !== null) {
@@ -43,13 +43,14 @@ async function calcAndenes() {
                 }
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
+                empPat.textContent = `Empresa: ${data['empresa']}`;
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
                 tiempPat.textContent = `Tiempo de Parking: ${minutos * 25} min.`;
                 valPat.textContent = `Valor: $${valorTot}`;
 
-                cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
+                cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
                 const datos = {
                     id: data['idmov'],
@@ -58,9 +59,9 @@ async function calcAndenes() {
                     valor: valorTot,
                 };
 
-                await closeMovimiento(datos);
-                actualizarMovimientos();
-                actualizarPagos();
+                await updateMov(datos);
+                refreshMov();
+                refreshPagos();
                 alert('Pago registrado!');
                 document.getElementById('andenQRPat').value = '';
             } else {

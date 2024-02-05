@@ -1,9 +1,9 @@
 /* Data Access */
-const apiWhitelist = "http://localhost/parkingCalama/php/whitelist/api.php";
+const apiDestinos = "http://localhost/parkingCalama/php/destinos/api.php";
 
 // Obtiene todos los registros
-async function getWL() {
-    let ret = await fetch(apiWhitelist, {
+async function getDest() {
+    let ret = await fetch(apiDestinos, {
         method: 'GET',
         mode: 'cors',
         headers: {
@@ -17,8 +17,8 @@ async function getWL() {
 }
 
 // Obtiene un registro basado en ID
-async function getWLByID(idIn) {
-    let ret = await fetch(apiWhitelist + '?' + new URLSearchParams({
+async function getDestByID(idIn) {
+    let ret = await fetch(apiDestinos + '?' + new URLSearchParams({
         id: idIn
         }), {
         method: 'GET',
@@ -33,26 +33,9 @@ async function getWLByID(idIn) {
     return ret;
 }
 
-// Obtiene un registro basado en Patente
-async function getWLByPatente(patIn) {
-    let ret = await fetch(apiWhitelist + '?' + new URLSearchParams({
-        patente: patIn
-        }), {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
-    })
-    .then(reply => reply.json())
-    .then(data => { return data; })
-    .catch(error => { console.log(error); });
-    return ret;
-}
-
 // Borra un registro basado en ID
-async function deleteWL(idIn) {
-    let ret = await fetch(apiWhitelist, {
+async function deleteDest(idIn) {
+    let ret = await fetch(apiDestinos, {
         method: 'DELETE',
         mode: 'cors',
         headers: {
@@ -68,9 +51,9 @@ async function deleteWL(idIn) {
 }
 
 // Actualiza un registro
-// Datos: id, patente, empresa
-async function updateWL(datos) {
-    let ret = await fetch(apiWhitelist, {
+// Datos: id, ciudad, valor
+async function updateDest(datos) {
+    let ret = await fetch(apiDestinos, {
         method: 'PUT',
         mode: 'cors',
         headers: {
@@ -86,9 +69,9 @@ async function updateWL(datos) {
 }
 
 // Inserta un registro
-// Datos: patente, empresa
-async function insertWL(datos) {
-    let ret = await fetch(apiWhitelist, {
+// Datos: ciudad, valor
+async function insertDest(datos) {
+    let ret = await fetch(apiDestinos, {
         method: 'POST',
         mode: 'cors',
         headers: {

@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS `permParking`;
+
 CREATE TABLE `permParking` (
   `idperm` int NOT NULL AUTO_INCREMENT,
   `nivel` int DEFAULT NULL,
@@ -20,6 +22,7 @@ VALUES
 (10,
 'Administrador');
 
+DROP TABLE IF EXISTS `userParking`;
 CREATE TABLE `userParking` (
   `iduser` int NOT NULL AUTO_INCREMENT,
   `mail` varchar(30) DEFAULT NULL,
@@ -40,6 +43,7 @@ VALUES
 '$2a$12$.RUbsTcGPqOXPUaSjOw/.ON9ZSo629LN.3uPPH3Lsp9lVJ11AokO6',
 10);
 
+DROP TABLE IF EXISTS `empParking`;
 CREATE TABLE `empParking` (
   `idemp` int NOT NULL AUTO_INCREMENT,
   `nombre` varchar(20) DEFAULT NULL,
@@ -54,6 +58,7 @@ VALUES
 ('TurBus',
 'contacto@turbus.cl');
 
+DROP TABLE IF EXISTS `wlParking`;
 CREATE TABLE `wlParking` (
   `idwl` int NOT NULL AUTO_INCREMENT,
   `patente` varchar(20) DEFAULT NULL,

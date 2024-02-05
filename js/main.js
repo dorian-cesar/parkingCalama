@@ -11,7 +11,14 @@ function blankPage() {
   });
 }
 
+// Iniciar Tablas
 refreshWL();
+refreshDest();
+refreshUsr();
+refreshEmp();
+refreshMov();
+refreshPagos();
+listarAndenesDestinos();
 
 // Abre el modal especificado
 // modal: nombre del modal
@@ -92,7 +99,6 @@ function listablanca(){
 // Muestra la página "Buses" y oculta las demás
 function buses(){
   blankPage();// Oculta todas las páginas
-  listarAndenesDestinos();
   //listarAndenesEmpresas();
   document.getElementById('pageBuses').style.display = 'block';
 }

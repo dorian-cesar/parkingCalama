@@ -30,8 +30,9 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
 
     if(isset($_GET['patente'])){
         $patente = str_replace('-','',$_GET['patente']);
+        $date = date('Y-m-d');
         $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor FROM movParking as m JOIN empParking as e ON m.empresa = e.idemp WHERE m.patente = ? AND m.fechaent = ? ORDER BY m.idmov DESC");
-        $stmt->bind_param("ss",$patente, date('Y-m-d'));
+        $stmt->bind_param("ss",$patente, $date);
     
         try {
             $stmt->execute();
@@ -45,8 +46,10 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo json_encode(['error' => $e]);
         }
     } else if(isset($_GET['id'])){
+        $id = $_GET['id'];
+        $date = date('Y-m-d');
         $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor FROM movParking as m JOIN empParking as e ON m.empresa = e.idemp WHERE m.idmov = ? AND m.fechaent = ?");
-        $stmt->bind_param("is",$_GET['id'],date('Y-m-d'));
+        $stmt->bind_param("is",$id,$date);
     
         try {
             $stmt->execute();
@@ -68,9 +71,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     
         try {
             $stmt->execute();
-    
             $result = $stmt->get_result();
-    
             $datos = $result->fetch_all(MYSQLI_ASSOC);
     
             echo json_encode($datos);
@@ -100,8 +101,8 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $empresa = $data['empresa'];
         $tipo = $data['tipo'];
 
-        $chck = $conn->prepare("SELECT idmov FROM movParking WHERE patente = ? AND tipo = ? AND fechasal = '0000-00-00'");
-        $chck->bind_param("ss",$patente,$tipo);
+        $chck = $conn->prepare("SELECT idmov FROM movParking WHERE patente = ? AND fechasal = '0000-00-00'");
+        $chck->bind_param("s",$patente);
         $chck->execute();
         $result = $chck->get_result();
 
@@ -113,13 +114,13 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $id = $conn->insert_id;
                 echo json_encode(['id' => $id, 'msg' => 'Insertado correctamente']);
             } else {
-                echo json_encode(['error' => 'Error al insertar']);
+                echo json_encode(['error' => $conn->error]);
             }
         } else {
             echo json_encode(['error' => 'Ya existe registro!']);
         }
     } else {
-        echo json_encode(['error' => 'No se han enviado datos!']);
+        echo json_encode(['error' => 'Error al decodificar JSON']);
     }
 }
 // Update (Pagado)
@@ -149,7 +150,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
             echo json_encode(['error' => 'Error al actualizar']);
         }
     } else {
-        echo json_encode(['error' => 'No se han enviado datos!']);
+        echo json_encode(['error' => 'Error al decodificar JSON']);
     }
 }
 $conn->close();

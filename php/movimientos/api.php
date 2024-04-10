@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 // Establece los encabezados CORS para permitir solicitudes desde cualquier origen y métodos POST
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 
 // Verifica si la solicitud es OPTIONS (solicitud de pre-vuelo)
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {

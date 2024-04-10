@@ -23,12 +23,21 @@ function doLogin(email, pass){
         mail: email,
         pass: pass,
     };
+    axios.post(apiLogin, datos)
+    .then(function (response) {
+        console.log(response);
+    })
+    .catch(function (error) {
+        console.log(error);
+    })
+    .finally(function () {
+    });/*
     // Realizar solicitud POST al backend para validar credenciales
     fetch(apiLogin, {
         method: 'POST',
         mode: 'cors',
         headers: {
-            'Content-type' : 'application/x-www-form-urlencoded; charset=UTF-8'
+            'Content-type' : 'application/json; charset=UTF-8'
         },
         body: JSON.stringify(datos)
     })
@@ -41,7 +50,7 @@ function doLogin(email, pass){
         location.reload();
     })
     // Manejar errores en la solicitud
-    .catch(error => console.log(error));
+    .catch(error => console.log(error));*/
 }
 
 // Elimina el token JWT

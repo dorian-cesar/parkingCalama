@@ -1,8 +1,5 @@
 <?php
 //valida credenciales y generacion de token y lo guarda 
-
-declare(strict_types=1); // Declaración de tipos estrictos para mejorar la seguridad
-
 header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST"); // Permitir solicitudes POST
 

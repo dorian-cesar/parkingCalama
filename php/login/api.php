@@ -74,7 +74,7 @@ try {
         ];
     
         header("Content-Type: text/plain"); // Establecer el tipo de contenido de la respuesta como texto plano
-        echo JWT::encode($data,$secretkey,'HS512'); // Codificar los datos en un token JWT y devolverlo como respuesta
+        echo JWT::encode($data,$secretkey,'HS256'); // Codificar los datos en un token JWT y devolverlo como respuesta
     } else {
         echo "Error"; // Devolver mensaje de error si las credenciales no son válidas
     }

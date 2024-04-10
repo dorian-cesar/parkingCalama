@@ -32,7 +32,7 @@ if (! $jwt) {
     exit;
 }
 
-$token = JWT::decode($jwt, $secretkey, ['HS512']); // Decodificar el token JWT utilizando la clave secreta
+$token = JWT::decode($jwt, $secretkey, array('HS256')); // Decodificar el token JWT utilizando la clave secreta
 $now = new DateTimeImmutable(); // Obtener la fecha y hora actual
 $serverName = "wit.la"; // Nombre del servidor
 

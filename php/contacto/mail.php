@@ -1,7 +1,7 @@
 <?php
 // Establece los encabezados CORS para permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
 
 // Verifica si la solicitud es OPTIONS (solicitud de pre-vuelo)
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {

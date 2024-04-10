@@ -4,7 +4,7 @@
 declare(strict_types=1); // Declaración de tipos estrictos para mejorar la seguridad
 
 header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
-header("Access-Control-Allow-Methods: POST"); // Permitir solicitudes POST
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST
 
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     // El navegador está realizando una solicitud de pre-vuelo OPTIONS

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 header("Access-Control-Allow-Origin: *"); // Establece el encabezado CORS para permitir solicitudes desde cualquier origen
-header("Access-Control-Allow-Methods: POST"); // Especifica que solo se permiten solicitudes POST
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // Especifica que solo se permiten solicitudes POST
 
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     // Si la solicitud es OPTIONS (solicitud previa), se configuran los encabezados CORS necesarios

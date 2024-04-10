@@ -1,5 +1,5 @@
 /* Data Access */
-const apiPermisos = "http://localhost/parkingCalama/php/permisos/api.php";
+const apiPermisos = baseURL+"/permisos/api.php";
 
 // Obtiene todos los registros
 async function getPerm() {

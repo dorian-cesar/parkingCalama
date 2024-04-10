@@ -1,6 +1,6 @@
 var tableMov = $('#tableMov').DataTable({
     order: [[0, 'desc']],
-    language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" },
+    language: { url: "esCLDT.json" },
     columnDefs : [ {
         targets: 'no-sort',
         orderable: false,

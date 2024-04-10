@@ -1,5 +1,5 @@
 /* Data Access */
-const apiWhitelist = "http://localhost/parkingCalama/php/whitelist/api.php";
+const apiWhitelist = baseURL+"/whitelist/api.php";
 
 // Obtiene todos los registros
 async function getWL() {

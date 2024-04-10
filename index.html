@@ -7,11 +7,11 @@
   <!-- Enlaces a hojas de estilo externas -->
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.css" />
+  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" />
   <!-- Inclusión de jQuery -->
   <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
   <!-- Inclusión de DataTables -->
-  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.js"></script>
+  <script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
   <script src="js/Data/validDA.js"></script>
 </head>
 <body>
@@ -80,6 +80,8 @@
 </div>
 
 <script>
+  const baseURL = "https://masgps-bi.wit.la/parkingCalama/php";
+  //const baseURL = "http://localhost/parkingCalama/php";
   // Función para inicializar la interfaz de usuario
   function initUI() {
     // Elementos que solo deben verse por usuarios y administradores
@@ -99,7 +101,7 @@
     });
 
     // URL para validar el token de autenticación
-    const urlValidate = "http://localhost/parkingCalama/php/login/validate.php";
+    const urlValidate = baseURL+"/login/validate.php";
 
     if (getCookie('jwt')) {
       // Validar el token de autenticación

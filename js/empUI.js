@@ -3,7 +3,7 @@
 var tableEmp = $('#tableEmp').DataTable({
     // Configuración inicial de la tabla DataTable
     order: [[0, 'desc']], // Ordenar por la primera columna (ID) de forma descendente al cargar
-    language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" }, // Configuración del idioma
+    language: { url: "esCLDT.json" }, // Configuración del idioma
     columnDefs : [ {
         targets: 'no-sort', // Clases CSS de columnas que no se pueden ordenar
         orderable: false, // No permitir ordenar estas columnas

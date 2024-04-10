@@ -1,5 +1,5 @@
 /* Data Access */
-const apiDestinos = "http://localhost/parkingCalama/php/destinos/api.php";
+const apiDestinos = baseURL+"/destinos/api.php";
 
 // Obtiene todos los registros
 async function getDest() {

@@ -1,5 +1,5 @@
 /* Data Access */
-const apiUsers = "http://localhost/parkingCalama/php/users/api.php";
+const apiUsers = baseURL+"/users/api.php";
 
 // Obtiene todos los registros
 async function getUsr() {

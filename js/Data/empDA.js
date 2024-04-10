@@ -1,5 +1,5 @@
 /* Data Access */
-const apiEmpresas = "http://localhost/parkingCalama/php/empresas/api.php";
+const apiEmpresas = baseURL+"/empresas/api.php";
 
 // Obtiene todos los registros
 async function getEmp() {

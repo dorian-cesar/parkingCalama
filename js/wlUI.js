@@ -3,7 +3,7 @@ const patRegEx = /^[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}-?[a-zA-Z\d]{2}$/;
 
 var tableWL = $('#tableWL').DataTable({
     order: [[0, 'desc']], // Ordena la tabla por la primera columna de forma descendente
-    language: { url: "//cdn.datatables.net/plug-ins/1.13.7/i18n/es-CL.json" }, // Define el idioma de la tabla
+    language: { url: "esCLDT.json" }, // Define el idioma de la tabla
     columnDefs : [ {
         targets: 'no-sort', // Aplica esta configuración a las columnas con la clase 'no-sort'
         orderable: false, // No permite ordenar las columnas con la clase 'no-sort'

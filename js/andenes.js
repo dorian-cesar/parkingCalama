@@ -119,7 +119,7 @@ function listarAndenesDestinos(){
 async function andGetEmpresas(){
     if(getCookie('jwt')){
         // Función para obtener todas las empresas
-        let ret = await fetch("https://masgps-bi.wit.la/parkingCalama/php/empresas/get.php", {
+        let ret = await fetch(baseURL+"/empresas/get.php", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {

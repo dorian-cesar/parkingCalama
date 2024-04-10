@@ -1,5 +1,5 @@
 /* Data Access */
-const apiMovimientos = "http://localhost/parkingCalama/php/movimientos/api.php";
+const apiMovimientos = baseURL+"/movimientos/api.php";
 
 // Obtiene todos los registros
 async function getMov() {

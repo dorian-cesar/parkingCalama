@@ -25,7 +25,8 @@ function doLogin(email, pass){
     };
     axios.post(apiLogin, datos)
     .then(function (response) {
-        console.log(response);
+        document.cookie = `jwt=${response.data};path=/; samesite=lax; secure;`;
+        location.reload();
     })
     .catch(function (error) {
         console.log(error);

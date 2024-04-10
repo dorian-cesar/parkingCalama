@@ -9,7 +9,7 @@ $LVLADMIN = 10;
 $LVLAUDIT = 5;
 $LVLUSER = 1;
 
-if(! $headers['Authorization']) {
+if(! isset($headers['Authorization'])) {
     echo json_encode(['error' => 'No se envió un token', 'headers' => $headers]);
     exit;
 }

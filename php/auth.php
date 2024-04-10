@@ -20,7 +20,7 @@ require_once('../../vendor/autoload.php');
 // Verificar si el encabezado Authorization contiene un token JWT
 if (! preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
     header('HTTP/1.0 400 Bad Request');
-    echo json_encode(['error' => 'No se envió un token']);
+    echo json_encode(['error' => 'No se envió un token', 'headers' => $headers]);
     exit;
 }
 

@@ -2,6 +2,7 @@
 //Valida Token 
 header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     // El navegador está realizando una solicitud de pre-vuelo OPTIONS
@@ -22,7 +23,7 @@ try {
     // Verificar si el encabezado Authorization contiene un token JWT
     if (! preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
         header('HTTP/1.0 400 Bad Request');
-        echo 'Token not found in request '.$headers['Authorization']; // Devolver un mensaje de error si el token no se encuentra en la solicitud
+        echo json_encode(['error' => 'No se envió un token']);
         exit;
     }
     

@@ -107,28 +107,25 @@
 
     if (getCookie('jwt')) {
       // Validar el token de autenticación
-      fetch(urlValidate, {
-          method: 'POST',
-          mode: 'cors',
-          headers: {
-            'Authorization': `Bearer ${getCookie('jwt')}`
-          }
-        })
-        .then(response => response.json())
-        .then(data => {
-          // Ocultar elementos para usuarios no registrados
+      axios.post(urlValidate,{},{
+        headers: {
+          'Authorization' : `Bearer ${getCookie('jwt')}`
+        }
+      })
+      .then(reply => {
+        console.log(reply);
           guestCtl.forEach(item => {
             item.style.display = 'none';
           });
           // Mostrar elementos según el nivel de acceso del usuario
-          if (data[0]['lvl'] <= 10) {
+          if (reply.data[0]['lvl'] <= 10) {
             sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=nbUsr]');
 
             sideBarCtl.forEach(item => {
               item.style.display = 'block';
             });
           }
-          if (data[0]['lvl'] >= 10) {
+          if (reply.data[0]['lvl'] >= 10) {
             sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
 
             sideBarCtl.forEach(item => {
@@ -136,9 +133,9 @@
             });
           }
           // Mostrar el correo del usuario autenticado
-          document.getElementById('sbUsrMail').textContent = ' ' + data[0]['user'];
-        })
-        .catch(error => console.log(error));
+          document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];
+      })
+      .catch(error => console.log(error));
     }
   }
 

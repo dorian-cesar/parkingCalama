@@ -10,7 +10,7 @@ const btnEnroll = document.getElementById('formUsrInsert'); // Botón de registr
 
 // URLs para las solicitudes al backend
 // PHP para validar los datos ingresados en la base de datos
-const apiLogin = "http://localhost/parkingCalama/php/login/api.php";
+const apiLogin = "https://masgps-bi.wit.la/parkingCalama/php/login/api.php";
 
 /* Funciones */
 

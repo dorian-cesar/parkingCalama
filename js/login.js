@@ -26,8 +26,9 @@ function doLogin(email, pass){
     // Realizar solicitud POST al backend para validar credenciales
     fetch(apiLogin, {
         method: 'POST',
+        mode: 'cors',
         headers: {
-            'Content-type' : 'application/json; charset=UTF-8'
+            'Content-type' : 'application/x-www-form-urlencoded; charset=UTF-8'
         },
         body: JSON.stringify(datos)
     })

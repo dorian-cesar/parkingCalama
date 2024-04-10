@@ -22,7 +22,7 @@ try {
     // Verificar si el encabezado Authorization contiene un token JWT
     if (! preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
         header('HTTP/1.0 400 Bad Request');
-        echo 'Token not found in request'; // Devolver un mensaje de error si el token no se encuentra en la solicitud
+        echo 'Token not found in request '.$headers['Authorization']; // Devolver un mensaje de error si el token no se encuentra en la solicitud
         exit;
     }
     

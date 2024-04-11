@@ -1,4 +1,5 @@
 // Definimos la tabla de DataTables
+console.log('creating destinos table');
 var tableDest = $('#tabelDest').DataTable({
     order: [[0, 'desc']],
     language: { url: "esCLDT.json" },
@@ -6,11 +7,14 @@ var tableDest = $('#tabelDest').DataTable({
         targets: 'no-sort',
         orderable: false,
     }],
+    ajax: {
+        url: apiWhitelist,
+    },
     columns: [
         { data: 'iddest'},
         { data: 'ciudad'},
         { data: 'valor'},
-        { data: 'ctrl', className: 'no-sort'}
+        { data: null, className: 'no-sort'}
     ]
 });
 
@@ -57,7 +61,7 @@ async function modalDestDelete(idIn){
 
 // Refrescar Tabla
 async function refreshDest(){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         // Creamos una referencia al boton de refresh para desactivarlo
         const refreshBtn = document.getElementById('btnRefreshDest');
         refreshBtn.disabled = true;
@@ -67,6 +71,7 @@ async function refreshDest(){
 
         // Obtenemos los destinos
         let data = await getDest();
+        console.log(data);
 
         if(data){
             // Si existen destinos, limpiamos la tabla y regeneramos

@@ -117,14 +117,11 @@ function listarAndenesDestinos(){
 }
 
 async function andGetEmpresas(){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         // Función para obtener todas las empresas
         let ret = await fetch(baseURL+"/empresas/get.php", {
                 method: 'POST',
                 mode: 'cors',
-                headers: {
-                    'Authorization': `Bearer ${getCookie('jwt')}`
-                }
             })
             .then(reply => reply.json())
             .then(data => {
@@ -138,13 +135,10 @@ async function andGetEmpresas(){
 }
 
 async function andGetDestinos(){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         let ret = await fetch(apiDestinos, {
                 method: 'GET',
                 mode: 'cors',
-                headers: {
-                  'Authorization': `Bearer ${getCookie('jwt')}`
-                }
             })
             .then(reply => reply.json())
             .then(data => {

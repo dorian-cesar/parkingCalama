@@ -1,7 +1,4 @@
 <?php
-// Declaración estricta de tipos para garantizar la coherencia en el tipo de datos
-declare(strict_types=1);
-
 // Establece los encabezados CORS para permitir solicitudes desde cualquier origen y métodos POST
 header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
@@ -18,14 +15,9 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 // Incluye el archivo de configuración de la base de datos
 include("../conf.php");
 
-include('../auth.php');
+
 
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
 
     // Seleccionar por ID
     if(isset($_GET['id'])) {
@@ -40,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     } else if(isset($_GET['patente'])) {
@@ -55,7 +47,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     } else {
@@ -76,18 +68,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     }
 }
 
 else if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
 
     // Leer datos JSON del cuerpo de la solicitud POST
     $json_data = file_get_contents("php://input");
@@ -168,7 +155,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "PUT") {
                 // Capturar excepciones de MySQLi y devolver el código de error
                 echo json_encode(['error' => mysqli_errno($conn)]);
             } catch (Exception $e) {
-                echo json_encode(['error' => $e->message]);
+                echo json_encode(['error' => $e->getMessage()]);
             }
         } else {
             echo json_encode(['error' => 'Registro inexistente']);
@@ -181,20 +168,8 @@ else if ($_SERVER["REQUEST_METHOD"] == "PUT") {
 }
 
 else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
-    if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
-    // Leer datos JSON del cuerpo de la solicitud POST
-    $json_data = file_get_contents("php://input");
-
-    // Decodificar los datos JSON en un array asociativo
-    $data = json_decode($json_data, true);
-
-    // Verificar si se decodificó correctamente el JSON
-    if ($data !== null) {
-        $id = $data;
+    if ($_GET['id']) {
+        $id = $_GET['id'];
 
         // Consultar la base de datos para verificar si existe una entrada con el ID proporcionado
         $chck = $conn->prepare("SELECT idwl FROM wlParking WHERE idwl = ?");
@@ -215,7 +190,7 @@ else if ($_SERVER["REQUEST_METHOD"] == "DELETE") {
                 // Capturar excepciones de MySQLi y devolver el código de error
                 echo json_encode(['error' => mysqli_errno($conn)]);
             } catch (Exception $e) {
-                echo json_encode(['error' => $e->message]);
+                echo json_encode(['error' => $e->getMessage()]);
             }
 
         } else {

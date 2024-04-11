@@ -78,7 +78,7 @@ async function modalUsrDelete(idIn){
 }
 
 async function refreshUsr() {
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         const refreshBtn = document.getElementById('btnRefreshUsr');
         refreshBtn.disabled = true;
         refreshBtn.classList.remove('fa-refresh');

@@ -6,9 +6,6 @@ async function getDest() {
     let ret = await fetch(apiDestinos, {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -23,9 +20,6 @@ async function getDestByID(idIn) {
         }), {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -40,7 +34,6 @@ async function deleteDest(idIn) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(idIn)
     })
@@ -58,7 +51,6 @@ async function updateDest(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -76,7 +68,6 @@ async function insertDest(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })

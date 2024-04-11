@@ -1,0 +1,344 @@
+* {
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    font-family:
+      Inter,
+      -apple-system,
+      BlinkMacSystemFont,
+      'Segoe UI',
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      'Fira Sans',
+      'Droid Sans',
+      'Helvetica Neue',
+      sans-serif;
+}
+
+h1 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+:root {
+    --navbar-height: 50px;
+    --sidebar-width: 250px;
+    --navbar-color: rgb(54, 54, 54);
+    --navbar-sel-color: rgb(109, 108, 108);
+    --button-color: rgb(105, 105, 105);
+    --reload-color: rgb(73, 84, 141);
+    --button-sel-color: rgb(54, 54, 54);
+    --reload-sel-color: rgb(39, 50, 104);
+    --text-main-color: white;
+    --text-invert-color: rgb(73, 73, 73);
+}
+
+header {
+    width: 100vw;
+    display: flex;
+    background-color: var(--navbar-color);
+    height: var(--navbar-height);
+    justify-content: space-between;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+header .left {
+    display: flex;
+    flex: 50%;
+    justify-content: flex-start;
+}
+
+header .right {
+    display: flex;
+    flex: 50%;
+    justify-content: flex-end;
+}
+
+header .menu-toggle,
+header a {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-main-color);
+    width: max-content;
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-decoration: none;
+}
+
+header .menu-toggle:hover,
+header a:hover {
+    text-decoration: underline;
+    background-color: var(--navbar-sel-color);
+}
+
+.sidebar {
+    display: none;
+    background-color: var(--navbar-color);
+    height: calc(100vh - var(--navbar-height));
+    width: var(--sidebar-width);
+    position: fixed;
+    top: var(--navbar-height);
+    overflow: auto;
+    z-index: 5000;
+}
+
+.sbopen {
+    display: block;
+    animation: sbRight .15s;
+}
+
+@keyframes sbRight {
+    from {
+      left: calc(var(--sidebar-width)*-1);
+    }
+    to {
+      left: 0;
+    }
+}
+
+.sidebar a {
+    display: block;
+    font-size: 20px;
+    text-decoration: none;
+    color: var(--text-main-color);
+    line-height: 3rem;
+    padding-left: 2rem;
+}
+
+.sidebar a:hover {
+    text-decoration: underline;
+    background-color: var(--navbar-sel-color);
+}
+
+.content {
+    background-color: white;
+    margin: auto;
+    max-width: 1200px;
+    padding-top: var(--navbar-height);
+}
+
+.btn-main {
+    background-color: var(--button-color);
+    border-radius: 5px;
+    border: none;
+    min-width: 200px;
+    font-weight: bold;
+    color: var(--text-main-color);
+    padding: 10px;
+}
+
+.btn-main:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    background-color: var(--button-sel-color);
+    outline: 1px solid var(--text-invert-color);
+}
+
+.btn-reload {
+    background-color: var(--reload-color);
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    color: var(--text-main-color);
+    padding: 10px;
+}
+
+.btn-reload:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    background-color: var(--reload-sel-color);
+    outline: 1px solid var(--text-invert-color);
+}
+
+.btn-table {
+    background-color: var(--button-color);
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    color: var(--text-main-color);
+    padding: 7px;
+    margin-right: 20px;
+}
+
+.btn-table:hover {
+    cursor: pointer;
+    background-color: var(--button-sel-color);
+    outline: 1px solid var(--text-invert-color);
+}
+
+.modal-bg {
+    display: none;
+    position: fixed;
+    background: #00000055;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+
+.modal-content {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--navbar-color);
+    margin: auto;
+    width: max-content;
+    padding: 30px;
+    border-radius: 15px;
+    z-index: 5000;
+    box-shadow: 0px 0px 10px black;
+}
+
+.modal-content h2 {
+    color: var(--text-main-color);
+}
+
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.form-group {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    padding: 5px;
+    color: var(--text-main-color);
+}
+
+.form-group input {
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 220px;
+    border: 1px solid var(--text-invert-color);
+}
+
+.form-group select {
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 234px;
+    border: 1px solid var(--text-invert-color);
+}
+
+.reg-group {
+    display: flex;
+    justify-content: right;
+    width: 100%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.reg-group label {
+    padding: 5px;
+    color: var(--text-invert-color);
+}
+
+.reg-group input {
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 220px;
+    border: 1px solid var(--text-invert-color);
+}
+
+.reg-group select {
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 234px;
+    border: 1px solid var(--text-invert-color);
+}
+
+.form-contacto {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 20px;
+}
+
+.form-contacto input,
+.form-contacto textarea,
+.form-contacto label,
+.form-contacto button {
+    min-width: 640px;
+    width: 640px;
+    max-width: 640px;
+    padding: 1rem;
+    margin: 1rem;
+    border-radius: 5px;
+    border: 1px solid var(--text-invert-color);
+}
+
+section p {
+    text-align: justify;
+    line-height: 2rem;
+}
+
+.register-cont {
+    display: flex;
+    width: 720px;
+    justify-content: space-between;
+    margin: auto;
+}
+
+.register-left {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+}
+
+.register-right {
+    font-family: Courier, monospace;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--text-invert-color);
+    border-radius: 5px;
+    padding: 1rem;
+    width: 340px;
+}
+
+.btn-print {
+    background-color: var(--button-color);
+    border-radius: 5px;
+    border: none;
+    font-weight: bold;
+    color: var(--text-main-color);
+    padding: 10px;
+    display: inline;
+    width: 45%;
+    margin: auto;
+    text-decoration: none;
+    margin-top: 5px;
+}
+
+.btn-print:hover {
+    text-decoration: underline;
+    cursor: pointer;
+    background-color: var(--button-sel-color);
+    outline: 1px solid var(--text-invert-color);
+}
+
+.printcard a {
+    text-decoration: none;
+}

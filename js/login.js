@@ -25,7 +25,9 @@ function doLogin(email, pass){
     };
     axios.post(apiLogin, datos)
     .then(function (response) {
-        document.cookie = `jwt=${response.data};path=/; samesite=lax; secure;`;
+        localStorage.setItem('login',response.data.login);
+        localStorage.setItem('level',response.data.level);
+        //document.cookie = `jwt=${response.data};path=/; samesite=lax; secure;`;
         location.reload();
     })
     .catch(function (error) {
@@ -56,7 +58,8 @@ function doLogin(email, pass){
 
 // Elimina el token JWT
 function logOut(){
-    document.cookie = 'jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; samesite=lax';
+    localStorage.removeItem('login');// = 'jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; samesite=lax';
+    localStorage.removeItem('level');
     initUI();
     location.reload();
 }

@@ -16,7 +16,7 @@ var tablePagos = $('#tablePagos').DataTable({
 });
 
 async function refreshPagos(){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         const refreshBtn = document.getElementById('btnRefreshPagos');
         refreshBtn.disabled = true;
         refreshBtn.classList.remove('fa-refresh');

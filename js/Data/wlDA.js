@@ -6,9 +6,6 @@ async function getWL() {
     let ret = await fetch(apiWhitelist, {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -23,9 +20,6 @@ async function getWLByID(idIn) {
         }), {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -40,9 +34,6 @@ async function getWLByPatente(patIn) {
         }), {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -57,7 +48,6 @@ async function deleteWL(idIn) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(idIn)
     })
@@ -75,7 +65,6 @@ async function updateWL(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -93,7 +82,6 @@ async function insertWL(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })

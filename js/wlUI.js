@@ -8,10 +8,14 @@ var tableWL = $('#tableWL').DataTable({
         targets: 'no-sort', // Aplica esta configuración a las columnas con la clase 'no-sort'
         orderable: false, // No permite ordenar las columnas con la clase 'no-sort'
     }],
+    ajax: {
+        url: apiWhitelist,
+    },
     columns: [
         { data: 'idwl'}, // Datos de la columna 1: ID de lista blanca
         { data: 'patente'}, // Datos de la columna 2: Patente
-        { data: 'ctrl', className: 'no-sort'} // Datos de la columna 3: Control, con clase 'no-sort'
+        { data: 'empresa'}, // Datos de la columna 2: Patente
+        { data: null, className: 'no-sort'} // Datos de la columna 3: Control, con clase 'no-sort'
     ]
 });
 
@@ -52,7 +56,8 @@ async function modalWLDelete(idIn){
 // Refrescar Tabla
 
 async function refreshWL(){
-    if(getCookie('jwt')){
+    console.log('test');
+    if(usrlvl>0){
         const refreshBtn = document.getElementById('btnRefreshWL');
         refreshBtn.disabled = true;
         refreshBtn.classList.remove('fa-refresh');

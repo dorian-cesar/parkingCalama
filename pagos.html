@@ -1,21 +1,23 @@
-<div class="caja1" id="pagePagos">
-  <div class="card2" style="text-align: center;">
-    <h1>Pagos del Día</h1>
-    <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
-    <hr>
-  </div>
-  <button id="btnRefreshPagos" class="ctrlyel fa fa-refresh" onclick="refreshPagos()"></button>
-  <table id="tablePagos">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Tiempo</th>
-        <th>Patente</th>
-        <th>Empresa</th>
-        <th>Tipo</th>
-        <th>Valor</th>
-      </tr>
-    </thead>
-  </table>
+<div class="caja1" id="pageWhitelist">
+    <div class="card2" style="text-align:center">
+        <h1>Pagos Diarios</h1>
+        <hr>
+    </div>
+    <div class="button-group">
+		<div></div>
+		<button id="btnRefreshPagos" class="btn-reload fa fa-refresh" onclick="refreshPagos()"></button>
+    </div>
+    <table id="tablePagos">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Tiempo</th>
+				<th>Patente</th>
+				<th>Empresa</th>
+				<th>Tipo</th>
+				<th>Valor</th>
+			</tr>
+		</thead>
+        <tbody></tbody>
+    </table>
 </div>
-<script src="js/pagosUI.js"></script>

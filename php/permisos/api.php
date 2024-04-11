@@ -18,14 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 // Incluye el archivo de configuración de la base de datos
 include("../conf.php");
 
-include('../auth.php');
+
 
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
 
     // Seleccionar por ID
     if(isset($_GET['id'])) {
@@ -40,7 +35,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     } else {
@@ -61,7 +56,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     }

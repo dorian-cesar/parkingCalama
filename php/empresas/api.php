@@ -18,14 +18,9 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 // Incluye el archivo de configuración de la base de datos
 include("../conf.php");
 
-include('../auth.php');
+
 
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
 
     if(isset($_GET['id'])){
         // Si hay un ID en los datos, buscar solo ese registro
@@ -60,18 +55,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     }
 }
 
 else if($_SERVER['REQUEST_METHOD'] == "POST"){
-    if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
 
     // Obtiene los datos JSON del cuerpo de la solicitud
     $json_data = file_get_contents("php://input");
@@ -114,11 +104,6 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
 }
 
 else if($_SERVER['REQUEST_METHOD'] == "PUT"){
-    if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
 
     // Obtiene los datos JSON del cuerpo de la solicitud
     $json_data = file_get_contents("php://input");
@@ -164,22 +149,9 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
 }
 
 else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
-    if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
-
-    // Obtiene los datos JSON del cuerpo de la solicitud
-    $json_data = file_get_contents("php://input");
-
-    // Decodifica los datos JSON
-    $data = json_decode($json_data, true);
-
-    // Verifica si la decodificación de JSON fue exitosa
-    if ($data !== null){
-        // Obtener datos desde JSON
-        $id = $data;
+    if(isset($_GET['id'])){
+        // Si hay un ID en los datos, buscar solo ese registro
+        $id = $_GET['id'];
 
         // Preparar y ejecutar consulta SQL para verificar la existencia del registro
         $chck = $conn->prepare("SELECT nombre FROM empParking WHERE idemp = ?");

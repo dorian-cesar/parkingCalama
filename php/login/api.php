@@ -2,7 +2,6 @@
 //valida credenciales y generacion de token y lo guarda 
 header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST y OPTIONS
-use Firebase\JWT\JWT; // Importar la clase JWT desde la biblioteca Firebase
 
 
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
@@ -14,12 +13,13 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 }
 
 try {
-    require_once('../../vendor/autoload.php'); // Incluir la biblioteca autoload de Composer
-    
+    header("Content-Type: application/json");
     include("../conf.php"); // Incluir archivo de configuración de base de datos
     
     $validCred = false; // Inicializar variable para indicar si las credenciales son válidas
     $retrn = []; // Inicializar array para almacenar resultados
+    $level = 0;
+    $level = 'none';
     
     if($_SERVER["REQUEST_METHOD"] == "POST"){
         $json_data = file_get_contents("php://input"); // Obtener datos JSON de la solicitud POST
@@ -43,6 +43,8 @@ try {
                     // Verificar si la contraseña proporcionada coincide con la almacenada en la base de datos
                     if(password_verify($pass,$retrn['pass'])){
                         $validCred = true; // Las credenciales son válidas si la contraseña coincide
+                        $level = $retrn['nivel'];
+                        $user = $retrn['mail'];
                     } else {
                         $validCred = false; // Las credenciales no son válidas si la contraseña no coincide
                     }
@@ -50,35 +52,14 @@ try {
             }
         }
     }
-    
-    if($validCred == true){
-        // Generar token JWT si las credenciales son válidas
-        $tokenId    = base64_encode(random_bytes(16)); // ID único del token
-        $issuedAt   = new DateTimeImmutable(); // Fecha y hora de emisión del token
-        $expire     = $issuedAt->modify('+1 day')->getTimestamp(); // Fecha y hora de expiración del token (1 día)
-        $serverName = "wit.la"; // Nombre del servidor
-        $logon      = TRUE; // Indicador de inicio de sesión válido
-        $user       = $retrn['mail']; // Correo electrónico del usuario
-        $nivel      = $retrn['nivel']; // Nivel de acceso del usuario
-    
-        // Datos a codificar en el token JWT
-        $data = [
-            'iat'  => $issuedAt->getTimestamp(),
-            'jti'  => $tokenId,
-            'iss'  => $serverName,
-            'nbf'  => $issuedAt->getTimestamp(),
-            'exp'  => $expire,
-            'logon' => $logon,
-            'user' => $user,
-            'nivel' => $nivel,
-        ];
-    
-        header("Content-Type: text/plain"); // Establecer el tipo de contenido de la respuesta como texto plano
-        echo JWT::encode($data,$secretkey,'HS256'); // Codificar los datos en un token JWT y devolverlo como respuesta
-    } else {
-        echo "Error"; // Devolver mensaje de error si las credenciales no son válidas
-    }
+    echo json_encode([
+        'login' => $validCred,
+        'level' => $level,
+        'user' => $user,
+    ]);
+    exit;
 } catch(Exception $e) {
-    echo $e->getMessage();
+    echo json_encode($e->getMessage());
+    exit;
 }
 ?>

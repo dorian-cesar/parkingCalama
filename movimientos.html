@@ -1,41 +1,52 @@
 <div class="caja1" id="pageMovimientos">
-  <div class="card2" style="text-align: center;">
-    <h1>Entradas y Salidas del día</h1>
-    <button class="ctrlgrn" onclick="impMovimientos()">Imprimir</button>
-    <hr>
-    <button class="ctrlgrn" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
-    <hr>
-  </div>
-  <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
-  <table id="tableMov">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Ingreso</th>
-        <th>Salida</th>
-        <th>Patente</th>
-        <th>Empresa</th>
-        <th>Tipo</th>
-      </tr>
-    </thead>
-  </table>
-
-  <!-- Formulario para insertar un movimiento de prueba -->
-  <div id="movinsert-overlay" onclick="closeModal('movinsert')" class="mdl-overlay"></div>
-  <div id="movinsert-modal" class="mdl-content">
-      <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
-      <form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
-        <input required type="text" name="patente" class="entrada" placeholder="Patente">
-        <select required name="empresa" class="entrada2">
-        </select>
-        <select required name="tipo" class="entrada2">
-          <option value="Parking">Parking</option>
-          <option value="Anden">Anden</option>
-        </select>
-        <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
-      </form>
-  </div>
-
+	<div class="card2" style="text-align: center;">
+		<h1>Entradas y Salidas del día</h1>
+		<hr>
+	</div>
+	<div class="button-group">
+		<button class="btn-main" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
+		<button id="btnRefreshMov" class="btn-reload fa fa-refresh" onclick="refreshMov()"></button>
+	</div>
+	<table id="tableMov">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Ingreso</th>
+				<th>Salida</th>
+				<th>Patente</th>
+				<th>Empresa</th>
+				<th>Tipo</th>
+			</tr>
+		</thead>
+	</table>
+	
+	<!-- Formulario para insertar un movimiento de prueba -->
+	<div id="movinsert-overlay" onclick="closeModal('movinsert')" class="modal-bg"></div>
+	<div id="movinsert-modal" class="modal-content">
+		<h2 class="tituloModal">Crear Movimiento (DEV)</h2>
+		<form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
+			<div class="form-group">
+				<label for="patente">Patente</label>
+				<input required type="text" name="patente" class="entrada" placeholder="Patente">
+			</div>
+			<div class="form-group">
+				<label for="empresa">Empresa</label>
+				<select required name="empresa" class="entrada2">
+				</select>
+			</div>
+			<div class="form-group">
+				<label for="tipo">Tipo</label>
+				<select required name="tipo" class="entrada2">
+					<option value="Parking">Parking</option>
+					<option value="Anden">Anden</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<button class="btn-main" name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
+			</div>
+		</form>
+	</div>
+	
 </div>
 <script src="js/Data/movDA.js"></script>
 <script src="js/movUI.js"></script>

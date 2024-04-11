@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Administrador de Parking</title>
+	<!-- Enlaces a hojas de estilo externas -->
+	<link rel="stylesheet" href="css/styles.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" />
+	<!-- Inclusión de jQuery -->
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<!-- Inclusión de DataTables -->
+	<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
+	<script src="js/Data/validDA.js"></script>
+	<!-- Axios -->
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+	
+	<!-- Barra de navegación -->
+	<div id="navbar">
+		<div id="logo">Logo</div>
+		<!-- Enlaces a secciones del sitio -->
+		<a href="#" onclick="contacto()">Contáctenos</a>
+		<a href="#" onclick="nosotros()">Nosotros</a>
+		<a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
+		<a href="#" id="nbUsrbuses" onclick="buses()">Andenes</a>
+	</div>
+	
+	<!-- Barra lateral -->
+	<div id="sidebar">
+		<br>
+		<!-- Enlace para mostrar el correo del usuario -->
+		<a id="sbUsrMail" class="mainside" href="#"><i class="fa fa-user fa-fw"></i></a>
+		<hr>
+		<!-- Enlaces para usuarios no autenticados -->
+		<a href="#" class="mainside" id="sbGstLogin" onclick="openLoginModal()"><i class="fa fa-sign-in fa-fw"></i> Login</a>
+		<!-- Enlace para mostrar opciones de configuración -->
+		<a href="#" class="mainside" id="sbAdmConfig" onclick="configuraciones()"><i class="fa fa-chevron-down fa-fw"></i> Configuración</a>
+		<!-- Submenús para opciones de configuración -->
+		<a href="#" class="subside" style="display: none" id="sbSubEmpresas" onclick="empresas()"><i class="fa fa-chevron-right"></i><i class="fa fa-id-card fa-fw"></i> Empresas</a>
+		<a href="#" class="subside" style="display: none" id="sbSubDestinos" onclick="destinos()"><i class="fa fa-chevron-right"></i><i class="fa fa-flag fa-fw"></i> Destinos</a>
+		<!-- Enlaces para administradores -->
+		<a href="#" class="mainside" id="sbAdmEnroll" onclick="enrolar()"><i class="fa fa-users fa-fw"></i> Usuarios</a>
+		<a href="#" class="mainside" id="sbAdmWhitelist" onclick="listablanca()"><i class="fa fa-list fa-fw"></i> Listas Blancas</a>
+		<a href="#" class="mainside" id="sbAdmPagos" onclick="pagos()"><i class="fa fa-dollar fa-fw"></i> Pagos Diarios</a>
+		<a href="#" class="mainside" id="sbAdmMovements" onclick="entradaSalida()"><i class="fa fa-bus fa-fw"></i> Entradas y Salidas</a>
+		<!-- Enlace para cerrar sesión -->
+		<a class="mainside logout-pos" href="#" id="sbUsrLogout" onclick="logOut()"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
+	</div>
+	
+	<!-- Contenido principal -->
+	<div id="content">
+		<!-- Botón para mostrar/ocultar la barra lateral en dispositivos móviles -->
+		<div id="menu-toggle"><i class="fa fa-bars fa-fw"></i> Menú</div>
+		
+		<!-- Contenedores para las diferentes secciones del sitio -->
+		<div id="contenedorParking"></div>
+		<div id="contenedorNosotros"></div>
+		<div id="contenedorContacto"></div>
+		<div id="contenedorMovimientos"></div>
+		<div id="contenedorEmpresas"></div>
+		<div id="contenedorDestinos"></div>
+		<div id="contenedorConfig"></div>
+		<div id="contenedorPagos"></div>
+		<div id="contenedorEnrolar"></div>
+		<div id="contenedorWhitelist"></div>
+		<div id="contenedorBuses"></div>
+	</div>
+	
+	<!-- Contenedor para modales -->
+	<div id="contenedorModal"></div>
+	
+	<!-- Pantalla de carga -->
+	<div class="loading-overlay" id="loadingscreen">
+		<br/>
+		<br/>
+		<br/>
+		<i class="fa fa-spinner fa-6 fa-spin"></i>
+		<div class="loading-texto">Cargando</div>
+	</div>
+	
+	<script>
+		//const baseURL = "https://masgps-bi.wit.la/parkingCalama/php";
+		const baseURL = "http://localhost/parkingCalama/php";
+			
+		var usrlvl = parseInt(localStorage.getItem('level'));
+
+		// Función para inicializar la interfaz de usuario
+		function initUI() {
+			// Elementos que solo deben verse por usuarios y administradores
+			var sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=sbAdm],[id^=nbUsr],[id^=nbAdm]');
+			
+			// Elementos que solo deben verse por usuarios no registrados
+			var guestCtl = document.querySelectorAll('[id^=sbGst],[id^=nbGst]');
+			
+			// Ocultar elementos de la barra lateral
+			sideBarCtl.forEach(item => {
+				item.style.display = 'none';
+			});
+			
+			// Mostrar elementos para usuarios no registrados
+			guestCtl.forEach(item => {
+				item.style.display = 'block';
+			});
+			
+			// URL para validar el token de autenticación
+			const urlValidate = baseURL+"/login/validate.php";
+			
+			if (usrlvl) {
+				guestCtl.forEach(item => {
+					item.style.display = 'none';
+				});
+				// Mostrar elementos según el nivel de acceso del usuario
+				if (usrlvl <= 10) {
+					sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=nbUsr]');
+					
+					sideBarCtl.forEach(item => {
+						item.style.display = 'block';
+					});
+				}
+				if (usrlvl >= 10) {
+					sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
+					
+					sideBarCtl.forEach(item => {
+						item.style.display = 'block';
+					});
+				}
+				// Mostrar el correo del usuario autenticado
+				//document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];
+			}
+		}
+		
+		// Inicializar la interfaz de usuario
+		initUI();
+		
+		// Función para mostrar/ocultar la barra lateral en dispositivos móviles
+		$('#menu-toggle').on('click', function() {
+			var sidebar = document.getElementById('sidebar');
+			var content = document.getElementById('content');
+			
+			if (sidebar.style.left === '0px') {
+				sidebar.style.left = '-200px';
+				content.style.marginLeft = '0';
+			} else {
+				sidebar.style.left = '0px';
+				content.style.marginLeft = '200px';
+			}
+		});
+		
+		// Generar una promesa luego de cargar todos los elementos
+		var loadPage = $.Deferred(function(dfd) {
+			$('#contenedorDestinos').load('destinos.html');
+			$('#contenedorMovimientos').load('movimientos.html');
+			$('#contenedorPagos').load('pagos.html');
+			$('#contenedorContacto').load('contacto.html');
+			$('#contenedorParking').load('parking.html');
+			$('#contenedorBuses').load('buses.html');
+			$('#contenedorNosotros').load('nosotros.html');
+			$('#contenedorModal').load('modal.html');
+			$('#contenedorWhitelist').load('whitelist.html');
+			$('#contenedorEmpresas').load('empresas.html');
+			$('#contenedorConfig').load('config.html');
+			$('#contenedorEnrolar').load('enroll.html', dfd.resolve);
+		}).promise();
+		
+		// Cargar el archivo main.js cuando todos los elementos existan
+		$.when(loadPage).then(function() {
+			$.getScript("js/main.js");
+			$.getScript("js/login.js");
+			//$('#miTabla').DataTable();
+		});
+		
+		// Función para obtener el valor de una cookie
+		function getCookie(cname) {
+			let name = cname + "=";
+			let decodedCookie = decodeURIComponent(document.cookie);
+			let ca = decodedCookie.split(';');
+			for (let i = 0; i < ca.length; i++) {
+				let c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1);
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length);
+				}
+			}
+			return "";
+		}
+		
+		//$(document).ready(loadPage());
+	</script>
+</body>
+</html>

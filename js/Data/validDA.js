@@ -1,12 +1,12 @@
 // Retorna datos si la sesion es valida
 // [0]lvl : nivel de usuario
 async function validate(){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         let ret = await fetch('https://masgps-bi.wit.la/parkingCalama/php/login/validate.php', {
             method: 'POST',
             mode: 'cors',
             headers: {
-                'Authorization': `Bearer ${getCookie('jwt')}`
+                'Authorization': `Bearer ${usrlvl}`
             }
           })
           .then(response => response.json())

@@ -37,7 +37,7 @@ function closeModal(modal){
 }
 
 // Inicializa la pagina en vista general dependiendo del estado de la sesión
-if(getCookie('jwt')){
+if(usrlvl>0){
   parking(); // Si hay una cookie de sesión, muestra la página de parking
 } else {
   nosotros();// Si no hay una cookie de sesión, muestra la página de nosotros

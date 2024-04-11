@@ -6,9 +6,6 @@ async function getUsr() {
     let ret = await fetch(apiUsers, {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -23,9 +20,6 @@ async function getUsrByID(idIn) {
         }), {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -40,7 +34,6 @@ async function deleteUsr(idIn) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(idIn)
     })
@@ -58,7 +51,6 @@ async function updateUsr(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -76,7 +68,6 @@ async function insertUsr(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })

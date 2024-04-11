@@ -1,10 +1,12 @@
 <div class="caja1" id="pageDestinos">
     <div class="card" style="text-align:center">
         <h1>Destinos</h1>
-        <button onclick="modalDestInsert()" class="ctrlgrn" id="btnCreateDest">Crear Destino</button>
         <hr>
     </div>
-    <button onclick="refreshDest()" class="ctrlyel fa fa-refresh" id="btnRefreshDest"></button>
+    <div class="button-group">
+    <button onclick="modalDestInsert()" class="btn-main" id="btnCreateDest">Crear Destino</button>
+    <button onclick="refreshDest()" class="btn-reload fa fa-refresh" id="btnRefreshDest"></button>
+</div>
     <table id="tabelDest">
         <thead>
             <tr>
@@ -17,25 +19,39 @@
     </table>
 </div>
 <!-- Insertar -->
-<div id="destinsert-overlay" onclick="closeModal('destinsert')" class="mdl-overlay"></div>
-<div id="destinsert-modal" class="mdl-content">
-    <h1>Ingresar Destino</h1>
+<div id="destinsert-overlay" onclick="closeModal('destinsert')" class="modal-bg"></div>
+<div id="destinsert-modal" class="modal-content">
+    <h2>Ingresar Destino</h2>
     <form onsubmit="doInsertDest(event)" method="POST" id="formInsertDest">
-        <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
-        <input required type="number" name="valor" class="entrada" placeholder="0">
-        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        <div class="form-group">
+            <label for="ciudad">Ciudad</label>
+            <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
+        </div>
+        <div class="form-group">
+            <label for="valor">Valor</label>
+            <input required type="number" name="valor" class="entrada" placeholder="0">
+        </div>
+        <div class="form-group">
+            <button class="btn-main" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        </div>
     </form>
 </div>
 <!-- Modificar -->
-<div id="destupdate-overlay" onclick="closeModal('destupdate')" class="mdl-overlay"></div>
-<div id="destupdate-modal" class="mdl-content">
-    <h1>Modificar Destino</h1>
+<div id="destupdate-overlay" onclick="closeModal('destupdate')" class="modal-bg"></div>
+<div id="destupdate-modal" class="modal-content">
+    <h2>Modificar Destino</h2>
     <form onsubmit="doUpdateDest(event)" method="POST" id="formUpdateDest">
         <input type="hidden" name="iddest">
-        <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
-        <input required type="number" name="valor" class="entrada" placeholder="0">
-        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        <div class="form-group">
+            <label for="ciudad">Ciudad</label>
+            <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
+        </div>
+        <div class="form-group">
+            <label for="valor">Valor</label>
+            <input required type="number" name="valor" class="entrada" placeholder="0">
+        </div>
+        <div class="form-group">
+            <button class="btn-main" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        </div>
     </form>
 </div>
-<script src="js/Data/destDA.js"></script>
-<script src="js/destUI.js"></script>

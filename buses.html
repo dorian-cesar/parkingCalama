@@ -1,38 +1,52 @@
 <div class="caja1" id="pageBuses">
-    <!-- Título de la sección -->
-    <h2>Loza - buses</h2>
-    <!-- Descripción -->
-    <p>Scanee el Codigo QR de su Ticket o ingrese su Patente</p>
-    <!-- Columna izquierda con formularios -->
-    <div class="izq">
-        <!-- Input para leer el código QR -->
-        <input type="text" class="entrada" id="andenQRPat" placeholder="Leer QR">
-        <!-- Select para seleccionar la compañía de transporte -->
-        <!-- <select id="empresaBuses" class="entrada">
-        </select>-->
-        <!-- Select para seleccionar el destino de los buses -->
-        <select id="destinoBuses" class="entrada">
-        </select>
-        <!-- Botón para calcular -->
-        <button class="btn" onclick="calcAndenes()">Calcular</button>
-    </div>
-    <!-- Columna derecha con información -->
-    <div class="derecha">
-        <!-- Card con información sobre el estacionamiento -->
-        <div class="card">
-            <div id="contAnden">
-                <h1>Patente</h1>
-                <h3>Fecha</h3>
-                <h3>Hora de ingreso</h3>
-                <h3>Hora salida</h3>
-                <h3>Tiempo de Parking</h3>
-                <h3>Valor</h3>
-            </div>
-            <!-- Botón para imprimir -->
-            <button onclick="impAnden()" class="btn">Imprimir</button>
-            <!-- Enlace para pagar en el SII -->
-            <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a>
-        </div>
-    </div>
+	<div class="card2" style="text-align: center;">
+		<!-- Título de la sección -->
+		<h1>Loza - buses</h1>
+		<!-- Descripción -->
+		<p>Escanee el Codigo QR de su Ticket o ingrese su Patente</p>
+	</div>
+	<div class="register-cont">
+		<!-- Columna izquierda con formularios -->
+		<form onsubmit="calcAndenes(event)" class="register-left" method="POST" id="formLoza">
+			<div class="reg-group">
+				<label for="qrpat">QR o Patente</label>
+				<!-- Input para leer el código QR -->
+				<input type="text" name="qrpat" class="entrada" id="andenQRPat" placeholder="Leer QR" required>
+			</div>
+			<!-- Select para seleccionar la compañía de transporte -->
+			<!-- <select id="empresaBuses" class="entrada">
+			</select>-->
+			<!-- Select para seleccionar el destino de los buses -->
+			<div class="reg-group">
+				<label for="destino">Destino</label>
+				<select id="destinoBuses" name="destino" class="entrada" required>
+				</select>
+			</div>
+			<!-- Botón para calcular -->
+			<div class="reg-group">
+				<button class="btn-main">Calcular</button>
+			</div>
+		</form>
+		<!-- Columna derecha con información -->
+		<div class="register-right">
+			<!-- Card con información sobre el estacionamiento -->
+			<div class="printcard">
+				<div id="contAnden">
+					<h2>Patente</h2>
+					<p>Destino</p>
+					<p>Empresa</p>
+					<p>Fecha</p>
+					<p>Hora de ingreso</p>
+					<p>Hora salida</p>
+					<p>Tiempo de Parking</p>
+					<p>Valor</p>
+				</div>
+				<!-- Botón para imprimir -->
+				<button onclick="impAnden()" class="btn-print">Imprimir</button>
+				<!-- Enlace para pagar en el SII -->
+				<a href="https://eboleta.sii.cl/" target="_blank"><button class="btn-print">Pagar SII</button></a>
+			</div>
+		</div>
+	</div>
 </div>
 <script src="js/andenes.js"></script>

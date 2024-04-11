@@ -52,7 +52,7 @@ async function modalEmpDelete(idIn){
 }
 
 async function refreshEmp() {
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         const refreshBtn = document.getElementById('btnRefreshEmp');
         refreshBtn.disabled = true;
         refreshBtn.classList.remove('fa-refresh');

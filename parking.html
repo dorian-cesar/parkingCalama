@@ -1,23 +1,34 @@
 <div class="caja1" id="pageParking">
-  <h2>Parking</h2>
-  <p>Scanee el Codigo QR de su Ticket o ingrese su Patente</p>
-  <div class="izq">
-    <input type="text" class="entrada" id="parkingQRPat" placeholder="Leer QR">
-    <button onclick="calcParking()" class="btn">Calcular</button>
-  </div>
-  <div class="derecha">
-    <div class="card">
-      <div id="contParking">
-        <h1>Patente</h1>
-        <h3>Fecha</h3>
-        <h3>Hora de ingreso</h3>
-        <h3>Hora salida</h3>
-        <h3>Tiempo de Parking</h3>
-        <h3>Valor</h3>
-      </div>
-      <button onclick="impParking()" class="btn">Imprimir</button>
-      <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a>
-    </div>
-  </div>
+	<div class="card2" style="text-align: center;">
+		<h1>Parking</h1>
+		<p>Escanee el Codigo QR de su Ticket o ingrese su Patente</p>
+	</div>
+	<div class="register-cont">
+		<form id="formParking" onsubmit="calcParking(event)" class="register-left" method="POST">
+			<div class="reg-group">
+				<label for="qrpat">QR o Patente</label>
+				<input type="text" name="qrpat" class="entrada" id="parkingQRPat" placeholder="Leer QR">
+			</div>
+			<div class="reg-group">
+				<button class="btn-main">Calcular</button>
+			</div>
+		</form>
+		<div class="register-right">
+			<div class="printcard">
+				<div id="contParking">
+					<h2>Patente</h2>
+					<p>Empresa</p>
+					<p>Fecha</p>
+					<p>Hora de ingreso</p>
+					<p>Hora salida</p>
+					<p>Tiempo de Parking</p>
+					<p>Valor</p>
+				</div>
+				<hr>
+				<button onclick="printParking()" class="btn-print">Imprimir</button>
+				<a href="https://eboleta.sii.cl/" target="_blank"><button class="btn-print">Pagar SII</button></a>
+			</div>
+		</div>
+	</div>
 </div>
 <script src="js/parking.js"></script>

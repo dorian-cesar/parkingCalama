@@ -6,9 +6,6 @@ async function getMov() {
     let ret = await fetch(apiMovimientos, {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -23,9 +20,6 @@ async function getMovByID(idIn) {
         }), {
         method: 'GET',
         mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
     })
     .then(reply => reply.json())
     .then(data => { return data; })
@@ -40,7 +34,6 @@ async function deleteMov(idIn) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(idIn)
     })
@@ -58,7 +51,6 @@ async function updateMov(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })
@@ -76,7 +68,6 @@ async function insertMov(datos) {
         mode: 'cors',
         headers: {
             'Content-type' : 'application/json',
-            'Authorization': `Bearer ${getCookie('jwt')}`
         },
         body: JSON.stringify(datos)
     })

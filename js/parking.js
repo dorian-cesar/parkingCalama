@@ -69,14 +69,14 @@ async function calcParking(){
 }
 
 async function getMovByPatente(patente){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         let ret = await fetch(apiMovimientos+'?'+ new URLSearchParams({
             patente: patente
         }), {
             method: 'GET',
             mode: 'cors',
             headers: {
-                'Authorization' : `Bearer ${getCookie('jwt')}`
+                'Authorization' : `Bearer ${usrlvl}`
             }
         })
         .then(reply => reply.json())

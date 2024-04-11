@@ -37,7 +37,7 @@ async function modalMovInsert(){
 }
 
 async function refreshMov(){
-    if(getCookie('jwt')){
+    if(usrlvl>0){
         const refreshBtn = document.getElementById('btnRefreshMov');
         refreshBtn.disabled = true;
         refreshBtn.classList.remove('fa-refresh');

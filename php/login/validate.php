@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 try {
     require_once('../../vendor/autoload.php'); // Cargar la biblioteca JWT
     require_once('../conf.php'); // Incluir el archivo de configuración de la base de datos
-    include('../auth.php');
+    
         
     // Construir los datos de respuesta con la información del usuario autenticado
     $data = array(["logon" => true,

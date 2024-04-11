@@ -1,10 +1,12 @@
 <div class="caja1" id="pageEmpresas">
     <div class="card2" style="text-align:center">
         <h1>Empresas</h1>
-        <button onclick="modalEmpInsert()" class="ctrlgrn" id="btnCreateEmp">Registrar Empresa</button>
         <hr>
     </div>
-    <button onclick="refreshEmp()" id="btnRefreshEmp" class="ctrlyel fa fa-refresh"></button>
+    <div class="button-group">
+        <button onclick="modalEmpInsert()" class="btn-main" id="btnCreateEmp">Registrar Empresa</button>
+        <button onclick="refreshEmp()" id="btnRefreshEmp" class="btn-reload fa fa-refresh"></button>
+    </div>
     <!-- Tabla para mostrar las empresas -->
     <table id="tableEmp">
         <thead>
@@ -22,28 +24,41 @@
 </div>
 
 <!-- Modal Insert: Formulario para ingresar una nueva empresa -->
-<div class="mdl-overlay" id="empinsert-overlay" onclick="closeModal('empinsert')"></div>
-<div class="mdl-content" id="empinsert-modal">
-    <h1 class="tituloModal">Ingresar Empresa</h1>
+<div class="modal-bg" id="empinsert-overlay" onclick="closeModal('empinsert')"></div>
+<div class="modal-content" id="empinsert-modal">
+    <h2 class="tituloModal">Ingresar Empresa</h2>
     <form onsubmit="doInsertEmp(event)" method="post" id="formInsertEmp">
-        <input type="text" name="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
-        <input type="text" name="contacto" class="entrada" placeholder="Contacto" required/>
-        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" name="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
+        </div>
+        <div class="form-group">
+            <label for="contacto">Contacto</label>
+            <input type="text" name="contacto" class="entrada" placeholder="Contacto" required/>
+        </div>
+        <div class="form-group">
+            <button class="btn-main" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        </div>
     </form>
 </div>
 
 <!-- Modal Update: Formulario para actualizar una empresa existente -->
-<div class="mdl-overlay" id="empupdate-overlay" onclick="closeModal('empupdate')"></div>
-<div class="mdl-content" id="empupdate-modal">
-    <h1>Modificar Empresa</h1>
+<div class="modal-bg" id="empupdate-overlay" onclick="closeModal('empupdate')"></div>
+<div class="modal-content" id="empupdate-modal">
+    <h2>Modificar Empresa</h2>
     <form onsubmit="doUpdateEmp(event)" method="post" id="formUpdateEmp">
         <!-- Campo oculto para almacenar el ID de la empresa a actualizar -->
         <input type="hidden" name="idemp"/>
-        <input type="text" name="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
-        <input type="text" name="contacto" class="entrada" placeholder="Contacto" required/>
-        <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" name="nombre" class="entrada" placeholder="Nombre de la Empresa" required/>
+        </div>
+        <div class="form-group">
+            <label for="contacto">Contacto</label>
+            <input type="text" name="contacto" class="entrada" placeholder="Contacto" required/>
+        </div>
+        <div class="form-group">
+            <button class="btn-main" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
+        </div>
     </form>
 </div>
-
-<script src="js/Data/empDA.js"></script>
-<script src="js/empUI.js"></script>

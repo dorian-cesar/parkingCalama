@@ -5,14 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Administrador de Parking</title>
 	<!-- Enlaces a hojas de estilo externas -->
-	<link rel="stylesheet" href="css/newstyle.css">
+	<link rel="stylesheet" href="./css/newstyle.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.dataTables.min.css" />
 	<!-- Inclusión de jQuery -->
 	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 	<!-- Inclusión de DataTables -->
 	<script src="https://cdn.datatables.net/2.0.3/js/dataTables.min.js"></script>
-	<script src="js/Data/validDA.js"></script>
 	<!-- Axios -->
 	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 	
@@ -94,12 +93,12 @@
 		<i class="fa fa-spinner fa-6 fa-spin"></i>
 		<div class="loading-texto">Cargando</div>
 	</div>-->
-	<script src="js/wlFunc.js"></script>
-	<script src="js/movFunc.js"></script>
-	<script src="js/usrFunc.js"></script>
-	<script src="js/empFunc.js"></script>
-	<script src="js/destFunc.js"></script>
-	<script src="js/printFunc.js"></script>
+	<script src="./js/wlFunc.js"></script>
+	<script src="./js/movFunc.js"></script>
+	<script src="./js/usrFunc.js"></script>
+	<script src="./js/empFunc.js"></script>
+	<script src="./js/destFunc.js"></script>
+	<script src="./js/printFunc.js"></script>
 	<script>
 		// Variables
 		const sidebarButton = document.getElementById('sidebar-button');
@@ -188,43 +187,43 @@
 		}
 		
 		function listablanca() {
-			loadComponent('whitelist.html', insertComponentIntoDOM);
+			loadComponent('./whitelist.html', insertComponentIntoDOM);
 		}
 		
 		function pagos() {
-			loadComponent('pagos.html', insertComponentIntoDOM);
+			loadComponent('./pagos.html', insertComponentIntoDOM);
 		}
 		
 		function entradaSalida() {
-			loadComponent('movimientos.html', insertComponentIntoDOM);
+			loadComponent('./movimientos.html', insertComponentIntoDOM);
 		}
 		
 		function enrolar() {
-			loadComponent('enroll.html', insertComponentIntoDOM);
+			loadComponent('./enroll.html', insertComponentIntoDOM);
 		}
 		
 		function empresas() {
-			loadComponent('empresas.html', insertComponentIntoDOM);
+			loadComponent('./empresas.html', insertComponentIntoDOM);
 		}
 		
 		function destinos() {
-			loadComponent('destinos.html', insertComponentIntoDOM);
+			loadComponent('./destinos.html', insertComponentIntoDOM);
 		}
 		
 		function contacto() {
-			loadComponent('contacto.html', insertComponentIntoDOM);
+			loadComponent('./contacto.html', insertComponentIntoDOM);
 		}
 		
 		function nosotros() {
-			loadComponent('nosotros.html', insertComponentIntoDOM);
+			loadComponent('./nosotros.html', insertComponentIntoDOM);
 		}
 		
 		function parking() {
-			loadComponent('parking.html', insertComponentIntoDOM);
+			loadComponent('./parking.html', insertComponentIntoDOM);
 		}
 		
 		function buses() {
-			loadComponent('buses.html', insertComponentIntoDOM);
+			loadComponent('./buses.html', insertComponentIntoDOM);
 		}
 		
 		function sendMail(e) {

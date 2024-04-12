@@ -1,6 +1,6 @@
 <?php
 //en construccion 
-declare(strict_types=1);
+
 
 header("Access-Control-Allow-Origin: *"); // Establece el encabezado CORS para permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Especifica que solo se permiten solicitudes POST

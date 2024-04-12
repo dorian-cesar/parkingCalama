@@ -1,6 +1,6 @@
 <?php
 // Declaración estricta de tipos para garantizar la coherencia en el tipo de datos
-declare(strict_types=1);
+
 
 // Establece los encabezados CORS para permitir solicitudes desde cualquier origen y métodos POST
 header("Access-Control-Allow-Origin: *");

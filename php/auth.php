@@ -1,7 +1,7 @@
 <?php
 
 // Usa la clase JWT de Firebase para manejar tokens JWT
-use Firebase\JWT\JWT;
+
 
 $headers = apache_request_headers(); // Obtener los encabezados de la solicitud
 

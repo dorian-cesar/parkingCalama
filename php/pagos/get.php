@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     exit;
 }
 
-use Firebase\JWT\JWT; // Se utiliza la clase JWT del paquete Firebase\JWT
+ // Se utiliza la clase JWT del paquete Firebase\JWT
 
 require_once('../../vendor/autoload.php'); // Se incluye el archivo autoload.php necesario para cargar las clases automáticamente
 

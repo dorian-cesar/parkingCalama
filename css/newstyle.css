@@ -76,10 +76,30 @@ header a {
     text-decoration: none;
 }
 
+header .logo {
+    font-size: 20px;
+    cursor: pointer;
+    color: var(--text-main-color);
+    width: 100px;
+    height: var(--navbar-height);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+    padding-left: 10px;
+    padding-right: 10px;
+    text-decoration: none;
+}
+
 header .menu-toggle:hover,
-header a:hover {
+header a:hover,
+header .logo:hover {
     text-decoration: underline;
     background-color: var(--navbar-sel-color);
+}
+
+.logo {
+    object-fit: contain;
 }
 
 .sidebar {

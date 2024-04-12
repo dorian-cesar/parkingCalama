@@ -112,11 +112,7 @@ async function calcAndenes(e) {
 
                         let valorTot = 20*minutos;
 
-                        console.log(valorTot);
-
-                        valorTot *= form.destino.value;
-                        console.log(form.destino.value);
-                        console.log(valorTot);
+                        valorTot = form.destino.value*minutos;
 
                         axios.get(apiWhitelist+'?patente='+form.qrpat.value)
                         .then(reply => {

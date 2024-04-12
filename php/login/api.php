@@ -14,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 
 try {
     header("Content-Type: application/json");
-    include("../conf.php"); // Incluir archivo de configuración de base de datos
+    include(dirname(__DIR__)."/conf.php"); // Incluir archivo de configuración de base de datos
     
     $validCred = false; // Inicializar variable para indicar si las credenciales son válidas
     $retrn = []; // Inicializar array para almacenar resultados

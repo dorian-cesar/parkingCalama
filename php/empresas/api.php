@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 }
 
 // Incluye el archivo de configuración de la base de datos
-include("../conf.php");
+include(dirname(__DIR__)."/conf.php"); 
 
 
 

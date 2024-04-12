@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 
 require_once('../../vendor/autoload.php'); // Se incluye el archivo autoload.php necesario para cargar las clases automáticamente
 
-include("../conf.php"); // Se incluye el archivo conf.php que probablemente contenga configuraciones y credenciales de la base de datos
+include(dirname(__DIR__)."/conf.php");  // Se incluye el archivo conf.php que probablemente contenga configuraciones y credenciales de la base de datos
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){ // Verifica que la solicitud sea POST
     $json_data = file_get_contents("php://input"); // Obtiene los datos JSON de la solicitud

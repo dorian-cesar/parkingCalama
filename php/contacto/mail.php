@@ -17,7 +17,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
-include("../conf.php");
+include(dirname(__DIR__)."/conf.php"); 
 
 // Incluye el archivo autoload.php que contiene las clases de PHPMailer
 require_once('../../vendor/autoload.php');

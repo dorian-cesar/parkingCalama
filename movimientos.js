@@ -4,7 +4,7 @@ $('#tableMov').dataTable({
 		dataSrc: '',
 	},
 	language: {
-		url: "/parkingCalama/es-CL.json"
+		url: "./es-CL.json"
 	},
 	layout: {
 		topStart: {

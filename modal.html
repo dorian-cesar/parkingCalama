@@ -1,4 +1,4 @@
-<!-- Formulario Modal Login-->
+<!-- Formulario Modal Login -->
 <div id="modal-overlay" onclick="closeLoginModal()"></div>
 <!-- Capa transparente para cubrir el fondo -->
 <div id="login-modal">
@@ -13,6 +13,12 @@
     <input type="password" id="password" name="password" required placeholder="Contaseña" class="entrada">
     
     <!-- Botón para enviar el formulario de inicio de sesión -->
+   <div>
     <button id="btnLogin" class="btn">Iniciar Sesión</button>
+
+    <!-- Botón para cancelar -->
+    <button type="button" class="btn btn-secondary" onclick="closeLoginModal()">Cancelar</button>
+   </div>
   </form>
 </div>
+

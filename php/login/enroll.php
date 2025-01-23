@@ -18,13 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
 // Incluye el archivo de configuración de la base de datos
 include("../conf.php");
 
-//include('../auth.php');
-/*
+include('../auth.php');
+
 if($token->nivel < $LVLADMIN){
     header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
     echo json_encode(['error' => 'Autoridad insuficiente']);
     exit;
-}*/
+}
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     $json_data = file_get_contents("php://input"); // Obtener datos JSON de la solicitud POST

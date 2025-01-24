@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     }
 
     // Consultar la tarifa en la base de datos
-    $query = "SELECT valor_minuto FROM tarifas WHERE tipo = ? AND activa = TRUE";
+    $query = "SELECT valor_minuto FROM tarifasParking WHERE tipo = ? AND activa = 1 AND (fecha_fin IS NULL OR fecha_fin >= CURDATE())";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $tipo);
     $stmt->execute();
@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         echo json_encode(["valor_minuto" => $tarifa['valor_minuto']]);
     } else {
         http_response_code(404); // Not Found
-        echo json_encode(["error" => "Tarifa no encontrada"]);
+        echo json_encode(["error" => "Tarifa no encontrada o no activa"]);
     }
 
     $stmt->close();
@@ -78,8 +78,8 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Verificar que el tipo de movimiento exista en la tabla tarifas
-    $query = "SELECT valor_minuto FROM tarifas WHERE tipo = ? AND activa = TRUE";
+    // Verificar que el tipo de movimiento exista en la tabla tarifasParking
+    $query = "SELECT valor_minuto FROM tarifasParking WHERE tipo = ? AND activa = 1 AND (fecha_fin IS NULL OR fecha_fin >= CURDATE())";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $data['tipo']);
     $stmt->execute();
@@ -87,7 +87,7 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($result->num_rows === 0) {
         http_response_code(404); // Not Found
-        echo json_encode(["error" => "Tipo de movimiento no válido"]);
+        echo json_encode(["error" => "Tipo de movimiento no válido o tarifa no activa"]);
         exit;
     }
 

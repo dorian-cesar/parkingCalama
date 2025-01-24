@@ -35,8 +35,8 @@ if ($result->num_rows === 0) {
 $movimiento = $result->fetch_assoc();
 $tipo = $movimiento['tipo'];
 
-// Obtener la tarifa por minuto desde la tabla tarifas
-$query = "SELECT valor_minuto FROM tarifas WHERE tipo = ? AND activa = TRUE";
+// Obtener la tarifa por minuto desde la tabla tarifasParking
+$query = "SELECT valor_minuto FROM tarifasParking WHERE tipo = ? AND activa = 1 AND (fecha_fin IS NULL OR fecha_fin >= CURDATE())";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("s", $tipo);
 $stmt->execute();
@@ -44,7 +44,7 @@ $result = $stmt->get_result();
 
 if ($result->num_rows === 0) {
     http_response_code(404); // Not Found
-    echo json_encode(["error" => "Tarifa no encontrada"]);
+    echo json_encode(["error" => "Tarifa no encontrada o no activa"]);
     exit;
 }
 

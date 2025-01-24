@@ -29,7 +29,7 @@ async function consultarParking() {
                 ? new Date(data['fechasal'] + 'T' + data['horasal']) 
                 : date;
 
-            // Calcular minutos por día con tope de 480 minutos
+            // Calcular minutos por día con tope de 480 minutos (8 horas)
             const minutosPorDia = calcularMinutosPorDia(fechaent, fechaSalida);
             const minutosTotales = minutosPorDia.reduce((total, minutos) => total + minutos, 0);
 
@@ -81,7 +81,7 @@ async function consultarParking() {
     }
 }
 
-// Función para calcular minutos por día con tope de 480 minutos
+// Función para calcular minutos por día con tope de 480 minutos (8 horas)
 function calcularMinutosPorDia(fechaInicio, fechaFin) {
     const minutosPorDia = [];
     let fechaActual = new Date(fechaInicio);
@@ -91,23 +91,41 @@ function calcularMinutosPorDia(fechaInicio, fechaFin) {
         fechaFin = new Date(fechaFin);
     }
 
-    // Iterar día por día
-    while (fechaActual <= fechaFin) {
-        const inicioDia = new Date(fechaActual);
-        inicioDia.setHours(0, 0, 0, 0);
-
-        const finDia = new Date(fechaActual);
-        finDia.setHours(23, 59, 59, 999);
-
-        // Calcular minutos para el día actual
+    // Si el vehículo sale el mismo día, calcular el tiempo exacto
+    if (fechaActual.toDateString() === fechaFin.toDateString()) {
         const minutosDia = Math.min(
-            (Math.min(fechaFin, finDia) - Math.max(fechaInicio, inicioDia)) / 60000,
-            480
+            (fechaFin - fechaInicio) / 60000, // Diferencia en minutos
+            480 // Tope de 480 minutos (8 horas)
         );
-
         minutosPorDia.push(Math.round(minutosDia));
+        return minutosPorDia;
+    }
+
+    // Calcular el tiempo del primer día (desde la hora de entrada hasta las 23:59:59)
+    const finPrimerDia = new Date(fechaActual);
+    finPrimerDia.setHours(23, 59, 59, 999); // Fin del primer día
+    const minutosPrimerDia = Math.min(
+        (finPrimerDia - fechaInicio) / 60000,
+        480 // Tope de 480 minutos
+    );
+    minutosPorDia.push(Math.round(minutosPrimerDia));
+
+    // Avanzar al siguiente día
+    fechaActual.setDate(fechaActual.getDate() + 1);
+    fechaActual.setHours(fechaInicio.getHours(), fechaInicio.getMinutes(), fechaInicio.getSeconds(), fechaInicio.getMilliseconds()); // Inicio del día siguiente a la misma hora de entrada
+
+    // Calcular los días completos (cada día completo se cobra con 480 minutos)
+    while (fechaActual.toDateString() < fechaFin.toDateString()) {
+        minutosPorDia.push(480); // Cada día completo se cobra con 480 minutos
         fechaActual.setDate(fechaActual.getDate() + 1); // Pasar al siguiente día
     }
+
+    // Calcular el tiempo del último día (desde la hora de entrada hasta la hora de salida)
+    const minutosUltimoDia = Math.min(
+        (fechaFin - fechaActual) / 60000,
+        480 // Tope de 480 minutos
+    );
+    minutosPorDia.push(Math.round(minutosUltimoDia));
 
     return minutosPorDia;
 }

@@ -12,7 +12,8 @@ var tableMov = $('#tableMov').DataTable({
         { data: 'patente' },
         { data: 'empresa' },
         { data: 'tipo' },
-        { data: 'acciones' }
+        { data: 'acciones' },
+        { data: 'estado'}
     ],
     createdRow: function (row, data, dataIndex) {
         // Aplicar clases condicionales a las filas
@@ -81,12 +82,17 @@ async function refreshMov() {
                 const diferenciaTiempo = fechaActual - fechaEntrada;
                 const diferenciaDias = diferenciaTiempo / (1000 * 60 * 60 * 24);
 
-                // Determinar el color de la fila
+                // Determinar el estado y el color de la fila
+                let estado = '';
                 let rowClass = '';
                 if (item['fechasal'] !== "0000-00-00") {
+                    estado = 'Pagado'; // Estado: Pagado
                     rowClass = 'pagado'; // Verde si ya pagó
                 } else if (diferenciaDias > 1) {
+                    estado = 'Sin Pagar'; // Estado: Sin Pagar
                     rowClass = 'sin-pagar'; // Rojo si lleva más de un día sin pagar
+                } else {
+                    estado = 'En Estacionamiento'; // Estado: En Estacionamiento
                 }
 
                 tableMov.rows.add([{
@@ -97,6 +103,7 @@ async function refreshMov() {
                     'empresa': item['empresa'],
                     'tipo': item['tipo'],
                     'acciones': `<button onclick="modalEditSalida(${item['idmov']})">Actualizar Salida</button>`,
+                    'estado': estado, // Agregar el estado
                     'DT_RowClass': rowClass // Agregar clase a la fila
                 }]);
             });

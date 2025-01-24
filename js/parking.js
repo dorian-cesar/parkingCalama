@@ -1,65 +1,78 @@
-async function calcParking(){
+// Función para consultar los datos de la patente
+async function consultarParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
 
-    if(!patRegEx.test(input)){
+    // Validar si el input es una patente válida
+    if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
-        return; //To-Do leer QR o Codigo de Barra
+        return; // To-Do: Implementar lectura de QR o código de barras
     }
+
     try {
+        // Obtener los datos de la patente desde la API
         const data = await getMovByPatente(input);
 
-        if(!data) {
+        if (!data) {
             alert('Patente no encontrada');
             return;
         }
 
-        if(data['tipo'] === 'Parking') {
-            if(data['fechasal'] === "0000-00-00") {
-                cont.textContent = '';
-                const date = new Date();
-                
-                var fechaent = new Date(data['fechaent']+'T'+data['horaent']);
-                var differencia = (date.getTime() - fechaent.getTime()) / 1000;
-                var minutos = Math.ceil(differencia / 60);
+        // Verificar si la patente es de tipo "Parking"
+        if (data['tipo'] === 'Parking') {
+            cont.textContent = ''; // Limpiar el contenido anterior
+            const date = new Date();
 
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
+            // Calcular el tiempo de estacionamiento
+            var fechaent = new Date(data['fechaent'] + 'T' + data['horaent']);
+            var fechaSalida = (data['fechasal'] !== "0000-00-00") 
+                ? new Date(data['fechasal'] + 'T' + data['horasal']) 
+                : date;
 
-                const ret = await getWLByPatente(data['patente']);
+            // Calcular minutos por día con tope de 480 minutos
+            const minutosPorDia = calcularMinutosPorDia(fechaent, fechaSalida);
+            const minutosTotales = minutosPorDia.reduce((total, minutos) => total + minutos, 0);
 
-                let valorTot = 20*minutos;
-                if (ret !== null) {
-                    valorTot = 0;
-                }
+            // Calcular el valor total (20 pesos por minuto)
+            const valorTot = 20 * minutosTotales;
 
-                elemPat.textContent = `Patente: ${data['patente']}`;
-                empPat.textContent = `Empresa: ${data['empresa']}`;
-                fechaPat.textContent = `Fecha: ${data['fechaent']}`;
-                horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
-                horasalPat.textContent = 'Hora salida: '+date.getHours()+':'+date.getMinutes()+':'+date.getSeconds() ;
-                tiempPat.textContent = `Tiempo de Parking: ${minutos} min.`;
-                // To-Do: Traer valor x minuto desde la BDD
-                valPat.textContent = `Valor: $${valorTot}`;
-                
-                cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
+            // Crear elementos HTML para mostrar los datos
+            const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
+                ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
-                datos = {
+            // Asignar valores a los elementos HTML
+            elemPat.textContent = `Patente: ${data['patente']}`;
+            empPat.textContent = `Empresa: ${data['empresa']}`;
+            fechaPat.textContent = `Fecha: ${data['fechaent']}`;
+            horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
+
+            // Mostrar la hora de salida si ya fue cobrada
+            if (data['fechasal'] !== "0000-00-00") {
+                horasalPat.textContent = `Hora salida: ${data['fechasal']} ${data['horasal']}`;
+            } else {
+                horasalPat.textContent = 'Hora salida: ' + date.toLocaleTimeString();
+            }
+
+            tiempPat.textContent = `Tiempo de Parking: ${minutosTotales} min.`;
+            valPat.textContent = `Valor: $${valorTot.toFixed(2)}`;
+
+            // Agregar los elementos al contenedor
+            cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
+
+            // Guardar los datos para el pago (solo si no ha sido cobrada)
+            if (data['fechasal'] === "0000-00-00") {
+                window.pendingPayment = {
                     id: data['idmov'],
                     fecha: date.toISOString().split('T')[0],
-                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+                    hora: date.toLocaleTimeString(),
                     valor: valorTot,
                 };
-
-                await updateMov(datos);
-                refreshMov();
-                refreshPagos();
-                alert('Pago registrado!');
-                document.getElementById('parkingQRPat').value = '';
             } else {
-                alert('Esta patente ya fue cobrada');
+                window.pendingPayment = null; // No permitir pagar si ya fue cobrada
             }
+
         } else {
+            // Redirigir a la sección de buses si no es de tipo "Parking"
             buses();
             document.getElementById('andenQRPat').value = input;
         }
@@ -68,25 +81,60 @@ async function calcParking(){
     }
 }
 
-async function getMovByPatente(patente){
-    if(getCookie('jwt')){
-        let ret = await fetch(apiMovimientos+'?'+ new URLSearchParams({
-            patente: patente
-        }), {
-            method: 'GET',
-            mode: 'cors',
-            headers: {
-                'Authorization' : `Bearer ${getCookie('jwt')}`
-            }
-        })
-        .then(reply => reply.json())
-        .then(data => {return data})
-        .catch(error => {console.log(error)});
-        return ret;
+// Función para calcular minutos por día con tope de 480 minutos
+function calcularMinutosPorDia(fechaInicio, fechaFin) {
+    const minutosPorDia = [];
+    let fechaActual = new Date(fechaInicio);
+
+    // Asegurarse de que fechaFin sea un objeto Date
+    if (!(fechaFin instanceof Date)) {
+        fechaFin = new Date(fechaFin);
+    }
+
+    // Iterar día por día
+    while (fechaActual <= fechaFin) {
+        const inicioDia = new Date(fechaActual);
+        inicioDia.setHours(0, 0, 0, 0);
+
+        const finDia = new Date(fechaActual);
+        finDia.setHours(23, 59, 59, 999);
+
+        // Calcular minutos para el día actual
+        const minutosDia = Math.min(
+            (Math.min(fechaFin, finDia) - Math.max(fechaInicio, inicioDia)) / 60000,
+            480
+        );
+
+        minutosPorDia.push(Math.round(minutosDia));
+        fechaActual.setDate(fechaActual.getDate() + 1); // Pasar al siguiente día
+    }
+
+    return minutosPorDia;
+}
+
+// Función para realizar el pago
+async function realizarPago() {
+    if (!window.pendingPayment) {
+        alert('No hay datos de pago pendientes.');
+        return;
+    }
+
+    try {
+        // Marcar como pagado en la base de datos
+        await updateMov(window.pendingPayment);
+        refreshMov(); // Llamar a refreshMov después del pago
+        refreshPagos();
+        alert('Pago registrado!');
+        document.getElementById('parkingQRPat').value = '';
+        window.pendingPayment = null; // Limpiar el pago pendiente
+    } catch (error) {
+        console.error('Error al realizar el pago:', error);
+        alert('No se pudo realizar el pago.');
     }
 }
 
-function impParking(){
+// Función para imprimir la boleta
+function impParking() {
     const ventanaImpr = window.open('', '_blank');
 
     const contBoleta = document.getElementById('contParking');

@@ -1,41 +1,81 @@
-<div class="caja1" id="pageMovimientos">
-  <div class="card2" style="text-align: center;">
-    <h1>Entradas y Salidas del día</h1>
-    <button class="ctrlgrn" onclick="impMovimientos()">Imprimir</button>
-    <hr>
-    <button class="ctrlgrn" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
-    <hr>
-  </div>
-  <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
-  <table id="tableMov">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Ingreso</th>
-        <th>Salida</th>
-        <th>Patente</th>
-        <th>Empresa</th>
-        <th>Tipo</th>
-      </tr>
-    </thead>
-  </table>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movimientos</title>
+    <!-- Estilos CSS -->
+    <style>
+        /* Estilo para las filas de vehículos que ya pagaron */
+        #tableMov tr.pagado {
+            background-color: #d4edda; /* Verde claro */
+        }
 
-  <!-- Formulario para insertar un movimiento de prueba -->
-  <div id="movinsert-overlay" onclick="closeModal('movinsert')" class="mdl-overlay"></div>
-  <div id="movinsert-modal" class="mdl-content">
-      <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
-      <form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
-        <input required type="text" name="patente" class="entrada" placeholder="Patente">
-        <select required name="empresa" class="entrada2">
-        </select>
-        <select required name="tipo" class="entrada2">
-          <option value="Parking">Parking</option>
-          <option value="Anden">Anden</option>
-        </select>
-        <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
-      </form>
-  </div>
+        /* Estilo para las filas de vehículos que llevan más de un día sin pagar */
+        #tableMov tr.sin-pagar {
+            background-color: #f8d7da; /* Rojo claro */
+        }
 
-</div>
-<script src="js/Data/movDA.js"></script>
-<script src="js/movUI.js"></script>
+        /* Estilos adicionales para la tabla */
+        #tableMov {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        #tableMov th, #tableMov td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        #tableMov th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="caja1" id="pageMovimientos">
+        <div class="card2" style="text-align: center;">
+            <h1>Entradas y Salidas del día</h1>
+            <button class="ctrlgrn" onclick="impMovimientos()">Imprimir</button>
+            <hr>
+            <button class="ctrlgrn" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
+            <hr>
+        </div>
+        <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
+        <table id="tableMov">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Ingreso</th>
+                    <th>Salida</th>
+                    <th>Patente</th>
+                    <th>Empresa</th>
+                    <th>Tipo</th>
+                </tr>
+            </thead>
+        </table>
+
+        <!-- Formulario para insertar un movimiento de prueba -->
+        <div id="movinsert-overlay" onclick="closeModal('movinsert')" class="mdl-overlay"></div>
+        <div id="movinsert-modal" class="mdl-content">
+            <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
+            <form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
+                <input required type="text" name="patente" class="entrada" placeholder="Patente">
+                <select required name="empresa" class="entrada2">
+                </select>
+                <select required name="tipo" class="entrada2">
+                    <option value="Parking">Parking</option>
+                    <option value="Anden">Anden</option>
+                </select>
+                <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/Data/movDA.js"></script>
+    <script src="js/movUI.js"></script>
+</body>
+</html>

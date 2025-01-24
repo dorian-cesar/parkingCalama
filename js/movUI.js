@@ -13,7 +13,13 @@ var tableMov = $('#tableMov').DataTable({
         { data: 'empresa' },
         { data: 'tipo' },
         { data: 'acciones' }
-    ]
+    ],
+    createdRow: function (row, data, dataIndex) {
+        // Aplicar clases condicionales a las filas
+        if (data.DT_RowClass) {
+            $(row).addClass(data.DT_RowClass);
+        }
+    }
 });
 
 // Función para obtener los datos de la patente desde la API
@@ -69,6 +75,20 @@ async function refreshMov() {
         if (data) {
             tableMov.clear();
             data.forEach(item => {
+                // Calcular la diferencia de tiempo para los vehículos que no han salido
+                const fechaEntrada = new Date(item['fechaent'] + 'T' + item['horaent']);
+                const fechaActual = new Date();
+                const diferenciaTiempo = fechaActual - fechaEntrada;
+                const diferenciaDias = diferenciaTiempo / (1000 * 60 * 60 * 24);
+
+                // Determinar el color de la fila
+                let rowClass = '';
+                if (item['fechasal'] !== "0000-00-00") {
+                    rowClass = 'pagado'; // Verde si ya pagó
+                } else if (diferenciaDias > 1) {
+                    rowClass = 'sin-pagar'; // Rojo si lleva más de un día sin pagar
+                }
+
                 tableMov.rows.add([{
                     'idmov': item['idmov'],
                     'fechaent': item['fechaent'],
@@ -76,7 +96,8 @@ async function refreshMov() {
                     'patente': item['patente'],
                     'empresa': item['empresa'],
                     'tipo': item['tipo'],
-                    'acciones': `<button onclick="modalEditSalida(${item['idmov']})">Actualizar Salida</button>`
+                    'acciones': `<button onclick="modalEditSalida(${item['idmov']})">Actualizar Salida</button>`,
+                    'DT_RowClass': rowClass // Agregar clase a la fila
                 }]);
             });
             tableMov.draw();

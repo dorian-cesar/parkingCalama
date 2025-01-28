@@ -76,24 +76,17 @@ async function refreshMov() {
         if (data) {
             tableMov.clear();
             data.forEach(item => {
-                // Calcular la diferencia de tiempo para los vehículos que no han salido
-                const fechaEntrada = new Date(item['fechaent'] + 'T' + item['horaent']);
-                const fechaActual = new Date();
-                const diferenciaTiempo = fechaActual - fechaEntrada;
-                const diferenciaDias = diferenciaTiempo / (1000 * 60 * 60 * 24);
+                // Obtener el estado directamente desde la API
+                const estado = item['estado']; 
 
-                // Determinar el estado y el color de la fila
-                let estado = '';
+                // Determinar el color de la fila según el estado
                 let rowClass = '';
-                if (item['fechasal'] !== "0000-00-00") {
-                    estado = 'Pagado'; // Estado: Pagado
-                    rowClass = 'pagado'; // Verde si ya pagó
-                } else if (diferenciaDias > 1) {
-                    estado = 'Sin Pagar'; // Estado: Sin Pagar
-                    rowClass = 'sin-pagar'; // Rojo si lleva más de un día sin pagar
-                } else {
-                    estado = 'En Estacionamiento'; // Estado: En Estacionamiento
-                }
+                if (estado === 'Pagado') {
+                    rowClass = 'pagado';
+                } else if (estado === 'Sin Pagar') {
+                    rowClass = 'sin-pagar';
+                } 
+                // 'En Estacionamiento' no necesita clase
 
                 tableMov.rows.add([{
                     'idmov': item['idmov'],
@@ -103,8 +96,8 @@ async function refreshMov() {
                     'empresa': item['empresa'],
                     'tipo': item['tipo'],
                     'acciones': `<button onclick="modalEditSalida(${item['idmov']})">Actualizar Salida</button>`,
-                    'estado': estado, // Agregar el estado
-                    'DT_RowClass': rowClass // Agregar clase a la fila
+                    'estado': estado, // Usar el valor de la API
+                    'DT_RowClass': rowClass 
                 }]);
             });
             tableMov.draw();
@@ -115,7 +108,6 @@ async function refreshMov() {
         refreshBtn.classList.remove('disabled');
     }
 }
-
 // Actualizar hora de salida
 async function modalEditSalida(id) {
     // Solicitar la fecha de salida

@@ -184,7 +184,7 @@ async function doInsertMov(e) {
 // Obtener la tarifa por tipo de movimiento
 async function getTarifaPorTipo(tipo) {
     try {
-        const response = await fetch(`/tarifas/api.php?tipo=${tipo}`, {
+        const response = await fetch(`http://localhost/parkingCalama/php/tarifas/api.php?tipo=${tipo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${getCookie('jwt')}`

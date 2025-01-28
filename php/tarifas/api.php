@@ -4,6 +4,7 @@ header("Content-Type: application/json; charset=UTF-8");
 
 // Incluir la configuración de la base de datos
 include("../conf.php");
+include('../auth.php');
 
 // Manejar solicitudes GET (consultar tarifas)
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {

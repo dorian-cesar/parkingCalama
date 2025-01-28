@@ -11,9 +11,36 @@ var tableMov = $('#tableMov').DataTable({
         { data: 'fechasal' },
         { data: 'patente' },
         { data: 'empresa' },
-        { data: 'tipo' }
-    ]
+        { data: 'tipo' },
+        { data: 'acciones' },
+        { data: 'estado'}
+    ],
+    createdRow: function (row, data, dataIndex) {
+        // Aplicar clases condicionales a las filas
+        if (data.DT_RowClass) {
+            $(row).addClass(data.DT_RowClass);
+        }
+    }
 });
+
+// Función para obtener los datos de la patente desde la API
+async function getMovByPatente(patente) {
+    if (getCookie('jwt')) {
+        let ret = await fetch(apiMovimientos + '?' + new URLSearchParams({
+            patente: patente
+        }), {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Authorization': `Bearer ${getCookie('jwt')}`
+            }
+        })
+            .then(reply => reply.json())
+            .then(data => { return data })
+            .catch(error => { console.log(error) });
+        return ret;
+    }
+}
 
 // Abrir Modales
 async function modalMovInsert() {
@@ -49,13 +76,35 @@ async function refreshMov() {
         if (data) {
             tableMov.clear();
             data.forEach(item => {
+                // Calcular la diferencia de tiempo para los vehículos que no han salido
+                const fechaEntrada = new Date(item['fechaent'] + 'T' + item['horaent']);
+                const fechaActual = new Date();
+                const diferenciaTiempo = fechaActual - fechaEntrada;
+                const diferenciaDias = diferenciaTiempo / (1000 * 60 * 60 * 24);
+
+                // Determinar el estado y el color de la fila
+                let estado = '';
+                let rowClass = '';
+                if (item['fechasal'] !== "0000-00-00") {
+                    estado = 'Pagado'; // Estado: Pagado
+                    rowClass = 'pagado'; // Verde si ya pagó
+                } else if (diferenciaDias > 1) {
+                    estado = 'Sin Pagar'; // Estado: Sin Pagar
+                    rowClass = 'sin-pagar'; // Rojo si lleva más de un día sin pagar
+                } else {
+                    estado = 'En Estacionamiento'; // Estado: En Estacionamiento
+                }
+
                 tableMov.rows.add([{
                     'idmov': item['idmov'],
-                    'fechaent': item['horaent'],
-                    'fechasal': item['horasal'],
+                    'fechaent': item['fechaent'],
+                    'fechasal': item['fechasal'],
                     'patente': item['patente'],
                     'empresa': item['empresa'],
-                    'tipo': item['tipo']
+                    'tipo': item['tipo'],
+                    'acciones': `<button onclick="modalEditSalida(${item['idmov']})">Actualizar Salida</button>`,
+                    'estado': estado, // Agregar el estado
+                    'DT_RowClass': rowClass // Agregar clase a la fila
                 }]);
             });
             tableMov.draw();
@@ -64,6 +113,36 @@ async function refreshMov() {
         refreshBtn.classList.add('fa-refresh');
         refreshBtn.classList.remove('fa-hourglass');
         refreshBtn.classList.remove('disabled');
+    }
+}
+
+// Actualizar hora de salida
+async function modalEditSalida(id) {
+    // Solicitar la fecha de salida
+    const fechaSalida = prompt('Ingrese la fecha de salida (YYYY-MM-DD):');
+    if (!fechaSalida || !/^\d{4}-\d{2}-\d{2}$/.test(fechaSalida)) {
+        alert('Formato de fecha inválido. Use YYYY-MM-DD.');
+        return;
+    }
+
+    // Solicitar la hora de salida
+    const horaSalida = prompt('Ingrese la hora de salida (HH:MM:SS):');
+    if (!horaSalida || !/^\d{2}:\d{2}:\d{2}$/.test(horaSalida)) {
+        alert('Formato de hora inválido. Use HH:MM:SS.');
+        return;
+    }
+
+    // Combinar fecha y hora
+    const fechaHoraSalida = `${fechaSalida} ${horaSalida}`;
+
+    try {
+        // Actualizar el movimiento en la base de datos
+        await updateMov({ id, fecha: fechaSalida, hora: horaSalida });
+        alert('Fecha y hora de salida actualizadas correctamente.');
+        refreshMov(); // Refrescar la tabla de movimientos
+    } catch (error) {
+        console.error('Error al actualizar la fecha y hora de salida:', error);
+        alert('No se pudo actualizar la fecha y hora de salida.');
     }
 }
 
@@ -102,60 +181,10 @@ async function doInsertMov(e) {
     refreshMov();
 }
 
-// Imprimir movimientos
-async function impMovimientos() {
-    const ventanaImpr = window.open('', '_blank');
-
-    ventanaImpr.document.write(`
-        <html>
-        <head>
-            <title>Movimientos</title>
-            <link rel="stylesheet" href="css/styles.css">
-        </head>
-        <body style="text-align:center; width: 1280px;">
-            <h1>Movimientos del Día</h1>
-            <table style="margin:auto;border:1px solid black;border-collapse:collapse">
-                <thead>
-                    <tr>
-                        <th>Ingreso</th>
-                        <th>Salida</th>
-                        <th>Patente</th>
-                        <th>Empresa</th>
-                        <th>Tipo</th>
-                    </tr>
-                </thead>
-                <tbody>
-    `);
-
-    try {
-        const data = await getMov();
-
-        if (data) {
-            data.forEach(itm => {
-                ventanaImpr.document.write(`
-                    <tr>
-                        <td style="padding:5px">${itm['horaent']}</td>
-                        <td style="padding:5px">${itm['horasal']}</td>
-                        <td style="padding:5px">${itm['patente']}</td>
-                        <td style="padding:5px">${itm['empresa']}</td>
-                        <td style="padding:5px">${itm['tipo']}</td>
-                    </tr>
-                `);
-            });
-
-            ventanaImpr.document.write('</tbody></table>');
-            ventanaImpr.document.close();
-            ventanaImpr.print();
-        }
-    } catch (error) {
-        console.error('Error:', error.message);
-    }
-}
-
 // Obtener la tarifa por tipo de movimiento
 async function getTarifaPorTipo(tipo) {
     try {
-        const response = await fetch(`/tarifas/api.php?tipo=${tipo}`, {
+        const response = await fetch(`http://localhost/parkingCalama/php/tarifas/api.php?tipo=${tipo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${getCookie('jwt')}`
@@ -180,18 +209,18 @@ function calcularMinutosPorDia(fechaInicio, fechaFin) {
 
     while (fechaActual <= fechaFin) {
         const inicioDia = new Date(fechaActual);
-        inicioDia.setHours(0, 0, 0, 0); // Medianoche del día actual
+        inicioDia.setHours(0, 0, 0, 0);
 
         const finDia = new Date(fechaActual);
-        finDia.setHours(23, 59, 59, 999); // Final del día actual
+        finDia.setHours(23, 59, 59, 999);
 
         const minutosDia = Math.min(
-            (Math.min(fechaFin, finDia) - Math.max(fechaInicio, inicioDia)) / 60000, // Diferencia en minutos
-            480 // Tope diario
+            (Math.min(fechaFin, finDia) - Math.max(fechaInicio, inicioDia)) / 60000,
+            480
         );
 
-        minutosPorDia.push(Math.round(minutosDia)); // Redondear al minuto más cercano
-        fechaActual.setDate(fechaActual.getDate() + 1); // Siguiente día
+        minutosPorDia.push(Math.round(minutosDia));
+        fechaActual.setDate(fechaActual.getDate() + 1);
     }
 
     return minutosPorDia;
@@ -204,7 +233,7 @@ async function calcParking() {
 
     if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
-        return; // To-Do leer QR o Codigo de Barra
+        return;
     }
 
     try {
@@ -220,24 +249,20 @@ async function calcParking() {
                 cont.textContent = '';
                 const date = new Date();
 
-                // Obtener la tarifa por minuto desde la API
                 const valorMinuto = await getTarifaPorTipo(data['tipo']);
                 if (valorMinuto === null) {
                     alert('Error al obtener la tarifa');
                     return;
                 }
 
-                // Calcular el tiempo de estacionamiento
                 const fechaEntrada = new Date(data['fechaent'] + 'T' + data['horaent']);
                 const fechaSalida = date;
 
                 const minutosPorDia = calcularMinutosPorDia(fechaEntrada, fechaSalida);
                 const minutosTotales = minutosPorDia.reduce((total, minutos) => total + minutos, 0);
 
-                // Calcular el valor total
                 const valorTot = valorMinuto * minutosTotales;
 
-                // Mostrar los detalles del pago
                 const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
                     ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
@@ -251,7 +276,6 @@ async function calcParking() {
 
                 cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
-                // Actualizar el movimiento en la base de datos
                 const datos = {
                     id: data['idmov'],
                     fecha: date.toISOString().split('T')[0],

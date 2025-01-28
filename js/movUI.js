@@ -184,7 +184,7 @@ async function doInsertMov(e) {
 // Obtener la tarifa por tipo de movimiento
 async function getTarifaPorTipo(tipo) {
     try {
-        const response = await fetch(`http://localhost/parkingCalama/php/tarifas/api.php?tipo=${tipo}`, {
+        const response = await fetch(`http://localhost/parkingCalama/php/movimientos/api.php?tipo=${tipo}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${getCookie('jwt')}`
@@ -195,7 +195,7 @@ async function getTarifaPorTipo(tipo) {
             console.error('Error:', data.error);
             return null;
         }
-        return data.valor_minuto;
+        return data.valor_minuto; // Obtienes el valor minuto desde movParking
     } catch (error) {
         console.error('Error al obtener la tarifa:', error);
         return null;

@@ -30,7 +30,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['patente'])) {
         $patente = str_replace('-', '', $_GET['patente']);
         $date = date('Y-m-d');
-        $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor FROM movParking as m JOIN empParking as e ON m.empresa = e.idemp WHERE m.patente = ? AND m.fechaent = ? ORDER BY m.idmov DESC");
+        $stmt = $conn->prepare("
+            SELECT 
+                m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor, m.tarifa
+            FROM 
+                movParking AS m 
+            JOIN 
+                empParking AS e ON m.empresa = e.idemp
+            WHERE 
+                m.patente = ? AND m.fechaent = ? 
+            ORDER BY 
+                m.idmov DESC
+        ");
         $stmt->bind_param("ss", $patente, $date);
 
         try {
@@ -47,7 +58,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if (isset($_GET['id'])) {
         $id = $_GET['id'];
         $date = date('Y-m-d');
-        $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor FROM movParking as m JOIN empParking as e ON m.empresa = e.idemp WHERE m.idmov = ? AND m.fechaent = ?");
+        $stmt = $conn->prepare("
+            SELECT 
+                m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor, m.tarifa
+            FROM 
+                movParking AS m 
+            JOIN 
+                empParking AS e ON m.empresa = e.idemp
+            WHERE 
+                m.idmov = ? AND m.fechaent = ?
+        ");
         $stmt->bind_param("is", $id, $date);
 
         try {
@@ -63,7 +83,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
     } else {
         $date = date('Y-m-d');
-        $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor FROM movParking as m JOIN empParking as e ON m.empresa = e.idemp WHERE m.fechaent = ? ORDER BY m.idmov");
+        $stmt = $conn->prepare("
+            SELECT 
+                m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, e.nombre AS empresa, m.tipo, m.valor, m.tarifa
+            FROM 
+                movParking AS m 
+            JOIN 
+                empParking AS e ON m.empresa = e.idemp
+            WHERE 
+                m.fechaent = ? 
+            ORDER BY 
+                m.idmov
+        ");
         $stmt->bind_param("s", $date);
 
         try {
@@ -79,7 +110,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         }
     }
 }
-// Insert
+
+/// Insert
 else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($token->nivel < $LVLUSER) {
         header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
@@ -97,28 +129,53 @@ else if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $empresa = $data['empresa'];
         $tipo = $data['tipo'];
 
-        $chck = $conn->prepare("SELECT idmov FROM movParking WHERE patente = ? AND fechasal = '0000-00-00'");
-        $chck->bind_param("s", $patente);
-        $chck->execute();
-        $result = $chck->get_result();
+        // Consultar tarifa activa para el tipo y fecha
+        $stmtTarifa = $conn->prepare("
+            SELECT valor_minuto 
+            FROM tarifasParking 
+            WHERE tipo = ? 
+              AND activa = 1 
+              AND (fecha_inicio <= ? AND (fecha_fin IS NULL OR fecha_fin >= ?))
+            LIMIT 1
+        ");
+        $stmtTarifa->bind_param("sss", $tipo, $fecha, $fecha);
+        $stmtTarifa->execute();
+        $resultTarifa = $stmtTarifa->get_result();
 
-        if ($result->num_rows == 0) {
-            $stmt = $conn->prepare("INSERT INTO movParking (fechaent, horaent, patente, empresa, tipo, fechasal, horasal) VALUES (?,?,?,?,?,'0','0')");
-            $stmt->bind_param("sssis", $fecha, $hora, $patente, $empresa, $tipo);
+        if ($resultTarifa->num_rows > 0) {
+            $tarifa = $resultTarifa->fetch_assoc()['valor_minuto'];
 
-            if ($stmt->execute()) {
-                $id = $conn->insert_id;
-                echo json_encode(['id' => $id, 'msg' => 'Insertado correctamente']);
+            // Verificar si ya existe un registro activo para la patente
+            $chck = $conn->prepare("SELECT idmov FROM movParking WHERE patente = ? AND fechasal = '0000-00-00'");
+            $chck->bind_param("s", $patente);
+            $chck->execute();
+            $result = $chck->get_result();
+
+            if ($result->num_rows == 0) {
+                // Insertar registro en movParking con la tarifa obtenida
+                $stmt = $conn->prepare("
+                    INSERT INTO movParking (fechaent, horaent, patente, empresa, tipo, tarifa, fechasal, horasal) 
+                    VALUES (?, ?, ?, ?, ?, ?, '0', '0')
+                ");
+                $stmt->bind_param("sssssd", $fecha, $hora, $patente, $empresa, $tipo, $tarifa);
+
+                if ($stmt->execute()) {
+                    $id = $conn->insert_id;
+                    echo json_encode(['id' => $id, 'msg' => 'Insertado correctamente', 'tarifa' => $tarifa]);
+                } else {
+                    echo json_encode(['error' => $conn->error]);
+                }
             } else {
-                echo json_encode(['error' => $conn->error]);
+                echo json_encode(['error' => 'Ya existe registro!']);
             }
         } else {
-            echo json_encode(['error' => 'Ya existe registro!']);
+            echo json_encode(['error' => 'No se encontró una tarifa activa para este tipo y fecha']);
         }
     } else {
         echo json_encode(['error' => 'Error al decodificar JSON']);
     }
 }
+
 // Update (Pagado)
 else if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
     if ($token->nivel < $LVLUSER) {
@@ -172,7 +229,7 @@ else if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
         // Aplicar reglas de negocio
         $minutos_cobrados = 0;
-        $costo_por_minuto = 20; // Puedes ajustar este valor según lo requerido
+         // Puedes ajustar este valor según lo requerido
         $tope_diario = 480;
 
         // Calcular minutos y costo por cada día

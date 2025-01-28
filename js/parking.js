@@ -3,14 +3,12 @@ async function consultarParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
 
-    // Validar si el input es una patente válida
     if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
-        return; // To-Do: Implementar lectura de QR o código de barras
+        return;
     }
 
     try {
-        // Obtener los datos de la patente desde la API
         const data = await getMovByPatente(input);
 
         if (!data) {
@@ -18,35 +16,29 @@ async function consultarParking() {
             return;
         }
 
-        // Verificar si la patente es de tipo "Parking"
         if (data['tipo'] === 'Parking') {
-            cont.textContent = ''; // Limpiar el contenido anterior
+            cont.textContent = '';
             const date = new Date();
 
-            // Calcular el tiempo de estacionamiento
             var fechaent = new Date(data['fechaent'] + 'T' + data['horaent']);
             var fechaSalida = (data['fechasal'] !== "0000-00-00") 
                 ? new Date(data['fechasal'] + 'T' + data['horasal']) 
                 : date;
 
-            // Calcular minutos por día con tope de 480 minutos (8 horas)
             const minutosPorDia = calcularMinutosPorDia(fechaent, fechaSalida);
             const minutosTotales = minutosPorDia.reduce((total, minutos) => total + minutos, 0);
 
-            // Calcular el valor total (20 pesos por minuto)
-            const valorTot = 20 * minutosTotales;
+            // Obtener tarifa desde la base de datos
+            const valorTot = data['tarifa'] * minutosTotales; // Cambio clave aquí
 
-            // Crear elementos HTML para mostrar los datos
             const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
                 ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
-            // Asignar valores a los elementos HTML
             elemPat.textContent = `Patente: ${data['patente']}`;
             empPat.textContent = `Empresa: ${data['empresa']}`;
             fechaPat.textContent = `Fecha: ${data['fechaent']}`;
             horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
 
-            // Mostrar la hora de salida si ya fue cobrada
             if (data['fechasal'] !== "0000-00-00") {
                 horasalPat.textContent = `Hora salida: ${data['fechasal']} ${data['horasal']}`;
             } else {
@@ -56,10 +48,8 @@ async function consultarParking() {
             tiempPat.textContent = `Tiempo de Parking: ${minutosTotales} min.`;
             valPat.textContent = `Valor: $${valorTot.toFixed(2)}`;
 
-            // Agregar los elementos al contenedor
             cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
-            // Guardar los datos para el pago (solo si no ha sido cobrada)
             if (data['fechasal'] === "0000-00-00") {
                 window.pendingPayment = {
                     id: data['idmov'],
@@ -68,11 +58,10 @@ async function consultarParking() {
                     valor: valorTot,
                 };
             } else {
-                window.pendingPayment = null; // No permitir pagar si ya fue cobrada
+                window.pendingPayment = null;
             }
 
         } else {
-            // Redirigir a la sección de buses si no es de tipo "Parking"
             buses();
             document.getElementById('andenQRPat').value = input;
         }

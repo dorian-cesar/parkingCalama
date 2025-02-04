@@ -1,12 +1,11 @@
 <?php
 
 $data = [
-  "codigoEmpresa" => "89",  
-  "tipoDocumento" => "39",  
-  "total" => (string)$valorTot,  // Usar el valor calculado como string
-  "detalleBoleta" => "53-" . (string)$valorTot . "-1-dsa-BANO"  // Concatenar todo como string
+    "codigoEmpresa" => "89",  
+    "tipoDocumento" => "39",  
+    "total" => (string)$valorTot,  // Usar el valor calculado como string
+    "detalleBoleta" => "53-" . (string)$valorTot . "-1-dsa-BANO"  // Concatenar todo como string
 ];
-
 
 $curl = curl_init();
 
@@ -39,11 +38,18 @@ if (curl_errno($curl)) {
 
     if (json_last_error() === JSON_ERROR_NONE) {
         if (isset($responseData['respuesta']) && $responseData['respuesta'] === 'OK') {
-            // La boleta fue generada con éxito. Devolver la URL de la boleta.
-            $result = [
-                'success' => true,
-                'boletaUrl' => $responseData['rutaAcepta']  // Ruta de la boleta generada
-            ];
+            if (isset($responseData['rutaAcepta']) && filter_var($responseData['rutaAcepta'], FILTER_VALIDATE_URL)) {
+                // La boleta fue generada con éxito y la URL es válida
+                $result = [
+                    'success' => true,
+                    'boletaUrl' => $responseData['rutaAcepta']  // Ruta de la boleta generada
+                ];
+            } else {
+                $result = [
+                    'success' => false,
+                    'message' => 'La boleta fue generada, pero la URL de la boleta no es válida o no está presente.'
+                ];
+            }
         } else {
             $result = [
                 'success' => false,
@@ -63,4 +69,5 @@ curl_close($curl);
 // Enviar la respuesta como JSON
 header('Content-Type: application/json');
 echo json_encode($result);
+
 ?>

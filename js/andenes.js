@@ -1,6 +1,8 @@
-let valorTot = 0;
-async function calcAndenes() {
-    // Obtiene el valor ingresado en el input del código QR o patente
+
+
+let valorTotGlobal = 0;  // Variable global para almacenar el valor total
+
+async function calcAndenes() {    
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
@@ -38,14 +40,14 @@ async function calcAndenes() {
                 const ret = await getWLByPatente(data['patente']);
                 const destInfo = await getDestByID(dest.value);
 
-                let valorTot = minutos * destInfo['valor'];
+                valorTotGlobal = minutos * destInfo['valor'];  // Actualizamos la variable global
                 if (ret !== null) {
-                    valorTot = 0;
+                    valorTotGlobal = 0;
                 }
 
                 // Asegura que el valor total no sea negativo
-                if (valorTot < 0) {
-                    valorTot = 0;
+                if (valorTotGlobal < 0) {
+                    valorTotGlobal = 0;
                 }
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
@@ -54,7 +56,7 @@ async function calcAndenes() {
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
                 tiempPat.textContent = `Tiempo de Parking: ${minutos * 25} min.`;
-                valPat.textContent = `Valor: $${valorTot}`;
+                valPat.textContent = `Valor: $${valorTotGlobal}`;
 
                 cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
@@ -62,7 +64,7 @@ async function calcAndenes() {
                     id: data['idmov'],
                     fecha: date.toISOString().split('T')[0],
                     hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-                    valor: valorTot,
+                    valor: valorTotGlobal,
                 };
 
                 await updateMov(datos);
@@ -71,7 +73,7 @@ async function calcAndenes() {
                 alert('Pago registrado!');
                 document.getElementById('andenQRPat').value = '';
 
-                impAnden(valorTot);
+                impAnden(valorTotGlobal);  // Usamos la variable global actualizada
             } else {
                 alert('Esta patente ya fue cobrada');
             }
@@ -159,13 +161,21 @@ async function andGetDestinos() {
     }
 }
 
-// Función para imprimir la boleta del Andén
-async function impAnden(valorTot) {
+async function impAnden(valorTot = valorTotGlobal) {  // Usamos la variable global por defecto
     console.log("valorTot recibido en impAnden: ", valorTot);
+
     const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;  // Usamos el valor calculado para el detalle de la boleta
 
+    // Agregar log para ver los datos antes de hacer la solicitud
+    console.log("Datos a enviar a la API:", {
+        codigoEmpresa: "89",
+        tipoDocumento: "39",  // Tipo de boleta afecta
+        total: valorTot.toString(),
+        detalleBoleta: detalleBoleta
+    });
+
     try {
-        const response = await fetch('php/boletas/generarBoleta.php', {
+        const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -184,11 +194,13 @@ async function impAnden(valorTot) {
 
         const data = await response.json();
 
-        if (data.success) {
-            // Redirigir a la URL de la boleta generada
-            window.location.href = data.boletaUrl;
+        console.log("Respuesta del servidor:", data);
+
+        if (data.respuesta === "OK" && data.rutaAcepta) {
+            // Redirigir directamente a la URL del PDF
+            window.location.href = data.rutaAcepta;
         } else {
-            alert(`Error al generar la boleta: ${data.message}`);
+            alert(`Error al generar la boleta: ${data.respuesta || "Respuesta desconocida"}`);
         }
     } catch (error) {
         console.error('Error:', error);

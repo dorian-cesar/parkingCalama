@@ -1,3 +1,4 @@
+let valorTot = 0;
 async function calcAndenes() {
     // Obtiene el valor ingresado en el input del código QR o patente
     const input = document.getElementById('andenQRPat').value;
@@ -13,44 +14,40 @@ async function calcAndenes() {
     // Verifica si el input cumple con el formato de patente
     if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
-        return; // Aquí se podría implementar la lectura del QR o código de barras
+        return;
     }
 
     try {
-        // Obtiene datos del movimiento de la patente
         const data = await getMovByPatente(input);
-
         if (!data) {
             alert('Patente no encontrada');
             return;
         }
 
-        // Si el tipo de movimiento es "Anden"
         if (data['tipo'] === 'Anden') {
-            // Verifica si el vehículo ya ha salido
             if (data['fechasal'] === "0000-00-00") {
                 cont.textContent = '';
                 const date = new Date();
-
-                // Calcula la diferencia de tiempo desde la entrada
                 const fechaent = new Date(`${data['fechaent']}T${data['horaent']}`);
                 const diferencia = (date.getTime() - fechaent.getTime()) / 1000;
                 const minutos = Math.ceil((diferencia / 60) / 25);
 
-                // Crea elementos HTML para mostrar la información
                 const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
                     ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
-                // Obtiene el valor del destino
                 const ret = await getWLByPatente(data['patente']);
                 const destInfo = await getDestByID(dest.value);
 
                 let valorTot = minutos * destInfo['valor'];
                 if (ret !== null) {
-                    valorTot = 0; // Si el vehículo está en lista blanca, el valor es 0
+                    valorTot = 0;
                 }
 
-                // Asigna valores a los elementos creados
+                // Asegura que el valor total no sea negativo
+                if (valorTot < 0) {
+                    valorTot = 0;
+                }
+
                 elemPat.textContent = `Patente: ${data['patente']}`;
                 empPat.textContent = `Empresa: ${data['empresa']}`;
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
@@ -59,10 +56,8 @@ async function calcAndenes() {
                 tiempPat.textContent = `Tiempo de Parking: ${minutos * 25} min.`;
                 valPat.textContent = `Valor: $${valorTot}`;
 
-                // Agrega los elementos al contenedor
                 cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
-                // Prepara los datos para actualizar el movimiento
                 const datos = {
                     id: data['idmov'],
                     fecha: date.toISOString().split('T')[0],
@@ -70,23 +65,25 @@ async function calcAndenes() {
                     valor: valorTot,
                 };
 
-                // Actualiza el movimiento y refresca la interfaz
                 await updateMov(datos);
                 refreshMov();
                 refreshPagos();
                 alert('Pago registrado!');
                 document.getElementById('andenQRPat').value = '';
+
+                impAnden(valorTot);
             } else {
                 alert('Esta patente ya fue cobrada');
             }
         } else {
-            parking(); // Si no es un movimiento de "Anden", lo procesa como "Parking"
+            parking();
             document.getElementById('parkingQRPat').value = input;
         }
     } catch (error) {
         console.error('Error:', error.message);
     }
 }
+
 
 // Lista las empresas en un select
 function listarAndenesEmpresas() {
@@ -164,11 +161,11 @@ async function andGetDestinos() {
 
 // Función para imprimir la boleta del Andén
 async function impAnden(valorTot) {
-    
-    const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;  // Usamos el valor calculado en lugar de un número fijo
+    console.log("valorTot recibido en impAnden: ", valorTot);
+    const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;  // Usamos el valor calculado para el detalle de la boleta
 
     try {
-        const response = await fetch('generarBoleta.php', {
+        const response = await fetch('php/boletas/generarBoleta.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -181,17 +178,20 @@ async function impAnden(valorTot) {
             })
         });
 
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
         const data = await response.json();
 
         if (data.success) {
             // Redirigir a la URL de la boleta generada
             window.location.href = data.boletaUrl;
         } else {
-            alert('Error al generar la boleta: ' + data.message);
+            alert(`Error al generar la boleta: ${data.message}`);
         }
     } catch (error) {
         console.error('Error:', error);
         alert('Ocurrió un error al intentar generar la boleta.');
     }
 }
-

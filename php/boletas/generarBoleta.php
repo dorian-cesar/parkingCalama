@@ -1,10 +1,10 @@
 <?php
 
 $data = [
-  "codigoEmpresa" => "89",
-  "tipoDocumento" => "39",  // Tipo de boleta afecta
-  "total" => (string)$valorTot,  // Usar el valor calculado
-  "detalleBoleta" => "53-" . $valorTot . "-1-dsa-BANO"  
+  "codigoEmpresa" => "89",  
+  "tipoDocumento" => "39",  
+  "total" => (string)$valorTot,  // Usar el valor calculado como string
+  "detalleBoleta" => "53-" . (string)$valorTot . "-1-dsa-BANO"  // Concatenar todo como string
 ];
 
 
@@ -24,21 +24,43 @@ $response = curl_exec($curl);
 $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
 if (curl_errno($curl)) {
-    echo 'Error en la solicitud: ' . curl_error($curl);
+    $result = [
+        'success' => false,
+        'message' => 'Error en la solicitud: ' . curl_error($curl)
+    ];
 } elseif ($httpCode !== 200) {
-    echo "Error HTTP: Código $httpCode - Respuesta: $response";
+    $result = [
+        'success' => false,
+        'message' => "Error HTTP: Código $httpCode",
+        'response' => $response
+    ];
 } else {
     $responseData = json_decode($response, true);
 
     if (json_last_error() === JSON_ERROR_NONE) {
         if (isset($responseData['respuesta']) && $responseData['respuesta'] === 'OK') {
-            echo "Boleta generada con éxito: " . $responseData['rutaAcepta'];
+            // La boleta fue generada con éxito. Devolver la URL de la boleta.
+            $result = [
+                'success' => true,
+                'boletaUrl' => $responseData['rutaAcepta']  // Ruta de la boleta generada
+            ];
         } else {
-            echo "Error en la generación de la boleta: " . ($responseData['respuesta'] ?? 'Respuesta desconocida');
+            $result = [
+                'success' => false,
+                'message' => "Error en la generación de la boleta: " . ($responseData['respuesta'] ?? 'Respuesta desconocida')
+            ];
         }
     } else {
-        echo "Error al decodificar la respuesta JSON: " . json_last_error_msg();
+        $result = [
+            'success' => false,
+            'message' => "Error al decodificar la respuesta JSON: " . json_last_error_msg()
+        ];
     }
 }
 
 curl_close($curl);
+
+// Enviar la respuesta como JSON
+header('Content-Type: application/json');
+echo json_encode($result);
+?>

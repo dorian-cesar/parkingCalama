@@ -183,5 +183,3 @@ async function getMov(fecha = null) {
     .catch(error => { console.log(error); });
     return ret;
 }
-
-// Aquí sigue el resto del código...

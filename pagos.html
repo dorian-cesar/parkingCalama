@@ -1,24 +1,24 @@
 <div class="caja1" id="pagePagos">
-    <div class="card2" style="text-align: center;">
-      <h1>Pagos del Día</h1>
-      <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
-      <hr>
-      <input type="date" id="fechaSelector" value="">
-      <button class="ctrlyel1" onclick="cambiarFecha()">Cambiar Fecha</button>
-    </div>
-    <button id="btnRefreshPagos" class="ctrlyel fa fa-refresh" onclick="refreshPagos()"></button>
-    <table id="tablePagos">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Fecha</th>
-          <th>Tiempo</th>
-          <th>Patente</th>
-          <th>Empresa</th>
-          <th>Tipo</th>
-          <th>Valor</th>
-        </tr>
-      </thead>
-    </table>
+  <div class="card2" style="text-align: center;">
+    <h1>Pagos del Día</h1>
+    <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
+    <hr>
+    <input type="date" id="fechaSelector" value="">
+    <button class="ctrlyel1" onclick="cambiarFecha()">Cambiar Fecha</button>
   </div>
-  <script src="js/pagosUI.js"></script>
+  <button id="btnRefreshPagos" class="ctrlyel fa fa-refresh" onclick="refreshPagos()"></button>
+  <table id="tablePagos">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Tiempo</th>
+        <th>Patente</th>
+        <th>Empresa</th>
+        <th>Tipo</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+<script src="js/pagosUI.js"></script>

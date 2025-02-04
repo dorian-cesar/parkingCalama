@@ -17,6 +17,20 @@ var tableMov = $('#tableMov').DataTable({
 
 // Abrir Modales
 
+function cambiarFecha() {
+    const selectorFecha = document.getElementById('fechaSelector');
+    fechaSeleccionada = selectorFecha.value; // Actualizar la fecha seleccionada
+    refreshMov(); // Refrescar la tabla con la nueva fecha
+}
+
+// Nueva función para filtrar movimientos
+function filtrarMovimientos() {
+    const fechaFiltro = document.getElementById('fechaFiltro').value;  // Obtener la fecha seleccionada
+    if (fechaFiltro) {
+        refreshMov(fechaFiltro); // Llamar a refreshMov con la fecha filtrada
+    }
+}
+
 async function modalMovInsert(){
     const form = document.getElementById('formInsertMov');
     form.patente.value = '';
@@ -36,7 +50,7 @@ async function modalMovInsert(){
     openModal('movinsert');
 }
 
-async function refreshMov(){
+async function refreshMov(fecha = null){
     if(getCookie('jwt')){
         const refreshBtn = document.getElementById('btnRefreshMov');
         refreshBtn.disabled = true;
@@ -44,7 +58,7 @@ async function refreshMov(){
         refreshBtn.classList.add('fa-hourglass');
         refreshBtn.classList.add('disabled');
 
-        let data = await getMov();
+        let data = await getMov(fecha);  // Pasar la fecha como parámetro
 
         if(data){
             tableMov.clear();
@@ -150,3 +164,24 @@ async function impMovimientos() {
         console.error('Error:', error.message);
     }
 }
+
+async function getMov(fecha = null) {
+    let url = apiMovimientos;
+    if (fecha) {
+        url += `?fecha=${fecha}`; // Añadir el filtro de fecha a la URL
+    }
+    
+    let ret = await fetch(url, {
+        method: 'GET',
+        mode: 'cors',
+        headers: {
+            'Authorization' : `Bearer ${getCookie('jwt')}`
+        }
+    })
+    .then(reply => reply.json())
+    .then(data => { return data; })
+    .catch(error => { console.log(error); });
+    return ret;
+}
+
+// Aquí sigue el resto del código...

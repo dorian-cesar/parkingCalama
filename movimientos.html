@@ -1,41 +1,44 @@
 <div class="caja1" id="pageMovimientos">
-    <div class="card2" style="text-align: center;">
-      <h1>Entradas y Salidas del día</h1>
-      <button class="ctrlgrn" onclick="impMovimientos()">Imprimir</button>
-      <hr>
-      <button class="ctrlgrn" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
-      <hr>
-    </div>
-    <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
-    <table id="tableMov">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Ingreso</th>
-          <th>Salida</th>
-          <th>Patente</th>
-          <th>Empresa</th>
-          <th>Tipo</th>
-        </tr>
-      </thead>
-    </table>
-  
-    <!-- Formulario para insertar un movimiento de prueba -->
-    <div id="movinsert-overlay" onclick="closeModal('movinsert')" class="mdl-overlay"></div>
-    <div id="movinsert-modal" class="mdl-content">
-        <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
-        <form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
-          <input required type="text" name="patente" class="entrada" placeholder="Patente">
-          <select required name="empresa" class="entrada2">
-          </select>
-          <select required name="tipo" class="entrada2">
-            <option value="Parking">Parking</option>
-            <option value="Anden">Anden</option>
-          </select>
-          <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
-        </form>
-    </div>
-  
+  <div class="card2" style="text-align: center;">
+    <h1>Entradas y Salidas del día</h1>
+    <button class="ctrlgrn" onclick="impMovimientos()">Imprimir</button>
+    <hr>
+    <button class="ctrlgrn" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
+    <hr>
+    <!-- Filtro por fecha -->
+    <input type="date" id="fechaFiltro" value="">
+    <button class="ctrlyel1" onclick="filtrarMovimientos()">Filtrar por Fecha</button>
   </div>
-  <script src="js/Data/movDA.js"></script>
-  <script src="js/movUI.js"></script>
+  <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
+  <table id="tableMov">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Ingreso</th>
+        <th>Salida</th>
+        <th>Patente</th>
+        <th>Empresa</th>
+        <th>Tipo</th>
+      </tr>
+    </thead>
+  </table>
+
+  <!-- Formulario para insertar un movimiento de prueba -->
+  <div id="movinsert-overlay" onclick="closeModal('movinsert')" class="mdl-overlay"></div>
+  <div id="movinsert-modal" class="mdl-content">
+      <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
+      <form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
+        <input required type="text" name="patente" class="entrada" placeholder="Patente">
+        <select name="empresa" class="entrada2">
+        </select>
+        <select required name="tipo" class="entrada2">
+          <option value="Parking">Parking</option>
+          <option value="Anden">Anden</option>
+        </select>
+        <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
+      </form>
+  </div>
+
+</div>
+<script src="js/Data/movDA.js"></script>
+<script src="js/movUI.js"></script>

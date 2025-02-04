@@ -163,14 +163,35 @@ async function andGetDestinos() {
 }
 
 // Función para imprimir la boleta del Andén
-function impAnden() {
-    const ventanaImpr = window.open('', '_blank');
-    const contBoleta = document.getElementById('contAnden');
+async function impAnden(valorTot) {
+    
+    const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;  // Usamos el valor calculado en lugar de un número fijo
 
-    ventanaImpr.document.write('<html><head><title>Imprimir Boleta</title><link rel="stylesheet" href="css/styles.css"></head><body style="text-align:left; width: 640px;">');
-    ventanaImpr.document.write(contBoleta.innerHTML);
-    ventanaImpr.document.write('</body></html>');
+    try {
+        const response = await fetch('generarBoleta.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                codigoEmpresa: "89",
+                tipoDocumento: "39",  // Tipo de boleta afecta
+                total: valorTot.toString(),
+                detalleBoleta: detalleBoleta
+            })
+        });
 
-    ventanaImpr.document.close();
-    ventanaImpr.print();
+        const data = await response.json();
+
+        if (data.success) {
+            // Redirigir a la URL de la boleta generada
+            window.location.href = data.boletaUrl;
+        } else {
+            alert('Error al generar la boleta: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Ocurrió un error al intentar generar la boleta.');
+    }
 }
+

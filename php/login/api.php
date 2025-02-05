@@ -2,12 +2,14 @@
 //valida credenciales y generacion de token y lo guarda 
 header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST y OPTIONS
+header("Access-Control-Allow-Credentials: true");
 use Firebase\JWT\JWT; // Importar la clase JWT desde la biblioteca Firebase
 
 
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     // El navegador está realizando una solicitud de pre-vuelo OPTIONS
     header('Access-Control-Allow-Headers: Content-Type');
+    header("Access-Control-Allow-Credentials: true");
     header('Access-Control-Max-Age: 86400'); // Cache preflight request for 1 day
     header("HTTP/1.1 200 OK");
     exit;

@@ -1,6 +1,6 @@
 <?php
 //valida credenciales y generacion de token y lo guarda 
-header("Access-Control-Allow-Origin: *"); // Permitir solicitudes desde cualquier origen
+header("Access-Control-Allow-Origin: http://localhost "); // Permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST y OPTIONS
 header("Access-Control-Allow-Credentials: true");
 use Firebase\JWT\JWT; // Importar la clase JWT desde la biblioteca Firebase

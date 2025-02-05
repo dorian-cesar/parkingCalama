@@ -34,6 +34,7 @@ function doLogin(email, pass) {
             } else {
                 // Guardar el token JWT en una cookie
                 document.cookie = `jwt=${response.data};path=/; samesite=lax; secure;`;
+                
                 // Recargar la página
                 location.reload();
             }

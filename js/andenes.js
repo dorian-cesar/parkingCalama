@@ -51,7 +51,7 @@ async function calcAndenes() {
                 }
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
-                empPat.textContent = `Empresa: ${data['empresa']}`;
+                //empPat.textContent = `Empresa: ${data['empresa']}`;
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;

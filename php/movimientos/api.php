@@ -32,15 +32,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['patente'])) {
         $patente = str_replace('-', '', $_GET['patente']);
         $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                               IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.valor, m.estado 
+                               m.tipo, m.valor, m.estado 
                         FROM movParking AS m 
-                        LEFT JOIN empParking AS e ON m.empresa = e.idemp 
                         WHERE m.patente = ? 
                         ORDER BY m.idmov DESC");
 
         $stmt->bind_param("s", $patente);
 
-    
         try {
             $stmt->execute();
             $result = $stmt->get_result();
@@ -57,9 +55,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
     else if(isset($_GET['id'])){
         $id = $_GET['id'];
         $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                               e.nombre AS empresa, m.tipo, m.valor, m.estado 
+                               m.tipo, m.valor, m.estado 
                         FROM movParking as m 
-                        JOIN empParking as e ON m.empresa = e.idemp 
                         WHERE m.idmov = ? 
                         ORDER BY m.idmov");
     
@@ -80,18 +77,16 @@ if($_SERVER['REQUEST_METHOD'] == 'GET') {
         if(isset($_GET['fecha'])){
             $fecha = $_GET['fecha']; // Recibimos el parámetro de fecha
             $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                               e.nombre AS empresa, m.tipo, m.valor, m.estado 
+                               m.tipo, m.valor, m.estado 
                         FROM movParking as m 
-                        JOIN empParking as e ON m.empresa = e.idemp 
                         WHERE DATE(m.fechaent) = ? 
                         ORDER BY m.idmov");
             $stmt->bind_param("s", $fecha); // Usamos el parámetro de fecha en la consulta
         } else {
             // Si no se pasó una fecha, traemos todos los movimientos
             $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                               e.nombre AS empresa, m.tipo, m.valor, m.estado 
+                               m.tipo, m.valor, m.estado 
                         FROM movParking as m 
-                        JOIN empParking as e ON m.empresa = e.idemp 
                         ORDER BY m.idmov");
         }
 
@@ -125,12 +120,12 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fecha = $data['fecha'];
         $hora = $data['hora'];
         $patente = str_replace('-','',$data['patente']);
-        $empresa = $data['empresa'];
+        //$empresa = $data['empresa']; // Se ha comentado la parte de la empresa
         $tipo = $data['tipo'];
 
         // Aquí insertamos la patente correctamente en la base de datos sin necesidad de verificar si ya existe
         $stmt = $conn->prepare("INSERT INTO movParking (fechaent, horaent, patente, empresa, tipo, fechasal, horasal) VALUES (?,?,?,?,?,'0','0')");
-        $stmt->bind_param("sssis", $fecha, $hora, $patente, $empresa, $tipo);
+        $stmt->bind_param("sssis", $fecha, $hora, $patente, $empresa, $tipo); // La variable $empresa está comentada
 
         if($stmt->execute()){
             $id = $conn->insert_id;

@@ -10,7 +10,7 @@ var tableMov = $('#tableMov').DataTable({
         { data: 'fechaent'},
         { data: 'fechasal'},
         { data: 'patente'},
-        { data: 'empresa'},
+        // { data: 'empresa' }, // Comentado para no mostrar la columna de empresa
         { data: 'tipo'},
         { data: 'estado'}
     ]
@@ -36,17 +36,17 @@ async function modalMovInsert(){
     const form = document.getElementById('formInsertMov');
     form.patente.value = '';
 
-    let empresas = await getEmp();
+    // let empresas = await getEmp(); // Comentado para no obtener empresas
 
-    if(empresas){
-        form.empresa.textContent = '';
-        empresas.forEach(data => {
-            var optIn = document.createElement('option');
-            optIn.value = data['idemp'];
-            optIn.textContent = data['nombre'];
-            form.empresa.appendChild(optIn);
-        });
-    }
+    // if(empresas){
+    //     form.empresa.textContent = ''; // Comentado
+    //     empresas.forEach(data => {
+    //         var optIn = document.createElement('option');
+    //         optIn.value = data['idemp'];
+    //         optIn.textContent = data['nombre'];
+    //         form.empresa.appendChild(optIn);
+    //     });
+    // }
 
     openModal('movinsert');
 }
@@ -69,7 +69,7 @@ async function refreshMov(fecha = null){
                     'fechaent' : item['horaent'],
                     'fechasal' : item['horasal'],
                     'patente' : item['patente'],
-                    'empresa' : item['empresa'],
+                    // 'empresa' : item['empresa'], // Comentado para no agregar empresa
                     'tipo' : item['tipo'],
                     'estado' : item['estado']
                 }]);
@@ -102,7 +102,7 @@ async function doInsertMov(e){
         fecha: dateNow.toISOString().split('T')[0],
         hora: `${dateNow.getHours()}:${dateNow.getMinutes()}:${dateNow.getSeconds()}`,
         patente: form.patente.value,   // No se verifica si ya existe, se registra directamente
-        empresa: form.empresa.value,
+        // empresa: form.empresa.value, // Comentado para no enviar empresa
         tipo: form.tipo.value
     };
 
@@ -135,7 +135,7 @@ async function impMovimientos() {
                         <th>Ingreso</th>
                         <th>Salida</th>
                         <th>Patente</th>
-                        <th>Empresa</th>
+                        <!-- <th>Empresa</th> --> <!-- Comentado para no mostrar la columna de empresa -->
                         <th>Tipo</th>
                         <th>Estado</th>
                     </tr>
@@ -153,7 +153,7 @@ async function impMovimientos() {
                         <td style="padding:5px">${itm['horaent']}</td>
                         <td style="padding:5px">${itm['horasal']}</td>
                         <td style="padding:5px">${itm['patente']}</td>
-                        <td style="padding:5px">${itm['empresa']}</td>
+                        <!-- <td style="padding:5px">${itm['empresa']}</td> --> <!-- Comentado para no mostrar la columna de empresa -->
                         <td style="padding:5px">${itm['tipo']}</td>
                         <td style="padding:5px">${itm['estado']}</td>
                     </tr>

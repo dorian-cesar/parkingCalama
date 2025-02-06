@@ -3,8 +3,10 @@
     <h1>Pagos del Día</h1>
     <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
     <hr>
-    <input type="date" id="fechaSelector" value="">
-    <button class="ctrlyel1" onclick="cambiarFecha()">Cambiar Fecha</button>
+    <div style="display: flex; align-items: center; justify-content: center;">
+      <input type="date" id="fechaSelector" value="" style="margin-right: 10px; width: 150px;">
+      <button class="ctrlgrn" onclick="cambiarFecha()" style="padding: 5px 10px; font-size: 14px;">Filtrar por Fecha</button>
+    </div>
   </div>
   <button id="btnRefreshPagos" class="ctrlyel fa fa-refresh" onclick="refreshPagos()"></button>
   <table id="tablePagos">
@@ -14,7 +16,6 @@
         <th>Fecha</th>
         <th>Tiempo</th>
         <th>Patente</th>
-        <th>Empresa</th>
         <th>Tipo</th>
         <th>Valor</th>
       </tr>

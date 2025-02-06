@@ -20,7 +20,9 @@
 
 <!-- Barra de navegación -->
 <div id="navbar">
-  <div id="logo">Logo</div>
+  <div id="logo">
+    <img src="wit.png" alt="Logo" style="width: 100px;">
+  </div>  
   <a href="#" onclick="contacto()">Contáctenos</a>
   <a href="#" onclick="nosotros()">Nosotros</a>
   <a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
@@ -83,10 +85,10 @@
 </div>
 
 <script>
- // const baseURL = "http://localhost/parkingCalama/php";
+  const baseURL = "http://localhost/parkingCalama/php";
   //const baseURL = "https://masgps-bi.wit.la/parkingCalama/php";
   //const baseURL = "http://3.91.88.167/parkingCalama/php";
-  const baseURL = "https://andenes.terminal-calama.com/parkingCalama/php";
+  //const baseURL = "https://andenes.terminal-calama.com/parkingCalama/php";
   // Función para inicializar la interfaz de usuario
   function initUI() {
     // Elementos que solo deben verse por usuarios y administradores

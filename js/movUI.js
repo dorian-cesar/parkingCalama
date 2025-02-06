@@ -11,7 +11,8 @@ var tableMov = $('#tableMov').DataTable({
         { data: 'fechasal'},
         { data: 'patente'},
         { data: 'empresa'},
-        { data: 'tipo'}
+        { data: 'tipo'},
+        { data: 'estado'}
     ]
 });
 
@@ -69,7 +70,8 @@ async function refreshMov(fecha = null){
                     'fechasal' : item['horasal'],
                     'patente' : item['patente'],
                     'empresa' : item['empresa'],
-                    'tipo' : item['tipo']
+                    'tipo' : item['tipo'],
+                    'estado' : item['estado']
                 }]);
             });
             tableMov.draw();
@@ -135,6 +137,7 @@ async function impMovimientos() {
                         <th>Patente</th>
                         <th>Empresa</th>
                         <th>Tipo</th>
+                        <th>Estado</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -152,6 +155,7 @@ async function impMovimientos() {
                         <td style="padding:5px">${itm['patente']}</td>
                         <td style="padding:5px">${itm['empresa']}</td>
                         <td style="padding:5px">${itm['tipo']}</td>
+                        <td style="padding:5px">${itm['estado']}</td>
                     </tr>
                 `);
             });

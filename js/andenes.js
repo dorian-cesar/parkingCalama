@@ -65,15 +65,9 @@ async function calcAndenes() {
                     fecha: date.toISOString().split('T')[0],
                     hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
                     valor: valorTotGlobal,
-                };
+                };                
 
-                await updateMov(datos);
-                refreshMov();
-                refreshPagos();
-                alert('Pago registrado!');
-                document.getElementById('andenQRPat').value = '';
-
-                impAnden(valorTotGlobal);  // Usamos la variable global actualizada
+                
             } else {
                 alert('Esta patente ya fue cobrada');
             }

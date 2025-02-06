@@ -163,17 +163,20 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $valor = $data['valor'];
         $id = $data['id'];
 
-        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ? WHERE idmov = ?");
-        $stmt->bind_param("ssii",$fecha,$hora,$valor,$id);
+        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ?, estado = 'Pagado' WHERE idmov = ?");
+        $stmt->bind_param("ssii", $fecha, $hora, $valor, $id);
 
         if($stmt->execute()) {
-            echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente']);
+            echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente a Pagado']);
         } else {
             echo json_encode(['error' => 'Error al actualizar']);
         }
+
+        $stmt->close();
     } else {
         echo json_encode(['error' => 'Error al decodificar JSON']);
     }
 }
+
 $conn->close();
 ?>

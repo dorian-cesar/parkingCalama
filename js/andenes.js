@@ -1,8 +1,6 @@
-
-
 let valorTotGlobal = 0;  // Variable global para almacenar el valor total
 
-async function calcAndenes() {    
+async function calcAndenes() {
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
@@ -28,19 +26,18 @@ async function calcAndenes() {
 
         if (data['tipo'] === 'Anden') {
             if (data['fechasal'] === "0000-00-00") {
-                cont.textContent = '';
+                cont.textContent = ''; // Limpia el contenedor
+
                 const date = new Date();
                 const fechaent = new Date(`${data['fechaent']}T${data['horaent']}`);
                 const diferencia = (date.getTime() - fechaent.getTime()) / 1000;
                 const minutos = Math.ceil((diferencia / 60) / 25);
 
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
-
-                const ret = await getWLByPatente(data['patente']);
                 const destInfo = await getDestByID(dest.value);
+                valorTotGlobal = minutos * destInfo['valor'];
 
-                valorTotGlobal = minutos * destInfo['valor'];  // Actualizamos la variable global
+                // Verifica si está en la lista blanca y ajusta el valor a 0 si corresponde
+                const ret = await getWLByPatente(data['patente']);
                 if (ret !== null) {
                     valorTotGlobal = 0;
                 }
@@ -49,6 +46,10 @@ async function calcAndenes() {
                 if (valorTotGlobal < 0) {
                     valorTotGlobal = 0;
                 }
+
+                // Mostrar la información en el contenedor
+                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
                 empPat.textContent = `Empresa: ${data['empresa']}`;
@@ -60,23 +61,16 @@ async function calcAndenes() {
 
                 cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
-                const datos = {
-                    id: data['idmov'],
-                    fecha: date.toISOString().split('T')[0],
-                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-                    valor: valorTotGlobal,
-                };                
-
                 
             } else {
                 alert('Esta patente ya fue cobrada');
             }
         } else {
-            parking();
+            parking();  // Redirige al proceso de parking si no es tipo "Anden"
             document.getElementById('parkingQRPat').value = input;
         }
     } catch (error) {
-        console.error('Error:', error.message);
+        console.error('Error en el cálculo:', error);
     }
 }
 
@@ -155,49 +149,98 @@ async function andGetDestinos() {
     }
 }
 
-async function impAnden(valorTot = valorTotGlobal) {  // Usamos la variable global por defecto
-    console.log("valorTot recibido en impAnden: ", valorTot);
+async function pagarAnden(valorTot = valorTotGlobal) {  
+    console.log("valorTot recibido en impAnden:", valorTot);
 
-    const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;  // Usamos el valor calculado para el detalle de la boleta
+    const input = document.getElementById('andenQRPat').value;
+    const cont = document.getElementById('contAnden');
+    const date = new Date();
 
-    // Agregar log para ver los datos antes de hacer la solicitud
-    console.log("Datos a enviar a la API:", {
-        codigoEmpresa: "89",
-        tipoDocumento: "39",  // Tipo de boleta afecta
-        total: valorTot.toString(),
-        detalleBoleta: detalleBoleta
-    });
+    // Verifica si el input cumple con el formato de patente
+    if (!patRegEx.test(input)) {
+        console.log('No es patente, leer QR');
+        return;
+    }
 
     try {
-        const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                codigoEmpresa: "89",
-                tipoDocumento: "39",  // Tipo de boleta afecta
-                total: valorTot.toString(),
-                detalleBoleta: detalleBoleta
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error HTTP: ${response.status}`);
+        const data = await getMovByPatente(input);
+        if (!data) {
+            alert('Patente no encontrada');
+            return;
         }
 
-        const data = await response.json();
+        if (data['tipo'] === 'Anden') {
+            if (data['fechasal'] === "0000-00-00") {
+                console.log("Patente válida, registrando el pago...");
 
-        console.log("Respuesta del servidor:", data);
+                // Registro del pago en la base de datos
+                const datos = {
+                    id: data['idmov'],
+                    fecha: date.toISOString().split('T')[0],
+                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+                    valor: valorTot
+                };
 
-        if (data.respuesta === "OK" && data.rutaAcepta) {
-            // Redirigir directamente a la URL del PDF
-            window.location.href = data.rutaAcepta;
+                await updateMov(datos);
+                refreshMov();
+                refreshPagos();
+
+                alert('Pago registrado correctamente.');
+
+                // Intentar generar la boleta
+                const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;
+                console.log("Datos a enviar a la API:", {
+                    codigoEmpresa: "89",
+                    tipoDocumento: "39",
+                    total: valorTot.toString(),
+                    detalleBoleta: detalleBoleta
+                });
+
+                try {
+                    const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            codigoEmpresa: "89",
+                            tipoDocumento: "39",
+                            total: valorTot.toString(),
+                            detalleBoleta: detalleBoleta
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    console.log("Respuesta del servidor:", result);
+
+                    if (result.respuesta === "OK" && result.rutaAcepta) {
+                        console.log("Boleta generada correctamente.");
+                        window.location.href = result.rutaAcepta;  // Redirigir a la URL del PDF
+                    } else {
+                        console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
+                        alert('Pago registrado, pero no se pudo generar la boleta.');
+                    }
+                } catch (error) {
+                    console.error('Error al generar la boleta:', error);
+                    alert('Pago registrado, pero ocurrió un error al intentar generar la boleta.');
+                }
+
+                // Limpiar el campo de entrada y el contenedor después de registrar el pago y generar la boleta
+                document.getElementById('andenQRPat').value = '';
+                cont.innerHTML = '';  // Limpia el contenedor de información
+
+            } else {
+                alert('Esta patente ya fue cobrada');
+            }
         } else {
-            alert(`Error al generar la boleta: ${data.respuesta || "Respuesta desconocida"}`);
+            alert('La patente pertenece a un tipo distinto de movimiento.');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Ocurrió un error al intentar generar la boleta.');
+        alert('Ocurrió un error al procesar la solicitud.');
     }
 }

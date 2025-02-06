@@ -6,8 +6,10 @@
     <button class="ctrlgrn" onclick="modalMovInsert()">Crear Movimiento (DEV)</button>
     <hr>
     <!-- Filtro por fecha -->
-    <input type="date" id="fechaFiltro" value="">
-    <button class="ctrlyel1" onclick="filtrarMovimientos()">Filtrar por Fecha</button>
+    <div style="display: flex; align-items: center; justify-content: center;">
+      <input type="date" id="fechaFiltro" value="" style="margin-right: 10px; width: 150px;"> <!-- Ajustado el ancho -->
+      <button class="ctrlgrn" onclick="filtrarMovimientos()" style="padding: 5px 10px; font-size: 14px;">Filtrar por Fecha</button>
+    </div>
   </div>
   <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
   <table id="tableMov">
@@ -17,7 +19,7 @@
         <th>Ingreso</th>
         <th>Salida</th>
         <th>Patente</th>
-        <th>Empresa</th>
+        <!--<th>Empresa</th>-->
         <th>Tipo</th>
         <th>Estado</th>
       </tr>
@@ -30,8 +32,8 @@
       <h1 class="tituloModal">Crear Movimiento (DEV)</h1>
       <form onsubmit="doInsertMov(event)" method="POST" id="formInsertMov">
         <input required type="text" name="patente" class="entrada" placeholder="Patente">
-        <select name="empresa" class="entrada2">
-        </select>
+        <!-- Eliminado el campo de empresa -->
+        <!-- <select name="empresa" class="entrada2"> </select> -->
         <select required name="tipo" class="entrada2">
           <option value="Parking">Parking</option>
           <option value="Anden">Anden</option>

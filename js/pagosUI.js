@@ -10,7 +10,7 @@ var tablePagos = $('#tablePagos').DataTable({
         { data: 'fecha'},
         { data: 'tiempo'},
         { data: 'patente'},
-        { data: 'empresa'},
+        //{ data: 'empresa'},
         { data: 'tipo'},
         { data: 'valor'}
     ]
@@ -52,7 +52,6 @@ async function refreshPagos(){
                         'fecha' : item['fechasal'],
                         'tiempo' : minutos+' min.',
                         'patente' : item['patente'],
-                        'empresa' : item['empresa'],
                         'tipo' : item['tipo'],
                         'valor' : '$'+item['valor'],
                     }]);
@@ -68,6 +67,7 @@ async function refreshPagos(){
         refreshBtn.classList.remove('disabled');
     }
 }
+
 
 
 async function impPagos() {
@@ -87,7 +87,7 @@ async function impPagos() {
                         <th>Fecha</th>
                         <th>Tiempo</th>
                         <th>Patente</th>
-                        <th>Empresa</th>
+                        <!--<th>Empresa</th>-->
                         <th>Tipo</th>
                         <th>Valor</th>
                     </tr>

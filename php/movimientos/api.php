@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         exit;
     }
 
+
     try {
         if (isset($_GET['patente'])) {
             // Filtrar por patente
@@ -65,10 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         } else {
             // Obtener todos los movimientos
             $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
+
                                     IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.estado, m.valor 
                                     FROM movParking AS m 
                                     LEFT JOIN empParking AS e ON m.empresa = e.idemp 
                                     ORDER BY m.idmov");
+
         }
 
         // Ejecutar la consulta
@@ -108,12 +111,12 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fecha = $data['fecha'];
         $hora = $data['hora'];
         $patente = str_replace('-','',$data['patente']);
-        $empresa = $data['empresa'];
+        //$empresa = $data['empresa']; // Se ha comentado la parte de la empresa
         $tipo = $data['tipo'];
 
         // Aquí insertamos la patente correctamente en la base de datos sin necesidad de verificar si ya existe
         $stmt = $conn->prepare("INSERT INTO movParking (fechaent, horaent, patente, empresa, tipo, fechasal, horasal) VALUES (?,?,?,?,?,'0','0')");
-        $stmt->bind_param("sssis", $fecha, $hora, $patente, $empresa, $tipo);
+        $stmt->bind_param("sssis", $fecha, $hora, $patente, $empresa, $tipo); // La variable $empresa está comentada
 
         if($stmt->execute()){
             $id = $conn->insert_id;

@@ -21,90 +21,73 @@ include("../conf.php");
 include('../auth.php');
 
 // GET
-if($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+    if ($token->nivel < $LVLUSER) {
+        header('HTTP/1.1 401 Unauthorized');
         echo json_encode(['error' => 'Autoridad insuficiente']);
         exit;
     }
 
-    // Filtrar por patente
-    if (isset($_GET['patente'])) {
-        $patente = str_replace('-', '', $_GET['patente']);
-        $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                               IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.valor, m.estado 
-                        FROM movParking AS m 
-                        LEFT JOIN empParking AS e ON m.empresa = e.idemp 
-                        WHERE m.patente = ? 
-                        ORDER BY m.idmov DESC");
-
-        $stmt->bind_param("s", $patente);
-
-    
-        try {
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $datos = $result->fetch_assoc();
-    
-            echo json_encode($datos);
-        } catch (mysqli_sql_exception $e) {
-            echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
-        }
-    } 
-    // Verifica si se pasó un parámetro de id
-    else if(isset($_GET['id'])){
-        $id = $_GET['id'];
-        $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                               e.nombre AS empresa, m.tipo, m.valor, m.estado 
-                        FROM movParking as m 
-                        JOIN empParking as e ON m.empresa = e.idemp 
-                        WHERE m.idmov = ? 
-                        ORDER BY m.idmov");
-    
-        try {
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $datos = $result->fetch_assoc();
-            echo json_encode($datos);
-        } catch (mysqli_sql_exception $e) {
-            echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
-        }
-    } 
-    // Si no se pasó un parámetro específico, obtenemos todos los movimientos
-    else {
-        // Verificar si se pasó un parámetro de fecha
-        if (isset($_GET['fecha'])) {
-            $fecha = $_GET['fecha']; // Recibimos el parámetro de fecha
+    try {
+        if (isset($_GET['patente'])) {
+            // Filtrar por patente
+            $patente = str_replace('-', '', $_GET['patente']);
             $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                                e.nombre AS empresa, m.tipo, m.valor, IFNULL(m.estado, 'pendiente') AS estado 
-                                FROM movParking AS m 
-                                JOIN empParking AS e ON m.empresa = e.idemp 
-                                WHERE DATE(m.fechaent) = ? 
-                                ORDER BY m.idmov");
-            $stmt->bind_param("s", $fecha); // Usamos el parámetro de fecha en la consulta
+                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.valor, m.estado 
+                                    FROM movParking AS m 
+                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
+                                    WHERE m.patente = ? 
+                                    ORDER BY m.idmov DESC");
+            $stmt->bind_param("s", $patente);
+        
+        } else if (isset($_GET['id'])) {
+            // Filtrar por idmov
+            $id = $_GET['id'];
+            $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
+                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.valor, m.estado 
+                                    FROM movParking AS m 
+                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
+                                    WHERE m.idmov = ? 
+                                    ORDER BY m.idmov");
+            $stmt->bind_param("i", $id);
+
+        } else if (isset($_GET['fecha'])) {
+            // Filtrar por fecha de entrada
+            $fecha = $_GET['fecha'];
+            $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
+                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.estado, m.valor 
+                                    FROM movParking AS m 
+                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
+                                    WHERE DATE(m.fechaent) = ? 
+                                    ORDER BY m.idmov");
+            $stmt->bind_param("s", $fecha);
+
         } else {
-            // Si no se pasó una fecha, traemos todos los movimientos
+            // Obtener todos los movimientos
             $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                                e.nombre AS empresa, m.tipo, m.valor, IFNULL(m.estado, 'pendiente') AS estado 
-                                FROM movParking AS m 
-                                JOIN empParking AS e ON m.empresa = e.idemp 
-                                ORDER BY m.idmov");
+                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.estado, m.valor 
+                                    FROM movParking AS m 
+                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
+                                    ORDER BY m.idmov");
         }
 
-        try {
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $datos = $result->fetch_all(MYSQLI_ASSOC);
-            echo json_encode($datos);
-        } catch (mysqli_sql_exception $e) {
-            echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Exception $e) {
-            echo json_encode(['error' => $e->getMessage()]);
+        // Ejecutar la consulta
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Determinar el formato de salida en función de la consulta
+        if (isset($_GET['patente']) || isset($_GET['id'])) {
+            $datos = $result->fetch_assoc(); // Un solo registro
+        } else {
+            $datos = $result->fetch_all(MYSQLI_ASSOC); // Varios registros
         }
+
+        echo json_encode($datos);
+        
+    } catch (mysqli_sql_exception $e) {
+        echo json_encode(['error' => $e->getMessage()]);
+    } catch (Exception $e) {
+        echo json_encode(['error' => $e->getMessage()]);
     }
 }
 

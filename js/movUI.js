@@ -137,6 +137,7 @@ async function impMovimientos() {
                         <th>Patente</th>
                         <th>Empresa</th>
                         <th>Tipo</th>
+                        <th>Estado</th>
                         
                     </tr>
                 </thead>

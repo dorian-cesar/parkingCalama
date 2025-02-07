@@ -26,34 +26,59 @@ function cambiarFecha() {
 }
 
 
-async function refreshPagos(){
-    if(getCookie('jwt')){
+async function obtenerConfiguracion() {
+    try {
+        const response = await fetch('php/configuracionAnden.php');
+        if (!response.ok) {
+            throw new Error('Error al obtener configuración');
+        }
+
+        const configuracion = await response.json();
+        return configuracion;
+    } catch (error) {
+        console.error('Error al cargar la configuración:', error);
+        return {
+            iva: 0.19 // Valor por defecto de IVA si hay un error
+        };
+    }
+}
+
+async function refreshPagos() {
+    if (getCookie('jwt')) {
         const refreshBtn = document.getElementById('btnRefreshPagos');
         refreshBtn.disabled = true;
         refreshBtn.classList.remove('fa-refresh');
         refreshBtn.classList.add('fa-hourglass');
         refreshBtn.classList.add('disabled');
 
+        // Obtener la configuración del IVA
+        const configuracion = await obtenerConfiguracion();
+        const iva = configuracion.iva || 0.21; // Usar 21% como valor por defecto si no se obtiene la configuración
+
         let data = await getMov();
 
-        if(data){
+        if (data) {
             tablePagos.clear();
-            
+
             data.forEach(item => {
-                if(item['fechasal'] && item['fechasal'] !== "0000-00-00" && item['fechasal'] === fechaSeleccionada){
-                    var fechaent = new Date(item['fechaent']+'T'+item['horaent']);
-                    var fechasal = new Date(item['fechasal']+'T'+item['horasal']);
+                if (item['fechasal'] && item['fechasal'] !== "0000-00-00" && item['fechasal'] === fechaSeleccionada) {
+                    var fechaent = new Date(item['fechaent'] + 'T' + item['horaent']);
+                    var fechasal = new Date(item['fechasal'] + 'T' + item['horasal']);
                     var differencia = (fechasal.getTime() - fechaent.getTime()) / 1000;
                     var minutos = Math.ceil(differencia / 60);
-                    if(item['tipo'] === 'Anden') { minutos = Math.ceil((differencia / 60) / 25) * 25; }
+                    if (item['tipo'] === 'Anden') { minutos = Math.ceil((differencia / 60) / 25) * 25; }
+
+                    // Calcular el valor con IVA
+                    const valorBase = item['valor'];
+                    const valorConIVA = valorBase * (1 + iva);
 
                     tablePagos.rows.add([{
-                        'idmov' : item['idmov'],
-                        'fecha' : item['fechasal'],
-                        'tiempo' : minutos+' min.',
-                        'patente' : item['patente'],
-                        'tipo' : item['tipo'],
-                        'valor' : '$'+item['valor'],
+                        'idmov': item['idmov'],
+                        'fecha': item['fechasal'],
+                        'tiempo': minutos + ' min.',
+                        'patente': item['patente'],
+                        'tipo': item['tipo'],
+                        'valor': '$' + valorConIVA.toFixed(0), // Mostrar el valor con IVA
                     }]);
                 }
             });

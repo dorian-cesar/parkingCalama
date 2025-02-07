@@ -5,7 +5,7 @@
 $configuracion = [
     'nacional' => 20,  // Cada cuánto tiempo se cobra en destinos nacionales (en minutos)
     'internacional' => 30, // Cada cuánto tiempo se cobra en destinos internacionales (en minutos)
-    'iva' => 0.21 // Porcentaje del IVA (21%)
+    'iva' => 0.19 // Porcentaje del IVA (21%)
 ];
 
 // Devolver los valores como JSON

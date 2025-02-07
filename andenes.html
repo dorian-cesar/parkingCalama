@@ -5,14 +5,19 @@
     <p>Ingrese su Patente</p>
     <!-- Columna izquierda con formularios -->
     <div class="izq">
-        
         <input type="text" class="entrada" id="andenQRPat" placeholder="Ingrese patente">
-        <!-- Select para seleccionar la compañía de transporte -->
-        <!-- <select id="empresaBuses" class="entrada">
-        </select>-->
+        
+        <!-- Select para elegir tipo de destino (Nacional o Internacional) -->
+        <select id="tipoDestino" class="entrada" onchange="filtrarDestinos()">
+            <option value="0">Seleccione tipo de destino</option>
+            <option value="nacional">Nacional (20 Min)</option>
+            <option value="internacional">Internacional (30 Min)</option>
+        </select>
         <!-- Select para seleccionar el destino de los buses -->
         <select id="destinoBuses" class="entrada">
+            <option value="0">Seleccione Destino</option>
         </select>
+
         <!-- Botón para calcular -->
         <button class="btn" onclick="calcAndenes()">Calcular</button>
     </div>
@@ -30,8 +35,6 @@
             </div>
             <!-- Botón para imprimir -->
             <button onclick="pagarAnden()" class="btn">Pagar</button>
-            <!-- Enlace para pagar en el SII -->
-            <!-- <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a> -->
         </div>
     </div>
 </div>

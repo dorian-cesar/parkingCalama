@@ -56,7 +56,7 @@ async function calcAndenes() {
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-                tiempPat.textContent = `Tiempo de Parking: ${minutos * 25} min.`;
+                tiempPat.textContent = `Tiempo de Parking: ${minutos * 20} min.`;
                 valPat.textContent = `Valor: $${valorTotGlobal}`;
 
                 cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);

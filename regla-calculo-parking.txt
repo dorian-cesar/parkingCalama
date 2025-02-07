@@ -1,28 +1,31 @@
-Regla de Negocio Detallada
+Regla de Negocio Actualizada: 300 Minutos por Día
 1. Cobro por Minuto
-Descripción: El cobro se realiza por cada minuto que el vehículo permanece en el estacionamiento.
+Descripción:
+El cobro se realiza por cada minuto que el vehículo permanece en el estacionamiento.
 
 Implementación:
 
 Calcular el tiempo total de estacionamiento en minutos.
 
-Multiplicar los minutos por el valor por minuto (ejemplo: $20 por minuto).
+Multiplicar los minutos por el valor por minuto (ejemplo: $30 por minuto).
 
 No hay un mínimo de tiempo; un vehículo puede estar estacionado por tan solo 10 minutos.
 
-2. Tope de 8 Horas Diarias (480 Minutos)
-Descripción: Cada día, incluyendo el día de salida, tiene un límite de 480 minutos. Si el vehículo permanece más de 480 minutos en un mismo día, solo se cobran 480 minutos.
+2. Tope de 5 Horas Diarias (300 Minutos)
+Descripción:
+Cada día, incluyendo el día de salida, tiene un límite de 300 minutos. Si el vehículo permanece más de 300 minutos en un mismo día, solo se cobran 300 minutos.
 
 Implementación:
 
 Dividir el tiempo de estacionamiento en días completos y el día de salida.
 
-Para cada día completo, cobrar 480 minutos (aunque el vehículo haya estado más tiempo).
+Para cada día completo, cobrar 300 minutos (aunque el vehículo haya estado más tiempo).
 
-Para el día de salida, cobrar el tiempo transcurrido desde la medianoche (o la hora de entrada, si es el mismo día) hasta la hora de salida, con un tope de 480 minutos.
+Para el día de salida, cobrar el tiempo transcurrido desde la medianoche (o la hora de entrada, si es el mismo día) hasta la hora de salida, con un tope de 300 minutos.
 
 3. No Registrar Salidas Intermedias
-Descripción: Si el vehículo permanece más de un día en el estacionamiento, no se debe registrar una salida hasta que efectivamente salga. Solo se registrará una salida cuando el vehículo abandone el estacionamiento.
+Descripción:
+Si el vehículo permanece más de un día en el estacionamiento, no se debe registrar una salida hasta que efectivamente salga. Solo se registrará una salida cuando el vehículo abandone el estacionamiento.
 
 Implementación:
 
@@ -31,7 +34,8 @@ Mantener el registro de entrada (fechaent y horaent) hasta que el vehículo salg
 No actualizar la fecha y hora de salida (fechasal y horasal) hasta que el vehículo efectivamente salga.
 
 4. Redondeo de Fracciones de Minuto
-Descripción: Las fracciones de minuto se redondean al minuto más cercano.
+Descripción:
+Las fracciones de minuto se redondean al minuto más cercano.
 
 Implementación:
 
@@ -54,66 +58,75 @@ Calcular el tiempo adicional del día de salida.
 Supongamos que un vehículo ingresa el 1 de enero a las 10:00 AM y sale el 3 de enero a las 2:15 PM.
 
 Día 1 (1 de enero):
+
 Hora de entrada: 10:00 AM.
 
 Hora de salida: 12:00 AM (medianoche, fin del día).
 
 Minutos en el día: 840 minutos (14 horas).
 
-Minutos cobrados: 480 minutos (tope diario).
+Minutos cobrados: 300 minutos (tope diario).
 
 Día 2 (2 de enero):
+
 Hora de entrada: 12:00 AM (inicio del día).
 
 Hora de salida: 12:00 AM (fin del día).
 
 Minutos en el día: 1440 minutos (24 horas).
 
-Minutos cobrados: 480 minutos (tope diario).
+Minutos cobrados: 300 minutos (tope diario).
 
 Día 3 (3 de enero):
+
 Hora de entrada: 12:00 AM (inicio del día).
 
 Hora de salida: 2:15 PM.
 
 Minutos en el día: 855 minutos (14 horas y 15 minutos).
 
-Minutos cobrados: 480 minutos (tope diario).
+Minutos cobrados: 300 minutos (tope diario).
 
 Cobro Total:
-Día 1: 480 minutos.
 
-Día 2: 480 minutos.
+Día 1: 300 minutos.
 
-Día 3: 480 minutos.
+Día 2: 300 minutos.
 
-Total: 1440 minutos.
+Día 3: 300 minutos.
 
-Costo: 1440 * 20 = $28,800.
+Total: 900 minutos.
+
+Costo: 900 * 20 = $18,000.
 
 7. Pasos para Implementar la Lógica
 Paso 1: Obtener Fechas y Horas
+
 Obtener la fecha y hora de entrada (fechaent y horaent).
 
 Obtener la fecha y hora de salida (fechasal y horasal).
 
 Paso 2: Calcular la Diferencia de Días
+
 Determinar cuántos días completos ha estado el vehículo en el estacionamiento.
 
-Para cada día completo, cobrar 480 minutos (tope diario).
+Para cada día completo, cobrar 300 minutos (tope diario).
 
 Paso 3: Calcular el Tiempo del Día de Salida
-Si el vehículo sale el mismo día de entrada, calcular el tiempo transcurrido desde la hora de entrada hasta la hora de salida, con un tope de 480 minutos.
 
-Si sale en un día posterior, calcular el tiempo transcurrido desde la medianoche del día de salida hasta la hora de salida, con un tope de 480 minutos.
+Si el vehículo sale el mismo día de entrada, calcular el tiempo transcurrido desde la hora de entrada hasta la hora de salida, con un tope de 300 minutos.
+
+Si sale en un día posterior, calcular el tiempo transcurrido desde la medianoche del día de salida hasta la hora de salida, con un tope de 300 minutos.
 
 Paso 4: Redondear las Fracciones de Minuto
+
 Redondear los minutos al minuto más cercano.
 
 Paso 5: Sumar los Minutos Cobrados
-Sumar los minutos de los días completos (con tope de 480 minutos por día).
 
-Sumar los minutos del día de salida (con tope de 480 minutos).
+Sumar los minutos de los días completos (con tope de 300 minutos por día).
+
+Sumar los minutos del día de salida (con tope de 300 minutos).
 
 Multiplicar por el valor por minuto para obtener el costo total.
 
@@ -138,14 +151,13 @@ Mantener el registro de entrada hasta que el vehículo salga.
 
 Actualizar la fecha y hora de salida solo cuando el vehículo efectivamente salga.
 
-9. Resumen de la Regla de Negocio
+9. Resumen de la Regla de Negocio Actualizada
 Cobro por minuto: Proporcional al tiempo de estacionamiento.
 
-Tope diario: 480 minutos por día.
+Tope diario: 300 minutos por día.
 
 No registrar salidas intermedias: Solo se registra la salida efectiva.
 
 Redondeo: Fracciones de minuto se redondean al minuto más cercano.
 
 Cálculo por días: Dividir el tiempo en días completos y el día de salida.
-

@@ -65,7 +65,15 @@ function closeLoginModal() {
 function nosotros(){
   blankPage();// Oculta todas las páginas
   document.getElementById('pageNosotros').style.display = 'block';
+
 }
+
+function privilegios(){
+  blankPage(); // Oculta todas las páginas
+  document.getElementById('pagePrivilegios').style.display = 'block';
+}
+
+
 // Muestra la página "Parking" y oculta las demás
 function parking(){
   blankPage();// Oculta todas las páginas

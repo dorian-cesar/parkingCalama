@@ -1,9 +1,9 @@
 <div class="caja1" id="pageParking">
   <h2>Parking</h2>
-  <p>Scanee el Codigo QR de su Ticket o ingrese su Patente</p>
+  <p>Ingrese su Patente o Scanee el Codigo QR de su Ticket</p>
   <div class="izq">
-    <input type="text" class="entrada" id="parkingQRPat" placeholder="Leer QR">
-    <button onclick="consultarParking()" class="btn">Consultar</button>
+    <input type="text" class="entrada" id="parkingQRPat" placeholder="Ingrese patente">
+    <button onclick="calcParking()" class="btn">Consultar</button>
   </div>
   <div class="derecha">
     <div class="card">
@@ -15,10 +15,11 @@
         <h3>Tiempo de Parking</h3>
         <h3>Valor</h3>
       </div>
-      <button onclick="realizarPago()" class="btn">Pagar</button>
-      <button onclick="impParking()" class="btn">Imprimir</button>
-      <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a>
+      <button onclick="registrarPago()" class="btn">Pagar</button>
+      <!-- <button onclick="impParking()" class="btn">Imprimir</button> -->
+      <!-- <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a> -->
     </div>
   </div>
 </div>
+<script src="js/Data/valores.js"></script>
 <script src="js/parking.js"></script>

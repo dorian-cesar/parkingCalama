@@ -8,7 +8,6 @@ body {
   overflow: hidden;
   background-color: #333;
   height: 50px;
-
 }
 
 #navbar a {
@@ -20,102 +19,102 @@ body {
   text-decoration: none;
   font-size: 17px;
 }
-  
 
-  #navbar a:hover {
-    background-color: #ddd;
-    color: black;
-  }
+#navbar a:hover {
+  background-color: #ddd;
+  color: black;
+}
 
-  #navbar #logo {
-   position: absolute;
-   margin-left: 300px;
-   font-size: 25px;
-   color: #ddd;
-   line-height: 50px;
+#navbar #logo {
+  position: absolute;
+  margin-left: 300px;
+  font-size: 25px;
+  color: #ddd;
+  line-height: 50px;
+}
 
-  }
+#sidebar {
+  height: 100%;
+  width: 200px;
+  padding-top: 20px;
+  position: fixed;
+  top: 0;
+  left: -300px;
+  background-color: #111;
+  padding-top: 20px;
+  color: white;
+  transition: left 0.3s ease;
+}
 
-  #sidebar {
-    height: 100%;
-    width: 200px;
-   padding-top: 20px;
-    position: fixed;
-    top: 0;
-    left: -300px;
-    background-color: #111;
-    padding-top: 20px;
-    color: white;
-    transition: left 0.3s ease;
-  }
-
-  .mainside {
-    margin-top: 12px;
+.mainside {
+  margin-top: 12px;
   padding: 10px;
   text-decoration: none;
   font-size: 18px;
   color: white;
   display: block;
-  }
+}
 
-  .subside {
-    margin-top: 6px;
-    margin-left: 30px;
-    padding: 10px;
-    text-decoration: none;
-    font-size: 16px;
-    color: white;
-    display: block;
-  }
+.subside {
+  margin-top: 6px;
+  margin-left: 30px;
+  padding: 10px;
+  text-decoration: none;
+  font-size: 16px;
+  color: white;
+  display: block;
+}
 
-  #content {
-    margin-left: 0;
-    padding: 16px;
-    transition: margin-left 0.3s ease;
-  }
+#content {
+  margin-left: 0;
+  padding: 16px;
+  transition: margin-left 0.3s ease;
+}
 
-  #menu-toggle {
-    position: fixed;
-    left: 10px;
-    top: 10px;
-    font-size: 20px;
-    cursor: pointer;
-    color: white;
-  }
+#menu-toggle {
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  font-size: 20px;
+  cursor: pointer;
+  color: white;
+}
 
-  .logout-pos {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    color: black;
-    background-color: #b6b6b6;
-    border-radius: 5px;
-    z-index: 999;
-  }
-     /* Estilos para el modal */
-    #login-modal {
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    padding: 20px;
-    background-color: #e4e3e3;
-    z-index: 1000;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-  }
+.logout-pos {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  color: black;
+  background-color: #b6b6b6;
+  border-radius: 5px;
+  z-index: 999;
+}
 
-  #modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-  }
+/* Estilos para el modal */
+#login-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #e4e3e3;
+  z-index: 1000;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+}
+
+#modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
 .mdl-overlay {
   display: none;
   position: fixed;
@@ -126,6 +125,7 @@ body {
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
 }
+
 .loading-overlay {
   display: block;
   position: fixed;
@@ -138,12 +138,14 @@ body {
   font-size: 4rem;
   z-index: 2000;
 }
+
 .loading-texto {
-  margin:auto;
+  margin: auto;
   width: 100%;
-  height:100%;
+  height: 100%;
   vertical-align: middle;
 }
+
 .mdl-content {
   display: none;
   position: fixed;
@@ -157,61 +159,64 @@ body {
   border-radius: 5px;
   text-align: center;
 }
-  .entrada {
-width: 90%;
-height: 40px;
-line-height: 40px;
-border: none;
-border-radius: 5px;
-margin: auto;
-margin-top: 20px;
-margin-left:7%;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-text-align: left;
-padding-left: 30px;
-  }
 
-  .entrada2 {
-    width: 97%;
-    height: 40px;
-    line-height: 40px;
-    border: none;
-    border-radius: 5px;
-    margin: auto;
-    margin-left:7%;
-    margin-top: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    text-align: left;
-    padding-left: 30px;
-  }
-  .entrada3 {
-    width: 98%;
-    height: 40px;
-    line-height: 40px;
-    border: none;
-    border-radius: 5px;
-    margin: auto;
-    margin-left:7%;
-    margin-top: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    text-align: left;
-    padding-left: 30px;
-  }
-  .texto {
-width: 90%;
-border: none;
-border-radius: 5px;
-margin: auto;
-margin-left:7%;
-margin-top: 20px;
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-text-align: left;
-padding-left: 30px
-  }
+.entrada {
+  width: 90%;
+  height: 40px;
+  line-height: 40px;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-top: 20px;
+  margin-left: 7%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  padding-left: 30px;
+}
+
+.entrada2 {
+  width: 97%;
+  height: 40px;
+  line-height: 40px;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-left: 7%;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  padding-left: 30px;
+}
+
+.entrada3 {
+  width: 98%;
+  height: 40px;
+  line-height: 40px;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-left: 7%;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  padding-left: 30px;
+}
+
+.texto {
+  width: 90%;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-left: 7%;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  padding-left: 30px;
+}
 
 form {
   text-align: center;
-width: 90%;
+  width: 90%;
 }
 
 .btn {
@@ -225,6 +230,7 @@ width: 90%;
   margin-left: 5.5%;
   background-color: #b6b6b6;
 }
+
 .btn:hover {
   background-color: #111;
   color: white;
@@ -244,6 +250,7 @@ width: 90%;
   border-radius: 5px;
   background-color: #b6b6b6;
 }
+
 .btnconf:hover {
   background-color: #111;
   color: white;
@@ -263,11 +270,13 @@ width: 90%;
   width: 27px;
   height: 27px;
 }
+
 .ctrl:hover {
   background-color: #111;
   color: white;
   cursor: pointer;
 }
+
 .ctrlred {
   border: none;
   border-radius: 5px;
@@ -282,11 +291,13 @@ width: 90%;
   width: 27px;
   height: 27px;
 }
+
 .ctrlred:hover {
   background-color: #2e0303;
   color: white;
   cursor: pointer;
 }
+
 .ctrlyel {
   border: none;
   border-radius: 5px;
@@ -301,11 +312,13 @@ width: 90%;
   width: 35px;
   height: 35px;
 }
+
 .ctrlyel:hover {
   background-color: #111;
   color: white;
   cursor: pointer;
 }
+
 .ctrlgrn {
   width: 100%;
   height: 40px;
@@ -314,94 +327,132 @@ width: 90%;
   margin: auto;
   background-color: #b6b6b6;
 }
+
 .ctrlgrn:hover {
   background-color: #111;
   color: white;
   cursor: pointer;
 }
 
-  .caja1 {
-    width: 800px;
-    margin: auto;
-    
-  }
+.caja1 {
+  width: 800px;
+  margin: auto;
+}
 
-  .izq {
-    width: 33%;
-    float: inline-start;
-    
+.izq {
+  width: 33%;
+  float: inline-start;
+}
 
-  }
-  .derecha {
-    width: 55%;
-    border-radius: 5px;
-   
-    float: right;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    
-  }
+.derecha {
+  width: 55%;
+  border-radius: 5px;
+  float: right;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
 
-  .card {
-    width: 70%;
-    margin: auto;
-    padding-bottom: 10%;
-  }
+.card {
+  width: 70%;
+  margin: auto;
+  padding-bottom: 10%;
+}
 
-  #nosotros {
-    display: none;
-  }
-  #wit {
-    color: blue;
-    font-size: 30px;
-  }
+#nosotros {
+  display: none;
+}
 
-  .card2 {
-  
-    width: 50%;
-    margin: auto;
-   
-    padding: auto;
-    margin-top: 50px;
-  }
-  #contacto {
-    display: none;
-  }
-  #entradaSalida {
-    display: none;
-  }
-  table {
-    width: 80%;
-    margin: auto;
-    border: 1px solid rgb(180, 180, 180);
-    border-collapse: collapse;
-    text-align: center;
-    padding: 0px;
-  }
-  th,td {
-    border: 1px solid rgb(180, 180, 180);
-    border-collapse: collapse;
-    padding: 0px;
-  }
+#wit {
+  color: blue;
+  font-size: 30px;
+}
 
-  .printTable {
-    padding: 5px;
-  }
+.card2 {
+  width: 50%;
+  margin: auto;
+  padding: auto;
+  margin-top: 50px;
+}
 
-  table.dataTable thead th, table.dataTable tbody td {
-    padding: 0px 0px;
-    width:min-content;
-    height:min-content;
-  }
+#contacto {
+  display: none;
+}
 
-  .disabled {
-    background-color: #cf2d2d;
-    color: rgb(255, 255, 255);
-  }
-  .tituloModal{
-    text-align: center;
-  
-  }
-  .tituloContacto{
-    text-align: center;
-  
-  }
+#entradaSalida {
+  display: none;
+}
+
+table {
+  width: 80%;
+  margin: auto;
+  border: 1px solid rgb(165, 165, 165);
+  border-collapse: collapse;
+  text-align: center;
+  padding: 0px;
+}
+
+th, td {
+  border: 1px solid rgb(165, 165, 165);
+  border-collapse: collapse;
+  padding: 12px;
+  font-size: 14px;
+  text-align: center;
+}
+
+thead {
+  background-color: #000000;
+  color: white;
+}
+
+input[type="file"] {
+  width: 100%;
+}
+
+h3 {
+  color: black;
+  font-weight: bolder;
+  font-size: 22px;
+}
+
+/* Modal for Calendar */
+#calendarioModal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #f1f1f1;
+  z-index: 1001;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  text-align: center;
+}
+
+#calendarioModal .calendar-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#calendarioModal .calendar-header {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#calendarioModal .calendar {
+  display: inline-block;
+}
+
+#calendarioModal .btn-close {
+  background-color: #cf2d2d;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  margin-top: 15px;
+}
+
+#calendarioModal .btn-close:hover {
+  background-color: #2e0303;
+  cursor: pointer;
+}

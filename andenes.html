@@ -2,17 +2,22 @@
     <!-- Título de la sección -->
     <h2>Loza - buses</h2>
     <!-- Descripción -->
-    <p>Scanee el Codigo QR de su Ticket o ingrese su Patente</p>
+    <p>Ingrese su Patente</p>
     <!-- Columna izquierda con formularios -->
     <div class="izq">
-        <!-- Input para leer el código QR -->
-        <input type="text" class="entrada" id="andenQRPat" placeholder="Leer QR">
-        <!-- Select para seleccionar la compañía de transporte -->
-        <!-- <select id="empresaBuses" class="entrada">
-        </select>-->
+        <input type="text" class="entrada" id="andenQRPat" placeholder="Ingrese patente">
+        
+        <!-- Select para elegir tipo de destino (Nacional o Internacional) -->
+        <select id="tipoDestino" class="entrada" onchange="filtrarDestinos()">
+            <option value="0">Seleccione tipo de destino</option>
+            <option value="nacional">Nacional (20 Min)</option>
+            <option value="internacional">Internacional (30 Min)</option>
+        </select>
         <!-- Select para seleccionar el destino de los buses -->
         <select id="destinoBuses" class="entrada">
+            <option value="0">Seleccione Destino</option>
         </select>
+
         <!-- Botón para calcular -->
         <button class="btn" onclick="calcAndenes()">Calcular</button>
     </div>
@@ -29,9 +34,7 @@
                 <h3>Valor</h3>
             </div>
             <!-- Botón para imprimir -->
-            <button onclick="impAnden()" class="btn">Imprimir</button>
-            <!-- Enlace para pagar en el SII -->
-            <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a>
+            <button onclick="pagarAnden()" class="btn">Pagar</button>
         </div>
     </div>
 </div>

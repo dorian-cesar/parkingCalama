@@ -9,22 +9,23 @@ $LVLADMIN = 10;
 $LVLAUDIT = 5;
 $LVLUSER = 1;
 
-if(! isset($headers['Authorization'])) {
-    echo json_encode(['error' => 'No se envió un token', 'headers' => $headers]);
-    exit;
-}
+// if(! isset($headers['Authorization'])) {
+//     echo json_encode(['error' => 'No se envió un token', 'headers' => $headers]);
+//     exit;
+// }
 
 // Incluye el archivo autoload.php que contiene las clases necesarias
 require_once('../../vendor/autoload.php');
 
 // Verificar si el encabezado Authorization contiene un token JWT
-if (! preg_match('/Bearer\s(\S+)/', $headers['Authorization'], $matches)) {
-    header('HTTP/1.0 400 Bad Request');
-    echo json_encode(['error' => 'No se envió un token', 'headers' => $headers]);
-    exit;
-}
+// if (! preg_match('/Bearer\s(\S+)/', $headers['Cookie'], $matches)) {
+//     header('HTTP/1.0 400 Bad Request');
+//     echo json_encode(['error' => 'No se envió un token', 'headers' => $headers]);
+//     exit;
+// }
 
-$jwt = $matches[1]; // Obtener el token JWT
+//$jwt = $matches[1]; // Obtener el token JWT
+$jwt =substr( $headers['Cookie'],4); // Obtener el token JWT
 
 if (! $jwt) {
     header('HTTP/1.0 400 Bad Request');
@@ -45,4 +46,7 @@ if ($token->iss !== $serverName ||
     echo json_encode(['error' => 'Token invalido']);
     exit;
 }
+
+
+
 ?>

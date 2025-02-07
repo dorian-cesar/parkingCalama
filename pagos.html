@@ -1,149 +1,25 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagos del Día</title>
-    <!-- Estilos CSS -->
-    <style>
-        /* Estilos generales */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9f9f9; /* Fondo gris claro */
-            color: #333; /* Texto gris oscuro */
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Estilos para la tabla */
-        #tablePagos {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        #tablePagos th, #tablePagos td {
-            padding: 10px;
-            border: 1px solid #ddd; /* Borde gris claro */
-            text-align: center;
-        }
-
-        #tablePagos th {
-            background-color: #333; /* Fondo gris oscuro */
-            color: white; /* Texto blanco */
-        }
-
-        #tablePagos tr:nth-child(even) {
-            background-color: #f2f2f2; /* Fondo gris claro para filas pares */
-        }
-
-        #tablePagos tr:hover {
-            background-color: #ddd; /* Fondo gris al pasar el mouse */
-        }
-
-        /* Estilos para los botones */
-        .ctrlgrn, .ctrlyel, .ctrlyel1 {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 5px;
-        }
-
-        .ctrlgrn {
-            background-color: #333; /* Fondo gris oscuro */
-            color: white; /* Texto blanco */
-        }
-
-        .ctrlgrn:hover {
-            background-color: #555; /* Fondo gris más claro al pasar el mouse */
-        }
-
-        .ctrlyel {
-            background-color: #555; /* Fondo gris medio */
-            color: white; /* Texto blanco */
-        }
-
-        .ctrlyel:hover {
-            background-color: #777; /* Fondo gris más claro al pasar el mouse */
-        }
-
-        /* Estilos para el botón "Cambiar Fecha" (ctrlyel1) */
-        .ctrlyel1 {
-            background-color: #333; /* Fondo gris oscuro */
-            color: white; /* Texto blanco */
-            border: 1px solid #555; /* Borde gris */
-        }
-
-        .ctrlyel1:hover {
-            background-color: #555; /* Fondo gris más claro al pasar el mouse */
-        }
-
-        /* Estilos para el selector de fecha */
-        #fechaSelector {
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc; /* Borde gris claro */
-            border-radius: 5px;
-            margin-right: 10px;
-            background-color: white; /* Fondo blanco */
-            color: #333; /* Texto gris oscuro */
-        }
-
-        /* Estilos para el contenedor principal */
-        .caja1 {
-            padding: 20px;
-            background-color: white; /* Fondo blanco */
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
-            margin: 20px auto;
-            max-width: 1200px;
-        }
-
-        /* Estilos para el título */
-        h1 {
-            color: #333; /* Texto gris oscuro */
-            margin-bottom: 20px;
-        }
-
-        /* Estilos para el separador */
-        hr {
-            border: 0;
-            height: 1px;
-            background-color: #ddd; /* Línea gris */
-            margin: 20px 0;
-        }
-    </style>
-</head>
-<body>
-    <div class="caja1" id="pagePagos">
-        <div class="card2" style="text-align: center;">
-            <h1>Pagos del Día</h1>
-            <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
-            <hr>
-            <!-- Selector de fecha y botón para cambiar de fecha -->
-            <input type="date" id="fechaSelector" value="">
-            <button class="ctrlyel1" onclick="cambiarFecha()">Cambiar Fecha</button>
-            <hr>
-        </div>
-        <button id="btnRefreshPagos" class="ctrlyel fa fa-refresh" onclick="refreshPagos()"></button>
-        <table id="tablePagos">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Fecha</th> <!-- Nueva columna para la fecha -->
-                    <th>Tiempo</th>
-                    <th>Patente</th>
-                    <th>Empresa</th>
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                </tr>
-            </thead>
-        </table>
+<div class="caja1" id="pagePagos">
+  <div class="card2" style="text-align: center;">
+    <h1>Pagos del Día</h1>
+    <button class="ctrlgrn" onclick="impPagos()">Imprimir</button>
+    <hr>
+    <div style="display: flex; align-items: center; justify-content: center;">
+      <input type="date" id="fechaSelector" value="" style="margin-right: 10px; width: 150px;">
+      <button class="ctrlgrn" onclick="cambiarFecha()" style="padding: 5px 10px; font-size: 14px;">Filtrar por Fecha</button>
     </div>
-
-    <!-- Scripts -->
-    <script src="js/pagosUI.js"></script>
-</body>
-</html>
+  </div>
+  <button id="btnRefreshPagos" class="ctrlyel fa fa-refresh" onclick="refreshPagos()"></button>
+  <table id="tablePagos">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Tiempo</th>
+        <th>Patente</th>
+        <th>Tipo</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+  </table>
+</div>
+<script src="js/pagosUI.js"></script>

@@ -20,32 +20,45 @@
 
 <!-- Barra de navegación -->
 <div id="navbar">
-  <div id="logo">Logo</div>
+  <div id="logo">
+    <img src="wit.png" alt="Logo" style="width: 100px;">
+  </div>  
   <a href="#" onclick="contacto()">Contáctenos</a>
   <a href="#" onclick="nosotros()">Nosotros</a>
   <a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
   <a href="#" id="nbUsrbuses" onclick="buses()">Andenes</a>
+  
 </div>
+
 
 <!-- Barra lateral -->
 <div id="sidebar">
   <br>
+  <!-- Enlace para mostrar el correo del usuario -->
   <a id="sbUsrMail" class="mainside" href="#"><i class="fa fa-user fa-fw"></i></a>
   <hr>
+  <!-- Enlaces para usuarios no autenticados -->
   <a href="#" class="mainside" id="sbGstLogin" onclick="openLoginModal()"><i class="fa fa-sign-in fa-fw"></i> Login</a>
+  <!-- Enlace para mostrar opciones de configuración -->
   <a href="#" class="mainside" id="sbAdmConfig" onclick="configuraciones()"><i class="fa fa-chevron-down fa-fw"></i> Configuración</a>
+  <!-- Submenús para opciones de configuración -->
   <a href="#" class="subside" style="display: none" id="sbSubEmpresas" onclick="empresas()"><i class="fa fa-chevron-right"></i><i class="fa fa-id-card fa-fw"></i> Empresas</a>
   <a href="#" class="subside" style="display: none" id="sbSubDestinos" onclick="destinos()"><i class="fa fa-chevron-right"></i><i class="fa fa-flag fa-fw"></i> Destinos</a>
+  <!-- Enlaces para administradores -->
   <a href="#" class="mainside" id="sbAdmEnroll" onclick="enrolar()"><i class="fa fa-users fa-fw"></i> Usuarios</a>
   <a href="#" class="mainside" id="sbAdmWhitelist" onclick="listablanca()"><i class="fa fa-list fa-fw"></i> Listas Blancas</a>
   <a href="#" class="mainside" id="sbAdmPagos" onclick="pagos()"><i class="fa fa-dollar fa-fw"></i> Pagos Diarios</a>
   <a href="#" class="mainside" id="sbAdmMovements" onclick="entradaSalida()"><i class="fa fa-bus fa-fw"></i> Entradas y Salidas</a>
+  <!-- Enlace para cerrar sesión -->
   <a class="mainside logout-pos" href="#" id="sbUsrLogout" onclick="logOut()"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
 </div>
 
 <!-- Contenido principal -->
 <div id="content">
+    <!-- Botón para mostrar/ocultar la barra lateral en dispositivos móviles -->
     <div id="menu-toggle"><i class="fa fa-bars fa-fw"></i> Menú</div>
+    
+    <!-- Contenedores para las diferentes secciones del sitio -->
     <div id="contenedorParking"></div>
     <div id="contenedorNosotros"></div>
     <div id="contenedorContacto"></div>
@@ -72,74 +85,73 @@
 </div>
 
 <script>
-  function actualizarSalida() {
-    const fechaSalida = document.getElementById('fechaSalida').value;
-    const horaSalida = document.getElementById('horaSalida').value;
-
-    if (!fechaSalida || !horaSalida) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
-
-    // Crear el payload con los datos
-    const data = {
-      fecha: fechaSalida,
-      hora: horaSalida,
-      id: 1 // Cambiar a un ID dinámico según sea necesario
-    };
-
-    // Enviar los datos al backend usando Axios
-    axios
-      .put(`${baseURL}/movParking.php`, data)
-      .then((response) => {
-        if (response.data.error) {
-          alert(`Error: ${response.data.error}`);
-        } else {
-          alert(`Salida actualizada: ${response.data.msg}`);
-        }
-      })
-      .catch((error) => {
-        console.error('Error al actualizar:', error);
-        alert('No se pudo completar la solicitud.');
-      });
-  }
-</script>
-
-
-<script>
-  // Código JavaScript anterior
   const baseURL = "http://localhost/parkingCalama/php";
+  //const baseURL = "https://masgps-bi.wit.la/parkingCalama/php";
+  //const baseURL = "http://3.91.88.167/parkingCalama/php";
+  //const baseURL = "https://andenes.terminal-calama.com/parkingCalama/php";
+  // Función para inicializar la interfaz de usuario
   function initUI() {
+    // Elementos que solo deben verse por usuarios y administradores
     var sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=sbAdm],[id^=nbUsr],[id^=nbAdm]');
-    var guestCtl = document.querySelectorAll('[id^=sbGst]');
-    sideBarCtl.forEach(item => { item.style.display = 'none'; });
-    guestCtl.forEach(item => { item.style.display = 'block'; });
 
+    // Elementos que solo deben verse por usuarios no registrados
+    var guestCtl = document.querySelectorAll('[id^=sbGst]');
+
+    // Ocultar elementos de la barra lateral
+    sideBarCtl.forEach(item => {
+      item.style.display = 'none';
+    });
+
+    // Mostrar elementos para usuarios no registrados
+    guestCtl.forEach(item => {
+      item.style.display = 'block';
+    });
+
+    // URL para validar el token de autenticación
     const urlValidate = baseURL+"/login/validate.php";
 
     if (getCookie('jwt')) {
-      axios.post(urlValidate, {}, {
-        headers: { 'Authorization' : `Bearer ${getCookie('jwt')}` }
-      }).then(reply => {
-        guestCtl.forEach(item => { item.style.display = 'none'; });
-        if (reply.data[0]['lvl'] <= 10) {
-          sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=nbUsr]');
-          sideBarCtl.forEach(item => { item.style.display = 'block'; });
+      // Validar el token de autenticación
+      axios.post(urlValidate,{},{
+        headers: {
+          'Authorization' : `Bearer ${getCookie('jwt')}`
         }
-        if (reply.data[0]['lvl'] >= 10) {
-          sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
-          sideBarCtl.forEach(item => { item.style.display = 'block'; });
-        }
-        document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];
-      }).catch(error => console.log(error));
+      })
+      .then(reply => {
+        console.log(reply);
+          guestCtl.forEach(item => {
+            item.style.display = 'none';
+          });
+          // Mostrar elementos según el nivel de acceso del usuario
+          if (reply.data[0]['lvl'] <= 10) {
+            sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=nbUsr]');
+
+            sideBarCtl.forEach(item => {
+              item.style.display = 'block';
+            });
+          }
+          if (reply.data[0]['lvl'] >= 10) {
+            sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
+
+            sideBarCtl.forEach(item => {
+              item.style.display = 'block';
+            });
+          }
+          // Mostrar el correo del usuario autenticado
+          document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];
+      })
+      .catch(error => console.log(error));
     }
   }
 
+  // Inicializar la interfaz de usuario
   initUI();
 
+  // Función para mostrar/ocultar la barra lateral en dispositivos móviles
   $('#menu-toggle').on('click', function() {
     var sidebar = document.getElementById('sidebar');
     var content = document.getElementById('content');
+
     if (sidebar.style.left === '0px') {
       sidebar.style.left = '-200px';
       content.style.marginLeft = '0';
@@ -148,27 +160,30 @@
       content.style.marginLeft = '200px';
     }
   });
-
+  
   var loadPage = $.Deferred(function(dfd) {
-    $('#contenedorMovimientos').load('movimientos.html');
-    $('#contenedorPagos').load('pagos.html');
-    $('#contenedorContacto').load('contacto.html');
-    $('#contenedorParking').load('parking.html');
-    $('#contenedorBuses').load('buses.html');
-    $('#contenedorNosotros').load('nosotros.html');
-    $('#contenedorModal').load('modal.html');
-    $('#contenedorWhitelist').load('whitelist.html');
-    $('#contenedorEmpresas').load('empresas.html');
-    $('#contenedorDestinos').load('destinos.html');
-    $('#contenedorConfig').load('config.html');
-    $('#contenedorEnrolar').load('enroll.html', dfd.resolve);
-  }).promise();
+  $('#contenedorMovimientos').load('movimientos.html');
+  $('#contenedorPagos').load('pagos.html');
+  $('#contenedorContacto').load('contacto.html');
+  $('#contenedorParking').load('parking.html');
+  $('#contenedorBuses').load('andenes.html');
+  $('#contenedorNosotros').load('nosotros.html');
+  $('#contenedorModal').load('modal.html');
+  $('#contenedorWhitelist').load('whitelist.html');
+  $('#contenedorEmpresas').load('empresas.html');
+  $('#contenedorDestinos').load('destinos.html');
+  $('#contenedorConfig').load('config.html');
+  $('#contenedorEnrolar').load('enroll.html', dfd.resolve);
+}).promise();
 
+  // Cargar el archivo main.js cuando todos los elementos existan
   $.when(loadPage).then(function() {
     $.getScript("js/main.js");
     $.getScript("js/login.js");
+    //$('#miTabla').DataTable();
   });
 
+  // Función para obtener el valor de una cookie
   function getCookie(cname) {
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
@@ -184,6 +199,8 @@
     }
     return "";
   }
+
+  //$(document).ready(loadPage());
 </script>
 </body>
 </html>

@@ -1,22 +1,58 @@
+let valorTotGlobal = 0;  // Variable global para almacenar el valor total
+
+async function filtrarDestinos() {
+    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
+    const lista = document.getElementById('destinoBuses');
+
+    if (tipoDest === '0') {
+        return; // Si no se ha seleccionado ningún tipo de destino, no hacemos nada
+    }
+
+    cargarDestinos(tipoDest, lista);
+}
+
+
+async function obtenerConfiguracion() {
+    try {
+        const response = await fetch('php/configuracionAnden.php');
+        if (!response.ok) {
+            throw new Error('Error al obtener configuración');
+        }
+
+        const configuracion = await response.json();
+        return configuracion;
+    } catch (error) {
+        console.error('Error al cargar la configuración:', error);
+        return {
+            nacional: 20,
+            internacional: 30,
+            iva: 0.21 // Valor por defecto de IVA si hay un error
+        };
+    }
+}
+
+// Usar la configuración para calcular bloques y el IVA
 async function calcAndenes() {
+    const configuracion = await obtenerConfiguracion(); // Cargar la configuración desde PHP
+
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
-    //const empr = document.getElementById('empresaBuses');
 
+    // Verifica si se ha seleccionado un destino válido
     if (!(dest.value > 0)) {
         alert('Seleccione Empresa y Destino');
         return;
     }
 
-    if(!patRegEx.test(input)){
+    // Verifica si el input cumple con el formato de patente
+    if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
-        return; //To-Do leer QR o Codigo de Barra
+        return;
     }
 
     try {
         const data = await getMovByPatente(input);
-
         if (!data) {
             alert('Patente no encontrada');
             return;
@@ -24,62 +60,78 @@ async function calcAndenes() {
 
         if (data['tipo'] === 'Anden') {
             if (data['fechasal'] === "0000-00-00") {
-                cont.textContent = '';
-                const date = new Date();
+                cont.textContent = ''; // Limpia el contenedor
 
+                const date = new Date();
                 const fechaent = new Date(`${data['fechaent']}T${data['horaent']}`);
                 const diferencia = (date.getTime() - fechaent.getTime()) / 1000;
-                const minutos = Math.ceil((diferencia / 60) / 25);
+                let minutos = Math.ceil(diferencia / 60);  // Tiempo de estacionamiento en minutos
 
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
-
-                const ret = await getWLByPatente(data['patente']);
+                // Obtener información del destino seleccionado
                 const destInfo = await getDestByID(dest.value);
+                let valorBase = destInfo['valor'];  // Valor base del destino
 
-                let valorTot = minutos * destInfo['valor'];
-                if (ret !== null) {
-                    valorTot = 0;
+                // Calcular el número de bloques según la configuración obtenida de PHP
+                let bloques = 0;
+                if (destInfo['tipo'] === 'nacional') {
+                    // Para Nacional, se cobra según el valor en configuracion.php
+                    bloques = Math.ceil((minutos - 1) / configuracion.nacional);
+                    valorBase = valorBase * bloques;
+                } else if (destInfo['tipo'] === 'internacional') {
+                    // Para Internacional, se cobra según el valor en configuracion.php
+                    bloques = Math.ceil((minutos - 1) / configuracion.internacional);
+                    valorBase = valorBase * bloques;
                 }
 
+                valorTotGlobal = valorBase;
+
+                // Verifica si está en la lista blanca y ajusta el valor a 0 si corresponde
+                const ret = await getWLByPatente(data['patente']);
+                if (ret !== null) {
+                    valorTotGlobal = 0;
+                }
+
+                // Asegura que el valor total no sea negativo
+                if (valorTotGlobal < 0) {
+                    valorTotGlobal = 0;
+                }
+
+                // Añadir IVA (valor dinámico desde configuracion.php)
+                const iva = valorTotGlobal * configuracion.iva;
+                const valorConIVA = valorTotGlobal + iva;
+
+                // Mostrar la información en el contenedor
+                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
+
                 elemPat.textContent = `Patente: ${data['patente']}`;
-                empPat.textContent = `Empresa: ${data['empresa']}`;
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-                tiempPat.textContent = `Tiempo de Parking: ${minutos * 25} min.`;
-                valPat.textContent = `Valor: $${valorTot}`;
-
-                cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
-
-                const datos = {
-                    id: data['idmov'],
-                    fecha: date.toISOString().split('T')[0],
-                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-                    valor: valorTot,
-                };
-
-                await updateMov(datos);
-                refreshMov();
-                refreshPagos();
-                alert('Pago registrado!');
-                document.getElementById('andenQRPat').value = '';
+                tiempPat.textContent = `Tiempo de Parking: ${minutos} min.`;
+                valPat.textContent = `Valor: $${valorTotGlobal.toFixed(0)}`;
+                ivaPat.textContent = `IVA (${(configuracion.iva * 100).toFixed(0)}%): $${iva.toFixed(0)}`;
+                totalPat.textContent = `Total con IVA: $${valorConIVA.toFixed(0)}`;
+                cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
             } else {
                 alert('Esta patente ya fue cobrada');
             }
         } else {
-            parking();
+            parking();  // Redirige al proceso de parking si no es tipo "Anden"
             document.getElementById('parkingQRPat').value = input;
         }
     } catch (error) {
-        console.error('Error:', error.message);
+        console.error('Error en el cálculo:', error);
     }
 }
 
-function listarAndenesEmpresas(){
+
+
+// Lista las empresas en un select
+function listarAndenesEmpresas() {
     andGetEmpresas()
     .then(data => {
-        if(data){
+        if (data) {
             const lista = document.getElementById('empresaBuses');
             lista.textContent = '';
             let nullData = document.createElement('option');
@@ -96,30 +148,58 @@ function listarAndenesEmpresas(){
     });
 }
 
-function listarAndenesDestinos(){
-    andGetDestinos()
-    .then(data => {
-        if(data){
-            const lista = document.getElementById('destinoBuses');
-            lista.textContent = '';
+// Función auxiliar para cargar y filtrar destinos
+async function cargarDestinos(tipoDest, lista) {
+    try {
+        const data = await andGetDestinos();
+        if (data) {
+            lista.textContent = '';  // Limpia la lista de destinos
             let nullData = document.createElement('option');
             nullData.value = 0;
             nullData.textContent = 'Seleccione Destino';
             lista.appendChild(nullData);
+
+            // Filtrar y mostrar los destinos según el tipo seleccionado
             data.forEach(itm => {
-                let optData = document.createElement('option');
-                optData.value = itm['iddest'];
-                optData.textContent = itm['ciudad'] + ' ($' + itm['valor'] + ')';
-                lista.appendChild(optData);
+                if (itm['tipo'] === tipoDest) {
+                    let optData = document.createElement('option');
+                    optData.value = itm['iddest'];
+                    optData.textContent = `${itm['ciudad']} - $${itm['valor']}`;
+                    lista.appendChild(optData);
+                }
             });
         }
-    });
+    } catch (error) {
+        console.error('Error al cargar los destinos:', error);
+    }
 }
 
-async function andGetEmpresas(){
-    if(getCookie('jwt')){
-        // Función para obtener todas las empresas
-        let ret = await fetch(baseURL+"/empresas/get.php", {
+
+// Función para listar andenes y destinos (también utiliza la función auxiliar)
+async function listarAndenesDestinos() {
+    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
+    const lista = document.getElementById('destinoBuses');
+
+    if (!tipoDest) {
+        lista.textContent = '';  // Limpia el contenedor
+        return;
+    }
+
+    cargarDestinos(tipoDest, lista);
+}
+
+// Agregar un evento para que se ejecute al cambiar el tipo de destino
+document.getElementById('tipoDestino').addEventListener('change', listarAndenesDestinos);
+
+
+// Agregar un evento para que se ejecute al cambiar el tipo de destino
+document.getElementById('tipoDestino').addEventListener('change', listarAndenesDestinos);
+
+
+// Obtiene la lista de empresas desde la API
+async function andGetEmpresas() {
+    if (getCookie('jwt')) {
+        let ret = await fetch(baseURL + "/empresas/get.php", {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
@@ -127,18 +207,14 @@ async function andGetEmpresas(){
                 }
             })
             .then(reply => reply.json())
-            .then(data => {
-                return data;
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            .catch(error => console.log(error));
         return ret;
     }
 }
 
-async function andGetDestinos(){
-    if(getCookie('jwt')){
+// Obtiene la lista de destinos desde la API
+async function andGetDestinos() {
+    if (getCookie('jwt')) {
         let ret = await fetch(apiDestinos, {
                 method: 'GET',
                 mode: 'cors',
@@ -147,25 +223,103 @@ async function andGetDestinos(){
                 }
             })
             .then(reply => reply.json())
-            .then(data => {
-                return data;
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            .catch(error => console.log(error));
         return ret;
     }
 }
 
-function impAnden(){
-    const ventanaImpr = window.open('', '_blank');
+async function pagarAnden(valorTot = valorTotGlobal) {  
+    console.log("valorTot recibido en impAnden:", valorTot);
 
-    const contBoleta = document.getElementById('contAnden');
+    const input = document.getElementById('andenQRPat').value;
+    const cont = document.getElementById('contAnden');
+    const date = new Date();
 
-    ventanaImpr.document.write('<html><head><title>Imprimir Boleta</title><link rel="stylesheet" href="css/styles.css"></head><body style="text-align:left; width: 640px;">');
-    ventanaImpr.document.write(contBoleta.innerHTML);
-    ventanaImpr.document.write('</body></html>');
+    // Verifica si el input cumple con el formato de patente
+    if (!patRegEx.test(input)) {
+        console.log('No es patente, leer QR');
+        return;
+    }
 
-    ventanaImpr.document.close();
-    ventanaImpr.print();
+    try {
+        const data = await getMovByPatente(input);
+        if (!data) {
+            alert('Patente no encontrada');
+            return;
+        }
+
+        if (data['tipo'] === 'Anden') {
+            if (data['fechasal'] === "0000-00-00") {
+                console.log("Patente válida, registrando el pago...");
+
+                // Registro del pago en la base de datos
+                const datos = {
+                    id: data['idmov'],
+                    fecha: date.toISOString().split('T')[0],
+                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+                    valor: valorTot
+                };
+
+                await updateMov(datos);
+                refreshMov();
+                refreshPagos();
+
+                alert('Pago registrado correctamente.');
+
+                // Intentar generar la boleta
+                const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;
+                console.log("Datos a enviar a la API:", {
+                    codigoEmpresa: "89",
+                    tipoDocumento: "39",
+                    total: valorTot.toString(),
+                    detalleBoleta: detalleBoleta
+                });
+
+                try {
+                    const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            codigoEmpresa: "89",
+                            tipoDocumento: "39",
+                            total: valorTot.toString(),
+                            detalleBoleta: detalleBoleta
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Error HTTP: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    console.log("Respuesta del servidor:", result);
+
+                    if (result.respuesta === "OK" && result.rutaAcepta) {
+                        console.log("Boleta generada correctamente.");
+                        window.location.href = result.rutaAcepta;  // Redirigir a la URL del PDF
+                    } else {
+                        console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
+                        alert('Pago registrado, pero no se pudo generar la boleta.');
+                    }
+                } catch (error) {
+                    console.error('Error al generar la boleta:', error);
+                    alert('Pago registrado, pero ocurrió un error al intentar generar la boleta.');
+                }
+
+                // Limpiar el campo de entrada y el contenedor después de registrar el pago y generar la boleta
+                document.getElementById('andenQRPat').value = '';
+                cont.innerHTML = '';  // Limpia el contenedor de información
+
+            } else {
+                alert('Esta patente ya fue cobrada');
+            }
+        } else {
+            alert('La patente pertenece a un tipo distinto de movimiento.');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Ocurrió un error al procesar la solicitud.');
+    }
 }

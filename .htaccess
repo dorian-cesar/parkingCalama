@@ -1,0 +1,9 @@
+# Habilitar CORS para permitir solicitudes desde otros dominios
+Header set Access-Control-Allow-Origin "*"
+Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+Header set Access-Control-Allow-Headers "Authorization, Content-Type"
+
+# Permitir que las solicitudes OPTIONS (preflight) pasen sin restricciones
+RewriteEngine On
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ / [R=200,L]

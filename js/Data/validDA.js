@@ -2,7 +2,7 @@
 // [0]lvl : nivel de usuario
 async function validate(){
     if(getCookie('jwt')){
-        let ret = await fetch('https://masgps-bi.wit.la/parkingCalama/php/login/validate.php', {
+        let ret = await fetch(baseURL+'/login/validate.php', {
             method: 'POST',
             mode: 'cors',
             headers: {

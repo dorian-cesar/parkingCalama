@@ -33,7 +33,10 @@ function doLogin(email, pass) {
                 alert('Error: Credenciales incorrectas. Por favor, intente de nuevo.');
             } else {
                 // Guardar el token JWT en una cookie
-                document.cookie = `jwt=${response.data};path=/; samesite=lax; secure;`;
+                console.log(response.data);
+                //document.cookie = `jwt=${response.data};path=/; samesite=lax; `;
+                document.cookie = `jwt=${response.data};path=/; samesite=None; secure; `;
+                
                 // Recargar la página
                 location.reload();
             }

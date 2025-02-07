@@ -1,0 +1,151 @@
+Documento de Reglas de Negocio para el Sistema de Cobro de Andenes 
+
+1. Descripción General 
+
+El sistema de cobro para andenes se basa en el tiempo que el vehículo permanece estacionado en el andén desde el momento de ingreso hasta el momento de cálculo del cobro. El tiempo se mide en bloques de 25 minutos, y cada bloque tiene un valor específico definido por el destino seleccionado. El sistema incluye condiciones especiales, como exenciones de pago para vehículos en la lista blanca y validaciones para evitar cobros duplicados. 
+
+ 
+
+2. Reglas de Negocio 
+
+2.1 Cálculo del Tiempo de Estancia 
+
+El tiempo transcurrido entre la hora de ingreso y la hora actual se calcula de la siguiente manera: 
+
+Se obtiene la diferencia en segundos entre la hora actual y la hora de ingreso. 
+
+La diferencia en segundos se convierte en minutos. 
+
+El tiempo en minutos se divide entre 25 y se redondea hacia arriba para asegurar que cualquier fracción de tiempo se considere como un bloque completo. 
+
+Ejemplos: 
+
+Si el vehículo estuvo estacionado durante 26 minutos, se consideran 2 bloques de 25 minutos. 
+
+Si el vehículo estuvo estacionado durante 49 minutos, también se consideran 2 bloques. 
+
+2.2 Valor del Cobro 
+
+El valor total del cobro se calcula multiplicando el número de bloques de 25 minutos por el valor correspondiente al destino seleccionado. 
+
+Fórmula: 
+
+Valor Total = (Número de Bloques) × (Valor del Bloque para el Destino) 
+  
+
+2.3 Condiciones Especiales 
+
+2.3.1 Lista Blanca (White List) 
+
+Si el vehículo está registrado en la lista blanca, el valor total del cobro será $0, independientemente del tiempo de estancia. 
+
+Regla: 
+
+Si el vehículo está en la lista blanca, entonces Valor Total = $0. 
+  
+
+2.3.2 Valor Total no Negativo 
+
+El valor total del cobro nunca puede ser negativo. Si el cálculo arroja un valor negativo, se ajusta automáticamente a $0. 
+
+Regla: 
+
+Si Valor Total < 0, entonces Valor Total = $0. 
+  
+
+2.4 Validación de Cobro Único 
+
+Antes de realizar el cálculo del cobro, el sistema verifica si el vehículo ya ha sido cobrado. Esto se hace comprobando el campo fechasal: 
+
+Si fechasal es igual a 0000-00-00, significa que el vehículo no ha sido cobrado y se puede proceder con el cálculo. 
+
+Si fechasal contiene una fecha válida, significa que el vehículo ya fue cobrado, y el sistema rechaza el proceso para evitar cobros duplicados. 
+
+Regla: 
+
+Si fechasal ≠ "0000-00-00", entonces el cobro está bloqueado. 
+  
+
+ 
+
+3. Flujo del Proceso de Cobro 
+
+El usuario ingresa la patente del vehículo. 
+
+El sistema verifica si el destino seleccionado es válido. 
+
+Se valida si la patente cumple con el formato esperado. 
+
+Se busca la información del vehículo en el sistema:  
+
+Si no se encuentra, se muestra el mensaje "Patente no encontrada". 
+
+Si el vehículo ya fue cobrado, se muestra el mensaje "Esta patente ya fue cobrada". 
+
+Si el vehículo es de tipo "Andén" y no ha sido cobrado:  
+
+Se calcula el tiempo de estancia. 
+
+Se obtiene el valor del destino. 
+
+Se calcula el valor total del cobro en función del tiempo de estancia. 
+
+Si el vehículo está en la lista blanca, el valor se ajusta a $0. 
+
+El sistema asegura que el valor total no sea negativo. 
+
+Se muestra al usuario la información del cobro detallada (patente, fecha y hora de ingreso, tiempo de estancia, valor total). 
+
+ 
+
+4. Casos Especiales 
+
+Vehículo en lista blanca: No se cobra, independientemente del tiempo de estancia. 
+
+Cobro previamente registrado: No se permite realizar un nuevo cobro. 
+
+Valor negativo: El sistema ajusta el valor a $0. 
+
+ 
+
+5. Datos Involucrados 
+
+5.1 Entradas 
+
+Patente del vehículo: Cadena de texto que representa la identificación del vehículo. 
+
+Destino seleccionado: Identificador del destino, utilizado para obtener el valor del bloque de 25 minutos. 
+
+Datos del vehículo: Información recuperada del sistema (tipo de vehículo, fecha y hora de ingreso, fecha de salida, empresa, etc.). 
+
+5.2 Salidas 
+
+Tiempo de estancia en bloques de 25 minutos. 
+
+Valor total del cobro en función del destino y el tiempo. 
+
+Detalle del cobro mostrado al usuario (patente, tiempo de estancia, valor total). 
+
+ 
+
+6. Consideraciones Técnicas 
+
+El tiempo de estancia se calcula en el cliente de forma asíncrona mediante una llamada a funciones de obtención de datos (getMovByPatente, getDestByID, getWLByPatente). 
+
+Se utilizan validaciones para asegurar que la patente tenga el formato correcto y que el destino sea válido. 
+
+La interfaz muestra el detalle del cobro de manera clara y ordenada para el usuario final. 
+
+ 
+
+7. Recomendaciones 
+
+Implementar mensajes de confirmación antes de registrar el cobro para evitar errores. 
+
+Considerar un registro de auditoría para llevar un historial de cobros. 
+
+Permitir la exportación de reportes de cobros para fines administrativos. 
+
+ 
+
+ 

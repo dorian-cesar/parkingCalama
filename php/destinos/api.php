@@ -20,9 +20,11 @@ include("../conf.php");
 
 include('../auth.php');
 
+// ... Código anterior ...
+
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+        header('HTTP/1.1 401 Unauthorized');
         echo json_encode(['error' => 'Autoridad insuficiente']);
         exit;
     }
@@ -31,8 +33,8 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         // Si hay un ID en los datos, buscar solo ese registro
         $id = $_GET['id'];
 
-        // Prepara y ejecuta una consulta SQL para obtener el registro por ID
-        $stmt = $conn->prepare("SELECT iddest, ciudad, valor FROM destParking WHERE iddest = ?");
+        // Prepara y ejecuta una consulta SQL para obtener el registro por ID, incluyendo el campo tipo
+        $stmt = $conn->prepare("SELECT iddest, ciudad, valor, tipo FROM destParking WHERE iddest = ?");
         $stmt->bind_param("i",$id);
 
         try{
@@ -40,17 +42,16 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             $result = $stmt->get_result();
             $datos = $result->fetch_assoc();
 
-            // Devuelve el resultado en formato JSON
+            // Devuelve el resultado en formato JSON, ahora con el campo 'tipo'
             echo json_encode($datos);
         } catch(mysqli_sql_exception $e){
-            // En caso de error, devuelve el código de error en formato JSON
             echo json_encode(['error' => mysqli_errno($conn)]);
         }
     }
     // Si no hay datos JSON, devolver todos los registros
     else {
-        // Prepara y ejecuta una consulta SQL para obtener todos los registros
-        $stmt = $conn->prepare("SELECT iddest, ciudad, valor FROM destParking");
+        // Prepara y ejecuta una consulta SQL para obtener todos los registros, incluyendo el campo tipo
+        $stmt = $conn->prepare("SELECT iddest, ciudad, valor, tipo FROM destParking");
         
         try{
             $stmt->execute();
@@ -68,7 +69,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
 else if($_SERVER['REQUEST_METHOD'] == "POST"){
     if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+        header('HTTP/1.1 401 Unauthorized');
         echo json_encode(['error' => 'Autoridad insuficiente']);
         exit;
     }
@@ -79,11 +80,11 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
     // Decodifica los datos JSON
     $data = json_decode($json_data, true);
 
-    // Verifica si la decodificación de JSON fue exitosa
     if ($data !== null){
-        // Obtener datos desde JSON
+        // Obtener datos desde JSON, incluyendo 'tipo'
         $ciudad = $data["ciudad"];
         $valor = $data["valor"];
+        $tipo = $data["tipo"];  // Agregar el tipo
 
         if($valor < 0){
             echo json_encode(['error' => 'Valor no puede ser negativo']);
@@ -96,19 +97,15 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
         $chck->execute();
         $result = $chck->get_result();
 
-        // Verifica si no existe ya una ciudad con el mismo nombre en la tabla
         if($result->num_rows == 0){
-            // Si no existe, prepara y ejecuta una consulta SQL para insertar una nueva ciudad y su valor en la tabla
-            $stmt = $conn->prepare("INSERT INTO destParking (ciudad, valor) VALUES (?, ?)");
-            $stmt->bind_param("si", $ciudad, $valor);
-    
-            // Ejecuta la consulta SQL para insertar los datos
+            // Si no existe, inserta el nuevo destino con el tipo
+            $stmt = $conn->prepare("INSERT INTO destParking (ciudad, valor, tipo) VALUES (?, ?, ?)");
+            $stmt->bind_param("sis", $ciudad, $valor, $tipo);  // Asegúrate de que el tipo esté en el parámetro
+
             if($stmt->execute()){
-                // Si la inserción es exitosa, devuelve el ID del nuevo registro en formato JSON
                 $id = $conn->insert_id;
                 echo json_encode(['id' => $id, 'msg' => 'Insertado correctamente']);
             } else {
-                // Si hay un error en la inserción, devuelve un mensaje de error en formato JSON
                 echo json_encode(['error' => $conn->error]);
             }
         } else {
@@ -121,7 +118,7 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
 
 else if($_SERVER['REQUEST_METHOD'] == "PUT"){
     if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+        header('HTTP/1.1 401 Unauthorized');
         echo json_encode(['error' => 'Autoridad insuficiente']);
         exit;
     }
@@ -132,12 +129,12 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
     // Decodifica los datos JSON
     $data = json_decode($json_data, true);
 
-    // Verifica si la decodificación de JSON fue exitosa
     if ($data !== null){
         // Obtener datos desde JSON
         $id = $data["id"];
         $ciudad = $data["ciudad"];
         $valor = $data["valor"];
+        $tipo = $data["tipo"];  // Agregar tipo
 
         // Prepara y ejecuta una consulta SQL para verificar si existe un registro con el ID dado
         $chck = $conn->prepare("SELECT ciudad FROM destParking WHERE iddest = ?");
@@ -145,13 +142,11 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         $chck->execute();
         $result = $chck->get_result();
 
-        // Verifica si existe al menos un registro con el ID dado
         if($result->num_rows >= 1){
-            // Si existe, prepara y ejecuta una consulta SQL para actualizar el registro
-            $stmt = $conn->prepare("UPDATE destParking SET ciudad = ?, valor = ? WHERE iddest = ?");
-            $stmt->bind_param("sii", $ciudad, $valor, $id);
-    
-            // Ejecuta la consulta SQL de actualización
+            // Si existe, actualiza el registro con el tipo también
+            $stmt = $conn->prepare("UPDATE destParking SET ciudad = ?, valor = ?, tipo = ? WHERE iddest = ?");
+            $stmt->bind_param("sisi", $ciudad, $valor, $tipo, $id);
+
             try{
                 if($stmt->execute()){
                     echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente']);
@@ -171,7 +166,7 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
 
 else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
     if($token->nivel < $LVLADMIN){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
+        header('HTTP/1.1 401 Unauthorized');
         echo json_encode(['error' => 'Autoridad insuficiente']);
         exit;
     }
@@ -182,24 +177,21 @@ else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
     // Decodifica los datos JSON
     $data = json_decode($json_data, true);
 
-    // Verifica si la decodificación de JSON fue exitosa
     if ($data !== null){
-        // Obtener datos desde JSON
-        $id = $data;
+        // Obtener ID desde JSON
+        $id = $data["id"];
 
-        // Preparar y ejecutar consulta SQL para verificar la existencia del registro
+        // Prepara y ejecuta consulta SQL para verificar la existencia del registro
         $chck = $conn->prepare("SELECT ciudad FROM destParking WHERE iddest = ?");
         $chck->bind_param("i",$id);
         $chck->execute();
         $result = $chck->get_result();
 
-        // Verificar si hay al menos una fila devuelta
         if($result->num_rows >= 1){
             // Preparar y ejecutar consulta SQL para eliminar el registro
             $stmt = $conn->prepare("DELETE FROM destParking WHERE iddest = ?");
             $stmt->bind_param("i", $id);
-    
-            // Ejecutar la consulta SQL para eliminar el registro
+
             if($stmt->execute()){
                 echo json_encode(['id' => $id, 'msg' => 'Eliminado correctamente']);
             } else {
@@ -214,4 +206,3 @@ else if($_SERVER['REQUEST_METHOD'] == "DELETE"){
 }
 
 $conn->close();
-?>

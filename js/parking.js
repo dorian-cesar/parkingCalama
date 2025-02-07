@@ -1,3 +1,5 @@
+const apiTarifas = baseURL+"/tarifas/api.php";
+
 async function calcParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
@@ -27,20 +29,20 @@ async function calcParking() {
 
             if (fechaIngreso.toDateString() === fechaSalida.toDateString()) {
                 let minutosTotales = Math.ceil((fechaSalida - fechaIngreso) / 60000);
-                minutosCobrar = Math.min(minutosTotales, 480);
+                minutosCobrar = Math.min(minutosTotales, 300);
             } else {
                 let minutosTotales = Math.ceil((fechaSalida - fechaIngreso) / 60000);
                 let diasCompletos = Math.floor(minutosTotales / 1440);
                 let minutosRestantes = minutosTotales % 1440;
                 
-                minutosCobrar += diasCompletos * 480;
-                minutosCobrar += Math.min(minutosRestantes, 480);
+                minutosCobrar += diasCompletos * 300;
+                minutosCobrar += Math.min(minutosRestantes, 300);
             }
 
-            let valorMinuto = 20;
+            let valorMinuto = 30;
             try {
                 const jwt = getCookie('jwt');
-                const tarifaResp = await fetch(`http://localhost/parkingCalama/php/tarifas/api.php?tipo=Parking`, {
+                const tarifaResp = await fetch(apiTarifas, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${jwt}`,

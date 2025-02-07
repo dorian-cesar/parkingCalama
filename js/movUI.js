@@ -7,10 +7,11 @@ var tableMov = $('#tableMov').DataTable({
     }],
     columns: [
         { data: 'idmov'},
-        { data: 'fechaent'},
-        { data: 'fechasal'},
+        { data: 'fechaent'},  // Fecha de entrada
+        { data: 'horaent'},   // Hora de entrada
+        { data: 'fechasal'},  // Fecha de salida
+        { data: 'horasal'},   // Hora de salida
         { data: 'patente'},
-        // { data: 'empresa' }, // Comentado para no mostrar la columna de empresa
         { data: 'tipo'},
         { data: 'estado'}
     ]
@@ -66,10 +67,11 @@ async function refreshMov(fecha = null){
             data.forEach(item => {
                 tableMov.rows.add([{
                     'idmov' : item['idmov'],
-                    'fechaent' : item['horaent'],
-                    'fechasal' : item['horasal'],
+                    'fechaent' : item['fechaent'],  // Fecha de entrada
+                    'horaent' : item['horaent'],    // Hora de entrada
+                    'fechasal' : item['fechasal'],  // Fecha de salida
+                    'horasal' : item['horasal'],    // Hora de salida
                     'patente' : item['patente'],
-                    // 'empresa' : item['empresa'], // Comentado para no agregar empresa
                     'tipo' : item['tipo'],
                     'estado' : item['estado']
                 }]);
@@ -82,7 +84,6 @@ async function refreshMov(fecha = null){
         refreshBtn.classList.remove('disabled');
     }
 }
-
 async function doInsertMov(e){
     e.preventDefault();
 
@@ -132,13 +133,13 @@ async function impMovimientos() {
             <table style="margin:auto;border:1px solid black;border-collapse:collapse">
                 <thead>
                     <tr>
-                        <th>Ingreso</th>
-                        <th>Salida</th>
+                        <th>Fecha Entrada</th>
+                        <th>Hora Entrada</th>
+                        <th>Fecha Salida</th>
+                        <th>Hora Salida</th>
                         <th>Patente</th>
-                        <!-- <th>Empresa</th> --> <!-- Comentado para no mostrar la columna de empresa -->
                         <th>Tipo</th>
                         <th>Estado</th>
-                        
                     </tr>
                 </thead>
                 <tbody>
@@ -151,10 +152,11 @@ async function impMovimientos() {
             data.forEach(itm => {
                 ventanaImpr.document.write(`
                     <tr>
+                        <td style="padding:5px">${itm['fechaent']}</td>
                         <td style="padding:5px">${itm['horaent']}</td>
+                        <td style="padding:5px">${itm['fechasal']}</td>
                         <td style="padding:5px">${itm['horasal']}</td>
                         <td style="padding:5px">${itm['patente']}</td>
-                        <!-- <td style="padding:5px">${itm['empresa']}</td> --> <!-- Comentado para no mostrar la columna de empresa -->
                         <td style="padding:5px">${itm['tipo']}</td>
                         <td style="padding:5px">${itm['estado']}</td>
                     </tr>

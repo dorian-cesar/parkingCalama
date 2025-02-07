@@ -1,6 +1,40 @@
 let valorTotGlobal = 0;  // Variable global para almacenar el valor total
 
+async function filtrarDestinos() {
+    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
+    const lista = document.getElementById('destinoBuses');
+
+    if (tipoDest === '0') {
+        return; // Si no se ha seleccionado ningún tipo de destino, no hacemos nada
+    }
+
+    cargarDestinos(tipoDest, lista);
+}
+
+
+async function obtenerConfiguracion() {
+    try {
+        const response = await fetch('php/configuracionAnden.php');
+        if (!response.ok) {
+            throw new Error('Error al obtener configuración');
+        }
+
+        const configuracion = await response.json();
+        return configuracion;
+    } catch (error) {
+        console.error('Error al cargar la configuración:', error);
+        return {
+            nacional: 20,
+            internacional: 30,
+            iva: 0.21 // Valor por defecto de IVA si hay un error
+        };
+    }
+}
+
+// Usar la configuración para calcular bloques y el IVA
 async function calcAndenes() {
+    const configuracion = await obtenerConfiguracion(); // Cargar la configuración desde PHP
+
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
@@ -31,10 +65,25 @@ async function calcAndenes() {
                 const date = new Date();
                 const fechaent = new Date(`${data['fechaent']}T${data['horaent']}`);
                 const diferencia = (date.getTime() - fechaent.getTime()) / 1000;
-                const minutos = Math.ceil((diferencia / 60) / 25);
+                let minutos = Math.ceil(diferencia / 60);  // Tiempo de estacionamiento en minutos
 
+                // Obtener información del destino seleccionado
                 const destInfo = await getDestByID(dest.value);
-                valorTotGlobal = minutos * destInfo['valor'];
+                let valorBase = destInfo['valor'];  // Valor base del destino
+
+                // Calcular el número de bloques según la configuración obtenida de PHP
+                let bloques = 0;
+                if (destInfo['tipo'] === 'nacional') {
+                    // Para Nacional, se cobra según el valor en configuracion.php
+                    bloques = Math.ceil((minutos - 1) / configuracion.nacional);
+                    valorBase = valorBase * bloques;
+                } else if (destInfo['tipo'] === 'internacional') {
+                    // Para Internacional, se cobra según el valor en configuracion.php
+                    bloques = Math.ceil((minutos - 1) / configuracion.internacional);
+                    valorBase = valorBase * bloques;
+                }
+
+                valorTotGlobal = valorBase;
 
                 // Verifica si está en la lista blanca y ajusta el valor a 0 si corresponde
                 const ret = await getWLByPatente(data['patente']);
@@ -47,21 +96,23 @@ async function calcAndenes() {
                     valorTotGlobal = 0;
                 }
 
+                // Añadir IVA (valor dinámico desde configuracion.php)
+                const iva = valorTotGlobal * configuracion.iva;
+                const valorConIVA = valorTotGlobal + iva;
+
                 // Mostrar la información en el contenedor
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, empPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h4'].map(tag => document.createElement(tag));
+                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
-                //empPat.textContent = `Empresa: ${data['empresa']}`;
                 fechaPat.textContent = `Fecha: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
-                tiempPat.textContent = `Tiempo de Parking: ${minutos * 20} min.`;
-                valPat.textContent = `Valor: $${valorTotGlobal}`;
-
-                cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
-
-                
+                tiempPat.textContent = `Tiempo de Parking: ${minutos} min.`;
+                valPat.textContent = `Valor: $${valorTotGlobal.toFixed(0)}`;
+                ivaPat.textContent = `IVA (${(configuracion.iva * 100).toFixed(0)}%): $${iva.toFixed(0)}`;
+                totalPat.textContent = `Total con IVA: $${valorConIVA.toFixed(0)}`;
+                cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
             } else {
                 alert('Esta patente ya fue cobrada');
             }
@@ -73,6 +124,7 @@ async function calcAndenes() {
         console.error('Error en el cálculo:', error);
     }
 }
+
 
 
 // Lista las empresas en un select
@@ -96,26 +148,53 @@ function listarAndenesEmpresas() {
     });
 }
 
-// Lista los destinos en un select
-function listarAndenesDestinos() {
-    andGetDestinos()
-    .then(data => {
+// Función auxiliar para cargar y filtrar destinos
+async function cargarDestinos(tipoDest, lista) {
+    try {
+        const data = await andGetDestinos();
         if (data) {
-            const lista = document.getElementById('destinoBuses');
-            lista.textContent = '';
+            lista.textContent = '';  // Limpia la lista de destinos
             let nullData = document.createElement('option');
             nullData.value = 0;
             nullData.textContent = 'Seleccione Destino';
             lista.appendChild(nullData);
+
+            // Filtrar y mostrar los destinos según el tipo seleccionado
             data.forEach(itm => {
-                let optData = document.createElement('option');
-                optData.value = itm['iddest'];
-                optData.textContent = itm['ciudad'] + ' ($' + itm['valor'] + ')';
-                lista.appendChild(optData);
+                if (itm['tipo'] === tipoDest) {
+                    let optData = document.createElement('option');
+                    optData.value = itm['iddest'];
+                    optData.textContent = `${itm['ciudad']} - $${itm['valor']}`;
+                    lista.appendChild(optData);
+                }
             });
         }
-    });
+    } catch (error) {
+        console.error('Error al cargar los destinos:', error);
+    }
 }
+
+
+// Función para listar andenes y destinos (también utiliza la función auxiliar)
+async function listarAndenesDestinos() {
+    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
+    const lista = document.getElementById('destinoBuses');
+
+    if (!tipoDest) {
+        lista.textContent = '';  // Limpia el contenedor
+        return;
+    }
+
+    cargarDestinos(tipoDest, lista);
+}
+
+// Agregar un evento para que se ejecute al cambiar el tipo de destino
+document.getElementById('tipoDestino').addEventListener('change', listarAndenesDestinos);
+
+
+// Agregar un evento para que se ejecute al cambiar el tipo de destino
+document.getElementById('tipoDestino').addEventListener('change', listarAndenesDestinos);
+
 
 // Obtiene la lista de empresas desde la API
 async function andGetEmpresas() {

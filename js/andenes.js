@@ -112,7 +112,6 @@ async function calcAndenes() {
                 valPat.textContent = `Valor: $${valorTotGlobal.toFixed(0)}`;
                 ivaPat.textContent = `IVA (${(configuracion.iva * 100).toFixed(0)}%): $${iva.toFixed(0)}`;
                 totalPat.textContent = `Total con IVA: $${valorConIVA.toFixed(0)}`;
-
                 cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
             } else {
                 alert('Esta patente ya fue cobrada');

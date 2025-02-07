@@ -1,5 +1,3 @@
-const apiTarifas = baseURL+"/tarifas/api.php";
-
 async function calcParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
@@ -29,35 +27,17 @@ async function calcParking() {
 
             if (fechaIngreso.toDateString() === fechaSalida.toDateString()) {
                 let minutosTotales = Math.ceil((fechaSalida - fechaIngreso) / 60000);
-                minutosCobrar = Math.min(minutosTotales, 300);
+                minutosCobrar = Math.min(minutosTotales, tarifas.topeDiario); // Usar el tope diario de tarifas
             } else {
                 let minutosTotales = Math.ceil((fechaSalida - fechaIngreso) / 60000);
                 let diasCompletos = Math.floor(minutosTotales / 1440);
                 let minutosRestantes = minutosTotales % 1440;
                 
-                minutosCobrar += diasCompletos * 300;
-                minutosCobrar += Math.min(minutosRestantes, 300);
+                minutosCobrar += diasCompletos * tarifas.topeDiario; // Usar el tope diario de tarifas
+                minutosCobrar += Math.min(minutosRestantes, tarifas.topeDiario); // Usar el tope diario de tarifas
             }
 
-            let valorMinuto = 30;
-            try {
-                const jwt = getCookie('jwt');
-                const tarifaResp = await fetch(apiTarifas, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${jwt}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
-                const tarifaData = await tarifaResp.json();
-                if (tarifaResp.ok && tarifaData.valor_minuto) {
-                    valorMinuto = tarifaData.valor_minuto;
-                }
-            } catch (error) {
-                console.error('Error obteniendo tarifa:', error);
-            }
-
+            let valorMinuto = tarifas.valorMinuto || 30; // Obtener el valor de la tarifa desde valores.js
             let valorTotal = valorMinuto * minutosCobrar;
 
             const ret = await getWLByPatente(data['patente']);
@@ -93,6 +73,7 @@ async function calcParking() {
     }
 }
 
+
 async function registrarPago() {
     // Asegúrate de que los datos hayan sido obtenidos previamente con la función de consulta
     if (!window.datosParking) {
@@ -101,19 +82,26 @@ async function registrarPago() {
     }
 
     const datos = window.datosParking;
-    
+
     try {
         await updateMov(datos);
         refreshMov();
         refreshPagos();
         alert('Pago registrado!');
-        document.getElementById('parkingQRPat').value = ''; // Limpiar el campo del QR
-        window.datosParking = null; // Limpiar los datos después de registrar el pago
+
+        // Limpiar el campo del QR
+        document.getElementById('parkingQRPat').value = '';
+
+        // Limpiar el contenido del contenedor donde se muestran los datos de calcParking
+        const cont = document.getElementById('contParking');
+        cont.innerHTML = '';  // Elimina todos los elementos dentro del contenedor
+
+        // Limpiar la variable global de datos de parking
+        window.datosParking = null;
     } catch (error) {
         console.error('Error al registrar el pago:', error.message);
     }
 }
-
 
 
 async function getMovByPatente(patente){

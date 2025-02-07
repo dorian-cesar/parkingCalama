@@ -101,19 +101,26 @@ async function registrarPago() {
     }
 
     const datos = window.datosParking;
-    
+
     try {
         await updateMov(datos);
         refreshMov();
         refreshPagos();
         alert('Pago registrado!');
-        document.getElementById('parkingQRPat').value = ''; // Limpiar el campo del QR
-        window.datosParking = null; // Limpiar los datos después de registrar el pago
+
+        // Limpiar el campo del QR
+        document.getElementById('parkingQRPat').value = '';
+
+        // Limpiar el contenido del contenedor donde se muestran los datos de calcParking
+        const cont = document.getElementById('contParking');
+        cont.innerHTML = '';  // Elimina todos los elementos dentro del contenedor
+
+        // Limpiar la variable global de datos de parking
+        window.datosParking = null;
     } catch (error) {
         console.error('Error al registrar el pago:', error.message);
     }
 }
-
 
 
 async function getMovByPatente(patente){

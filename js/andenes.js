@@ -224,7 +224,7 @@ async function pagarAnden(valorTot = valorTotGlobal) {
                 alert('Pago registrado correctamente.');
 
                 // Intentar generar la boleta
-                const detalleBoleta = `53-${valorTot}-1-dsa-BANO`;
+                const detalleBoleta = `53-${valorTot}-1-dsa-ANDEN`;
                 console.log("Datos a enviar a la API:", {
                     codigoEmpresa: "89",
                     tipoDocumento: "39",

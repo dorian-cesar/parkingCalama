@@ -6,7 +6,6 @@ async function calcParking() {
         console.log('No es patente, leer QR');
         return;
     }
-
     try {
         const data = await getMovByPatente(input);
         if (!data) {
@@ -18,19 +17,17 @@ async function calcParking() {
             cont.textContent = '';
             const now = new Date();
             const fechaEnt = new Date(data['fechaent'] + 'T' + data['horaent']);
-            const fechaSalida = now;  // Usamos la fecha y hora local directamente
+            const fechaSalida = now;
 
             let minutosCobrar = 0;
             let fechaIterativa = new Date(fechaEnt);
 
             while (fechaIterativa.toDateString() !== fechaSalida.toDateString()) {
-                // Cobrar 300 minutos por cada día completo
                 minutosCobrar += Math.min(1440, tarifas.topeDiario);
                 fechaIterativa.setDate(fechaIterativa.getDate() + 1);
                 fechaIterativa.setHours(0, 0, 0, 0);
             }
 
-            // Calcular los minutos del día de salida
             let minutosDelDiaSalida = Math.ceil((fechaSalida - fechaIterativa) / 60000);
             minutosCobrar += Math.min(minutosDelDiaSalida, tarifas.topeDiario);
 
@@ -50,7 +47,6 @@ async function calcParking() {
             fechaPat.textContent = `Fecha de Ingreso: ${data['fechaent']}`;
             horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
 
-            // Ajuste para mostrar la hora local correctamente formateada
             const horaSalida = `${fechaSalida.getHours().toString().padStart(2, '0')}:${fechaSalida.getMinutes().toString().padStart(2, '0')}:${fechaSalida.getSeconds().toString().padStart(2, '0')}`;
             horasalPat.textContent = `Hora Salida: ${horaSalida}`;
 
@@ -59,7 +55,6 @@ async function calcParking() {
 
             cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
-            // Guardar la fecha y hora local directamente en lugar de convertirla
             window.datosParking = {
                 id: data['idmov'],
                 fecha: `${fechaSalida.getFullYear()}-${(fechaSalida.getMonth() + 1).toString().padStart(2, '0')}-${fechaSalida.getDate().toString().padStart(2, '0')}`,
@@ -67,6 +62,8 @@ async function calcParking() {
                 valor: valorTotal,
             };
 
+        } else if (data['tipo'] !== 'Parking') {
+            alert(`Este vehículo está en Andén, porfavor cambie a la sección Andenes.`);
         } else {
             alert('Esta patente ya fue cobrada o no es válida para este cálculo');
         }
@@ -74,6 +71,7 @@ async function calcParking() {
         console.error('Error:', error.message);
     }
 }
+
 
 async function registrarPago() {
     // Asegúrate de que los datos hayan sido obtenidos previamente con la función de consulta

@@ -11,30 +11,8 @@ async function filtrarDestinos() {
     cargarDestinos(tipoDest, lista);
 }
 
-
-async function obtenerConfiguracion() {
-    try {
-        const response = await fetch('php/configuracionAnden.php');
-        if (!response.ok) {
-            throw new Error('Error al obtener configuración');
-        }
-
-        const configuracion = await response.json();
-        return configuracion;
-    } catch (error) {
-        console.error('Error al cargar la configuración:', error);
-        return {
-            nacional: 20,
-            internacional: 30,
-            iva: 0.21 // Valor por defecto de IVA si hay un error
-        };
-    }
-}
-
-// Usar la configuración para calcular bloques y el IVA
 async function calcAndenes() {
-    const configuracion = await obtenerConfiguracion(); // Cargar la configuración desde PHP
-
+    // La configuración ahora proviene directamente de valores.js
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
@@ -71,14 +49,14 @@ async function calcAndenes() {
                 const destInfo = await getDestByID(dest.value);
                 let valorBase = destInfo['valor'];  // Valor base del destino
 
-                // Calcular el número de bloques según la configuración obtenida de PHP
+                // Calcular el número de bloques según la configuración obtenida de valores.js
                 let bloques = 0;
                 if (destInfo['tipo'] === 'nacional') {
-                    // Para Nacional, se cobra según el valor en configuracion.php
+                    // Para Nacional, se cobra según el valor en configuracion.js
                     bloques = Math.ceil((minutos - 1) / configuracion.nacional);
                     valorBase = valorBase * bloques;
                 } else if (destInfo['tipo'] === 'internacional') {
-                    // Para Internacional, se cobra según el valor en configuracion.php
+                    // Para Internacional, se cobra según el valor en configuracion.js
                     bloques = Math.ceil((minutos - 1) / configuracion.internacional);
                     valorBase = valorBase * bloques;
                 }
@@ -96,7 +74,7 @@ async function calcAndenes() {
                     valorTotGlobal = 0;
                 }
 
-                // Añadir IVA (valor dinámico desde configuracion.php)
+                // Añadir IVA (valor dinámico desde configuracion.js)
                 const iva = valorTotGlobal * configuracion.iva;
                 const valorConIVA = valorTotGlobal + iva;
 
@@ -105,11 +83,11 @@ async function calcAndenes() {
                     ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
-                fechaPat.textContent = `Fecha: ${data['fechaent']}`;
+                fechaPat.textContent = `Fecha ingreso: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
                 tiempPat.textContent = `Tiempo de Parking: ${minutos} min.`;
-                valPat.textContent = `Valor: $${valorTotGlobal.toFixed(0)}`;
+                valPat.textContent = `Valor NETO: $${valorTotGlobal.toFixed(0)}`;
                 ivaPat.textContent = `IVA (${(configuracion.iva * 100).toFixed(0)}%): $${iva.toFixed(0)}`;
                 totalPat.textContent = `Total con IVA: $${valorConIVA.toFixed(0)}`;
                 cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
@@ -126,8 +104,6 @@ async function calcAndenes() {
 }
 
 
-
-// Lista las empresas en un select
 function listarAndenesEmpresas() {
     andGetEmpresas()
     .then(data => {

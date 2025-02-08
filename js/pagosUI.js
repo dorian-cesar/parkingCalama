@@ -18,29 +18,10 @@ var tablePagos = $('#tablePagos').DataTable({
 
 let fechaSeleccionada = new Date().toISOString().split('T')[0]; // Fecha actual por defecto
 
-// Función para cambiar la fecha seleccionada
 function cambiarFecha() {
     const selectorFecha = document.getElementById('fechaSelector');
-    fechaSeleccionada = selectorFecha.value; // Actualizar la fecha seleccionada
-    refreshPagos(); // Refrescar la tabla con la nueva fecha
-}
-
-
-async function obtenerConfiguracion() {
-    try {
-        const response = await fetch('php/configuracionAnden.php');
-        if (!response.ok) {
-            throw new Error('Error al obtener configuración');
-        }
-
-        const configuracion = await response.json();
-        return configuracion;
-    } catch (error) {
-        console.error('Error al cargar la configuración:', error);
-        return {
-            iva: 0.19 // Valor por defecto de IVA si hay un error
-        };
-    }
+    fechaSeleccionada = selectorFecha.value; 
+    refreshPagos();
 }
 
 async function refreshPagos() {
@@ -51,9 +32,8 @@ async function refreshPagos() {
         refreshBtn.classList.add('fa-hourglass');
         refreshBtn.classList.add('disabled');
 
-        // Obtener la configuración del IVA
-        const configuracion = await obtenerConfiguracion();
-        const iva = configuracion.iva || 0.21; // Usar 21% como valor por defecto si no se obtiene la configuración
+        // Obtener la configuración desde valores.js
+        const iva = configuracion.iva || 0.19; 
 
         let data = await getMov();
 
@@ -78,7 +58,7 @@ async function refreshPagos() {
                         'tiempo': minutos + ' min.',
                         'patente': item['patente'],
                         'tipo': item['tipo'],
-                        'valor': '$' + valorConIVA.toFixed(0), // Mostrar el valor con IVA
+                        'valor': '$' + valorConIVA.toFixed(0), 
                     }]);
                 }
             });
@@ -92,8 +72,6 @@ async function refreshPagos() {
         refreshBtn.classList.remove('disabled');
     }
 }
-
-
 
 async function impPagos() {
     const ventanaImpr = window.open('', '_blank');

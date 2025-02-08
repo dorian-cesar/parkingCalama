@@ -1,11 +1,3 @@
-async function handleCalcParking(button) {
-    button.disabled = true;  // Deshabilitar el botón
-    await calcParking();     // Esperar a que termine la función de cálculo
-    setTimeout(() => {
-        button.disabled = false;  // Habilitar el botón después de 1 segundo
-    }, 1000);
-}
-
 async function calcParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
@@ -80,33 +72,80 @@ async function calcParking() {
 }
 
 
-
 async function registrarPago() {
-    // Asegúrate de que los datos hayan sido obtenidos previamente con la función de consulta
+    // Verificamos que los datos de estacionamiento estén disponibles
     if (!window.datosParking) {
         alert('Por favor, realiza la consulta del estacionamiento primero');
         return;
     }
 
+    // Obtenemos los datos del estacionamiento desde window.datosParking
     const datos = window.datosParking;
+    const date = new Date();
+    const valorTot = datos.valor || 0;  // Usamos los datos de 'valor' desde window.datosParking
+    const detalleBoleta = `53-${valorTot}-1-dsa-PARKING`;
 
     try {
-        await updateMov(datos);
+        // Registrar el pago en la base de datos
+        const datosPago = {
+            id: datos.id,  // Usamos el ID desde window.datosParking
+            fecha: date.toISOString().split('T')[0],  // Fecha actual
+            hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,  // Hora actual
+            valor: valorTot  // El valor total del pago
+        };
+
+        // Actualizar movimiento con los datos del pago
+        await updateMov(datosPago);
         refreshMov();
         refreshPagos();
-        alert('Pago registrado!');
+        alert('Pago registrado correctamente.');
 
-        // Limpiar el campo del QR
+        // Intentamos generar la boleta
+        console.log("Datos a enviar a la API:", {
+            codigoEmpresa: "89",
+            tipoDocumento: "39",
+            total: valorTot.toString(),
+            detalleBoleta: detalleBoleta
+        });
+
+        // Llamada a la API para generar la boleta
+        const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                codigoEmpresa: "89",
+                tipoDocumento: "39",
+                total: valorTot.toString(),
+                detalleBoleta: detalleBoleta
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Respuesta del servidor:", result);
+
+        // Verificamos si la boleta se generó correctamente
+        if (result.respuesta === "OK" && result.rutaAcepta) {
+            console.log("Boleta generada correctamente.");
+            window.location.href = result.rutaAcepta;  // Redirigimos a la URL del PDF
+        } else {
+            console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
+            alert('Pago registrado, pero no se pudo generar la boleta.');
+        }
+
+        // Limpiar los campos y contenedor después de registrar el pago
         document.getElementById('parkingQRPat').value = '';
+        document.getElementById('contParking').innerHTML = '';
+        window.datosParking = null;  // Limpiar los datos guardados en window
 
-        // Limpiar el contenido del contenedor donde se muestran los datos de calcParking
-        const cont = document.getElementById('contParking');
-        cont.innerHTML = '';  // Elimina todos los elementos dentro del contenedor
-
-        // Limpiar la variable global de datos de parking
-        window.datosParking = null;
     } catch (error) {
-        console.error('Error al registrar el pago:', error.message);
+        console.error('Error al registrar el pago o generar la boleta:', error);
+        alert('Ocurrió un error al registrar el pago o generar la boleta.');
     }
 }
 
@@ -140,4 +179,12 @@ function impParking(){
 
     ventanaImpr.document.close();
     ventanaImpr.print();
+}
+
+async function handleCalcParking(button) {
+    button.disabled = true;  // Deshabilitar el botón
+    await calcParking();     // Esperar a que termine la función de cálculo
+    setTimeout(() => {
+        button.disabled = false;  // Habilitar el botón después de 1 segundo
+    }, 1000);
 }

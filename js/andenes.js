@@ -1,18 +1,15 @@
 let valorTotGlobal = 0;  // Variable global para almacenar el valor total
 
 async function calcAndenes() {
-    // La configuración ahora proviene directamente de valores.js
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
 
-    // Verifica si se ha seleccionado un destino válido
     if (!(dest.value > 0)) {
         alert('Seleccione Empresa y Destino');
         return;
     }
 
-    // Verifica si el input cumple con el formato de patente
     if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
         return;
@@ -27,47 +24,39 @@ async function calcAndenes() {
 
         if (data['tipo'] === 'Anden') {
             if (data['fechasal'] === "0000-00-00") {
-                cont.textContent = ''; // Limpia el contenedor
+                cont.textContent = '';
 
                 const date = new Date();
                 const fechaent = new Date(`${data['fechaent']}T${data['horaent']}`);
                 const diferencia = (date.getTime() - fechaent.getTime()) / 1000;
-                let minutos = Math.ceil(diferencia / 60);  // Tiempo de estacionamiento en minutos
+                let minutos = Math.ceil(diferencia / 60);
 
-                // Obtener información del destino seleccionado
                 const destInfo = await getDestByID(dest.value);
-                let valorBase = destInfo['valor'];  // Valor base del destino
-
-                // Calcular el número de bloques según la configuración obtenida de valores.js
+                let valorBase = destInfo['valor'];
                 let bloques = 0;
+
                 if (destInfo['tipo'] === 'nacional') {
-                    // Para Nacional, se cobra según el valor en configuracion.js
                     bloques = Math.ceil(minutos / configuracion.nacional);
-                    valorBase = valorBase * bloques;
+                    valorBase *= bloques;
                 } else if (destInfo['tipo'] === 'internacional') {
-                    // Para Internacional, se cobra según el valor en configuracion.js
                     bloques = Math.ceil(minutos / configuracion.internacional);
-                    valorBase = valorBase * bloques;
+                    valorBase *= bloques;
                 }
 
                 valorTotGlobal = valorBase;
 
-                // Verifica si está en la lista blanca y ajusta el valor a 0 si corresponde
                 const ret = await getWLByPatente(data['patente']);
                 if (ret !== null) {
                     valorTotGlobal = 0;
                 }
 
-                // Asegura que el valor total no sea negativo
                 if (valorTotGlobal < 0) {
                     valorTotGlobal = 0;
                 }
 
-                // Añadir IVA (valor dinámico desde configuracion.js)
                 const iva = valorTotGlobal * configuracion.iva;
                 const valorConIVA = valorTotGlobal + iva;
 
-                // Mostrar la información en el contenedor
                 const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat] =
                     ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
@@ -80,11 +69,15 @@ async function calcAndenes() {
                 ivaPat.textContent = `IVA (${(configuracion.iva * 100).toFixed(0)}%): $${iva.toFixed(0)}`;
                 totalPat.textContent = `Total con IVA: $${valorConIVA.toFixed(0)}`;
                 cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
+
+                // Actualiza valorTotGlobal con el texto de totalPat
+                valorTotGlobal = parseFloat(totalPat.textContent.replace(/\D+/g, '')) || 0;
+
             } else {
                 alert('Esta patente ya fue cobrada');
             }
         } else {
-            parking();  // Redirige al proceso de parking si no es tipo "Anden"
+            parking();
             document.getElementById('parkingQRPat').value = input;
         }
     } catch (error) {

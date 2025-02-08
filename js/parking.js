@@ -18,26 +18,23 @@ async function calcParking() {
             cont.textContent = '';
             const now = new Date();
             const fechaEnt = new Date(data['fechaent'] + 'T' + data['horaent']);
+            const fechaSalida = now;  // Usamos la fecha y hora local directamente
 
             let minutosCobrar = 0;
+            let fechaIterativa = new Date(fechaEnt);
 
-            // Normalizar fechas (eliminar segundos)
-            const fechaIngreso = new Date(fechaEnt.setSeconds(0));
-            const fechaSalida = new Date(now.setSeconds(0));
-
-            if (fechaIngreso.toDateString() === fechaSalida.toDateString()) {
-                let minutosTotales = Math.ceil((fechaSalida - fechaIngreso) / 60000);
-                minutosCobrar = Math.min(minutosTotales, tarifas.topeDiario); // Usar el tope diario de tarifas
-            } else {
-                let minutosTotales = Math.ceil((fechaSalida - fechaIngreso) / 60000);
-                let diasCompletos = Math.floor(minutosTotales / 1440);
-                let minutosRestantes = minutosTotales % 1440;
-                
-                minutosCobrar += diasCompletos * tarifas.topeDiario; // Usar el tope diario de tarifas
-                minutosCobrar += Math.min(minutosRestantes, tarifas.topeDiario); // Usar el tope diario de tarifas
+            while (fechaIterativa.toDateString() !== fechaSalida.toDateString()) {
+                // Cobrar 300 minutos por cada día completo
+                minutosCobrar += Math.min(1440, tarifas.topeDiario);
+                fechaIterativa.setDate(fechaIterativa.getDate() + 1);
+                fechaIterativa.setHours(0, 0, 0, 0);
             }
 
-            let valorMinuto = tarifas.valorMinuto || 30; // Obtener el valor de la tarifa desde valores.js
+            // Calcular los minutos del día de salida
+            let minutosDelDiaSalida = Math.ceil((fechaSalida - fechaIterativa) / 60000);
+            minutosCobrar += Math.min(minutosDelDiaSalida, tarifas.topeDiario);
+
+            let valorMinuto = tarifas.valorMinuto || 30;
             let valorTotal = valorMinuto * minutosCobrar;
 
             const ret = await getWLByPatente(data['patente']);
@@ -50,29 +47,33 @@ async function calcParking() {
 
             elemPat.textContent = `Patente: ${data['patente']}`;
             empPat.textContent = `Empresa: ${data['empresa']}`;
-            fechaPat.textContent = `Fecha: ${data['fechaent']}`;
+            fechaPat.textContent = `Fecha de Ingreso: ${data['fechaent']}`;
             horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
-            horasalPat.textContent = `Hora salida: ${fechaSalida.getHours()}:${fechaSalida.getMinutes()}:${fechaSalida.getSeconds()}`;
+
+            // Ajuste para mostrar la hora local correctamente formateada
+            const horaSalida = `${fechaSalida.getHours().toString().padStart(2, '0')}:${fechaSalida.getMinutes().toString().padStart(2, '0')}:${fechaSalida.getSeconds().toString().padStart(2, '0')}`;
+            horasalPat.textContent = `Hora Salida: ${horaSalida}`;
+
             tiempPat.textContent = `Tiempo de Parking: ${minutosCobrar} min.`;
-            valPat.textContent = `Valor: $${valorTotal}`;
+            valPat.textContent = `Valor a Pagar: $${valorTotal}`;
 
             cont.append(elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat);
 
+            // Guardar la fecha y hora local directamente en lugar de convertirla
             window.datosParking = {
                 id: data['idmov'],
-                fecha: fechaSalida.toISOString().split('T')[0],
-                hora: `${fechaSalida.getHours()}:${fechaSalida.getMinutes()}:${fechaSalida.getSeconds()}`,
+                fecha: `${fechaSalida.getFullYear()}-${(fechaSalida.getMonth() + 1).toString().padStart(2, '0')}-${fechaSalida.getDate().toString().padStart(2, '0')}`,
+                hora: horaSalida,
                 valor: valorTotal,
             };
 
         } else {
-            alert('Esta patente ya fue cobrada');
+            alert('Esta patente ya fue cobrada o no es válida para este cálculo');
         }
     } catch (error) {
         console.error('Error:', error.message);
     }
 }
-
 
 async function registrarPago() {
     // Asegúrate de que los datos hayan sido obtenidos previamente con la función de consulta

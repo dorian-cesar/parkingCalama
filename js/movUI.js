@@ -54,27 +54,38 @@ async function modalMovInsert(){
     openModal('movinsert');
 }
 
-async function refreshMov(fecha = null) {
-    if (getCookie('jwt')) {
+async function refreshMov(fecha = null){
+    if(getCookie('jwt')){
         const refreshBtn = document.getElementById('btnRefreshMov');
         refreshBtn.disabled = true;
-        refreshBtn.classList.replace('fa-refresh', 'fa-hourglass');
+        refreshBtn.classList.remove('fa-refresh');
+        refreshBtn.classList.add('fa-hourglass');
         refreshBtn.classList.add('disabled');
 
-        let data = await getMov(fecha);  // Obtener movimientos desde la API
+        let data = await getMov(fecha);  // Pasar la fecha como parámetro
 
-        if (data && data.length > 0) {
+        if(data){
             tableMov.clear();
-            tableMov.rows.add(data);  // Añadir todos los datos de una sola vez
+            data.forEach(item => {
+                tableMov.rows.add([{
+                    'idmov' : item['idmov'],
+                    'fechaent' : item['fechaent'],  // Fecha de entrada
+                    'horaent' : item['horaent'],    // Hora de entrada
+                    'fechasal' : item['fechasal'],  // Fecha de salida
+                    'horasal' : item['horasal'],    // Hora de salida
+                    'patente' : item['patente'],
+                    'tipo' : item['tipo'],
+                    'estado' : item['estado']
+                }]);
+            });
             tableMov.draw();
         }
-
         refreshBtn.disabled = false;
-        refreshBtn.classList.replace('fa-hourglass', 'fa-refresh');
+        refreshBtn.classList.add('fa-refresh');
+        refreshBtn.classList.remove('fa-hourglass');
         refreshBtn.classList.remove('disabled');
     }
 }
-
 async function doInsertMov(e){
     e.preventDefault();
 

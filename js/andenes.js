@@ -1,16 +1,5 @@
 let valorTotGlobal = 0;  // Variable global para almacenar el valor total
 
-async function filtrarDestinos() {
-    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
-    const lista = document.getElementById('destinoBuses');
-
-    if (tipoDest === '0') {
-        return; // Si no se ha seleccionado ningún tipo de destino, no hacemos nada
-    }
-
-    cargarDestinos(tipoDest, lista);
-}
-
 async function calcAndenes() {
     // La configuración ahora proviene directamente de valores.js
     const input = document.getElementById('andenQRPat').value;
@@ -53,11 +42,11 @@ async function calcAndenes() {
                 let bloques = 0;
                 if (destInfo['tipo'] === 'nacional') {
                     // Para Nacional, se cobra según el valor en configuracion.js
-                    bloques = Math.ceil((minutos - 1) / configuracion.nacional);
+                    bloques = Math.ceil(minutos / configuracion.nacional);
                     valorBase = valorBase * bloques;
                 } else if (destInfo['tipo'] === 'internacional') {
                     // Para Internacional, se cobra según el valor en configuracion.js
-                    bloques = Math.ceil((minutos - 1) / configuracion.internacional);
+                    bloques = Math.ceil(minutos / configuracion.internacional);
                     valorBase = valorBase * bloques;
                 }
 
@@ -102,7 +91,6 @@ async function calcAndenes() {
         console.error('Error en el cálculo:', error);
     }
 }
-
 
 function listarAndenesEmpresas() {
     andGetEmpresas()
@@ -298,4 +286,15 @@ async function pagarAnden(valorTot = valorTotGlobal) {
         console.error('Error:', error);
         alert('Ocurrió un error al procesar la solicitud.');
     }
+}
+
+async function filtrarDestinos() {
+    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
+    const lista = document.getElementById('destinoBuses');
+
+    if (tipoDest === '0') {
+        return; // Si no se ha seleccionado ningún tipo de destino, no hacemos nada
+    }
+
+    cargarDestinos(tipoDest, lista);
 }

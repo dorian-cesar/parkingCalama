@@ -1,3 +1,11 @@
+async function handleCalcParking(button) {
+    button.disabled = true;  // Deshabilitar el botón
+    await calcParking();     // Esperar a que termine la función de cálculo
+    setTimeout(() => {
+        button.disabled = false;  // Habilitar el botón después de 1 segundo
+    }, 1000);
+}
+
 async function calcParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
@@ -17,7 +25,7 @@ async function calcParking() {
             cont.textContent = '';
             const now = new Date();
             const fechaEnt = new Date(data['fechaent'] + 'T' + data['horaent']);
-            const fechaSalida = now;
+            const fechaSalida = now;  
 
             let minutosCobrar = 0;
             let fechaIterativa = new Date(fechaEnt);
@@ -49,7 +57,6 @@ async function calcParking() {
 
             const horaSalida = `${fechaSalida.getHours().toString().padStart(2, '0')}:${fechaSalida.getMinutes().toString().padStart(2, '0')}:${fechaSalida.getSeconds().toString().padStart(2, '0')}`;
             horasalPat.textContent = `Hora Salida: ${horaSalida}`;
-
             tiempPat.textContent = `Tiempo de Parking: ${minutosCobrar} min.`;
             valPat.textContent = `Valor a Pagar: $${valorTotal}`;
 
@@ -62,8 +69,8 @@ async function calcParking() {
                 valor: valorTotal,
             };
 
-        } else if (data['tipo'] !== 'Parking') {
-            alert(`Este vehículo está en Andén, porfavor cambie a la sección Andenes.`);
+        } else if (data['tipo'] === 'Anden') {
+            alert('Este vehículo está en Andén, no en Parking.');
         } else {
             alert('Esta patente ya fue cobrada o no es válida para este cálculo');
         }
@@ -71,6 +78,7 @@ async function calcParking() {
         console.error('Error:', error.message);
     }
 }
+
 
 
 async function registrarPago() {

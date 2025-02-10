@@ -22,7 +22,7 @@ async function calcAndenes() {
             return;
         }
 
-        if (data['tipo'] === 'Anden') {
+        if (data['tipo'].toLowerCase() === 'anden') {
             if (data['fechasal'] === "0000-00-00") {
                 cont.textContent = '';
 
@@ -205,7 +205,7 @@ async function pagarAnden(valorTot = valorTotGlobal) {
             return;
         }
 
-        if (data['tipo'] === 'Anden') {
+        if (data['tipo'].toLowerCase() === 'anden') {
             if (data['fechasal'] === "0000-00-00") {
                 console.log("Patente válida, registrando el pago...");
 

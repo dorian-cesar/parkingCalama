@@ -13,7 +13,7 @@ async function calcParking() {
             return;
         }
 
-        if (data['tipo'] === 'Parking' && data['fechasal'] === "0000-00-00") {
+        if (data['tipo'].toLowerCase() === 'parking' && data['fechasal'] === "0000-00-00") {
             cont.textContent = '';
             const now = new Date();
             const fechaEnt = new Date(data['fechaent'] + 'T' + data['horaent']);
@@ -61,7 +61,7 @@ async function calcParking() {
                 valor: valorTotal,
             };
 
-        } else if (data['tipo'] === 'Anden') {
+        } else if (data['tipo'].toLowerCase() === 'anden') {
             alert('Este vehículo está en Andén, no en Parking.');
         } else {
             alert('Esta patente ya fue cobrada o no es válida para este cálculo');

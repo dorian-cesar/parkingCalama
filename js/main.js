@@ -89,6 +89,10 @@ function entradaSalida(){
   blankPage();// Oculta todas las páginas
   document.getElementById('pageMovimientos').style.display = 'block';
 }
+function SalidaManual(){
+  blankPage();// Oculta todas las páginas
+  document.getElementById('pageSalidaManual').style.display = 'block';
+}
 // Muestra la página "Pagos" y oculta las demás
 function pagos(){
   blankPage();// Oculta todas las páginas

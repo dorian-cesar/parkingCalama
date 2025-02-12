@@ -49,6 +49,7 @@
   <a href="#" class="mainside" id="sbAdmWhitelist" onclick="listablanca()"><i class="fa fa-list fa-fw"></i> Listas Blancas</a>
   <a href="#" class="mainside" id="sbAdmPagos" onclick="pagos()"><i class="fa fa-dollar fa-fw"></i> Pagos Diarios</a>
   <a href="#" class="mainside" id="sbAdmMovements" onclick="entradaSalida()"><i class="fa fa-bus fa-fw"></i> Entradas y Salidas</a>
+  <a href="#" class="mainside" id="sbAdmMovements" onclick="SalidaManual()"><i class="fa fa-bus fa-fw"></i> Salida Manual</a>
   <!-- Enlace para cerrar sesión -->
   <a class="mainside logout-pos" href="#" id="sbUsrLogout" onclick="logOut()"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
 </div>
@@ -70,6 +71,7 @@
     <div id="contenedorEnrolar"></div>
     <div id="contenedorWhitelist"></div>
     <div id="contenedorBuses"></div>
+    <div id="contenedorSalidaManual"></div>
 </div>
 
 <!-- Contenedor para modales -->
@@ -162,6 +164,7 @@
   });
   
   var loadPage = $.Deferred(function(dfd) {
+  $('#contenedorSalidaManual').load('SalidaManual.html');
   $('#contenedorMovimientos').load('movimientos.html');
   $('#contenedorPagos').load('pagos.html');
   $('#contenedorContacto').load('contacto.html');

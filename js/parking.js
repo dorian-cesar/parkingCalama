@@ -2,10 +2,11 @@ async function calcParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
 
-    if (!patRegEx.test(input)) {
+ /*   if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
         return;
     }
+        */
     try {
         const data = await getMovByPatente(input);
         if (!data) {

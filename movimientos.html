@@ -7,8 +7,25 @@
     <hr>
     <!-- Filtro por fecha -->
     <div style="display: flex; align-items: center; justify-content: center;">
-      <input type="date" id="fechaFiltro" value="" style="margin-right: 10px; width: 150px;"> <!-- Ajustado el ancho -->
+      <input type="date" id="fechaFiltro" value="" style="margin-right: 10px; width: 150px;">
       <button class="ctrlgrn" onclick="filtrarMovimientos()" style="padding: 5px 10px; font-size: 14px;">Filtrar por Fecha</button>
+    </div>
+    <!-- Nuevos filtros -->
+    <div style="display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+      <input type="text" id="patenteFiltro" placeholder="Buscar por Patente" style="margin-right: 10px; width: 150px;">
+      <select id="tipoFiltro" style="margin-right: 10px; width: 150px;">
+        <option value="">Todos los tipos</option>
+        <option value="Parking">Parking</option>
+        <option value="Anden">Anden</option>
+      </select>
+      <select id="estadoFiltro" style="margin-right: 10px; width: 150px;">
+        <option value="">Todos los estados</option>
+        <option value="Ingresado">Ingresado</option>
+        <option value="Salida sin costo">Salida sin costo</option>
+        <option value="Salida Manual">Salida Manual</option>
+        <option value="Pagado">Pagado</option>
+      </select>
+      <button class="ctrlgrn" onclick="aplicarFiltros()" style="padding: 5px 10px; font-size: 14px;">Filtrar</button>
     </div>
   </div>
   <button id="btnRefreshMov" class="ctrlyel fa fa-refresh" onclick="refreshMov()"></button>
@@ -26,6 +43,8 @@
       </tr>
     </thead>
   </table>
+  <!-- Resto del código -->
+</div>
 
   <!-- Formulario para insertar un movimiento de prueba -->
   <div id="movinsert-overlay" onclick="closeModal('movinsert')" class="mdl-overlay"></div>

@@ -456,3 +456,23 @@ h3 {
   background-color: #2e0303;
   cursor: pointer;
 }
+.ctrlgrn {
+  background-color: #9c9c9c;
+  border: 1px solid #2b2a2a;
+  color: #333333;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ctrlgrn:hover {
+  background-color: #2e2e2e;
+}
+
+input, select {
+  background-color: #ffffff;
+  border: 1px solid #2b2a2a;
+  color: #333333;
+  padding: 5px;
+  font-size: 14px;
+}

@@ -19,6 +19,15 @@ var tableMov = $('#tableMov').DataTable({
 });
 
 
+function aplicarFiltros() {
+    const patente = document.getElementById('patenteFiltro').value;
+    const tipo = document.getElementById('tipoFiltro').value;
+    const estado = document.getElementById('estadoFiltro').value;
+
+    tableMov.columns(5).search(patente).draw(); // Filtra por patente (columna 5)
+    tableMov.columns(6).search(tipo).draw();   // Filtra por tipo (columna 6)
+    tableMov.columns(7).search(estado).draw(); // Filtra por estado (columna 7)
+}
 // Abrir Modales
 
 function cambiarFecha() {

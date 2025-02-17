@@ -1,34 +1,25 @@
 var tableMov = $('#tableMov').DataTable({
     order: [[0, 'desc']],
     language: { url: "esCLDT.json" },
-    
-    columnDefs: [{
-        targets: 'no-sort',
-        orderable: false
-    }],
+    columnDefs: [{ targets: 'no-sort', orderable: false }],
     columns: [
         { data: 'idmov' },
-        { data: 'fechaent' },  
-        { data: 'horaent' },   
-        { data: 'fechasal' },  
-        { data: 'horasal' },   
+        { data: 'fechaent' },
+        { data: 'horaent' },
+        { data: 'fechasal' },
+        { data: 'horasal' },
         { data: 'patente' },
         { data: 'tipo' },
-        { data: 'estado' }
+        { data: 'estado' },
+        { data: 'empresa' }
     ]
 });
 
-
 function aplicarFiltros() {
-    const patente = document.getElementById('patenteFiltro').value;
-    const tipo = document.getElementById('tipoFiltro').value;
-    const estado = document.getElementById('estadoFiltro').value;
-
-    tableMov.columns(5).search(patente).draw(); // Filtra por patente (columna 5)
-    tableMov.columns(6).search(tipo).draw();   // Filtra por tipo (columna 6)
-    tableMov.columns(7).search(estado).draw(); // Filtra por estado (columna 7)
+    tableMov.columns(5).search(document.getElementById('patenteFiltro').value).draw();
+    tableMov.columns(6).search(document.getElementById('tipoFiltro').value).draw();
+    tableMov.columns(7).search(document.getElementById('estadoFiltro').value).draw();
 }
-// Abrir Modales
 
 function cambiarFecha() {
     const selectorFecha = document.getElementById('fechaSelector');
@@ -38,69 +29,69 @@ function cambiarFecha() {
 
 // Nueva función para filtrar movimientos
 function filtrarMovimientos() {
-    const fechaFiltro = document.getElementById('fechaFiltro').value;  // Obtener la fecha seleccionada
+    const fechaFiltro = document.getElementById('fechaFiltro').value;
     if (fechaFiltro) {
-        refreshMov(fechaFiltro); // Llamar a refreshMov con la fecha filtrada
+        refreshMov(fechaFiltro);
     }
 }
 
-async function modalMovInsert(){
+async function modalMovInsert() {
     const form = document.getElementById('formInsertMov');
-    form.patente.value = '';
-
-    // let empresas = await getEmp(); // Comentado para no obtener empresas
-
-    // if(empresas){
-    //     form.empresa.textContent = ''; // Comentado
-    //     empresas.forEach(data => {
-    //         var optIn = document.createElement('option');
-    //         optIn.value = data['idemp'];
-    //         optIn.textContent = data['nombre'];
-    //         form.empresa.appendChild(optIn);
-    //     });
-    // }
-
+    if (form) {
+        const patenteInput = form.querySelector('[name="patente"]');
+        if (patenteInput) patenteInput.value = '';
+    } else {
+        console.error("Formulario 'formInsertMov' no encontrado.");
+    }
     openModal('movinsert');
 }
 
-async function refreshMov(fecha = null){
-    if(getCookie('jwt')){
+
+async function refreshMov(fecha = null) {
+    if (getCookie('jwt')) {
         const refreshBtn = document.getElementById('btnRefreshMov');
         refreshBtn.disabled = true;
-        refreshBtn.classList.remove('fa-refresh');
-        refreshBtn.classList.add('fa-hourglass');
-        refreshBtn.classList.add('disabled');
+        refreshBtn.classList.replace('fa-refresh', 'fa-hourglass');
 
-        let data = await getMov(fecha);  // Pasar la fecha como parámetro
-
-        if(data){
+        let data = await getMov(fecha);
+        if (data) {
             tableMov.clear();
             data.forEach(item => {
                 tableMov.rows.add([{
-                    'idmov' : item['idmov'],
-                    'fechaent' : item['fechaent'],  // Fecha de entrada
-                    'horaent' : item['horaent'],    // Hora de entrada
-                    'fechasal' : item['fechasal'],  // Fecha de salida
-                    'horasal' : item['horasal'],    // Hora de salida
-                    'patente' : item['patente'],
-                    'tipo' : item['tipo'],
-                    'estado' : item['estado']
+                    'idmov': item['idmov'],
+                    'fechaent': item['fechaent'],
+                    'horaent': item['horaent'],
+                    'fechasal': item['fechasal'],
+                    'horasal': item['horasal'],
+                    'patente': item['patente'],
+                    'tipo': item['tipo'],
+                    'estado': item['estado'],
+                    'empresa': item['empresa'] || 'No Identificado'  // Asegúrate de manejar el caso en que empresa sea null
                 }]);
             });
             tableMov.draw();
         }
+
         refreshBtn.disabled = false;
-        refreshBtn.classList.add('fa-refresh');
-        refreshBtn.classList.remove('fa-hourglass');
-        refreshBtn.classList.remove('disabled');
+        refreshBtn.classList.replace('fa-hourglass', 'fa-refresh');
     }
 }
-async function doInsertMov(e){
+
+async function doInsertMov(e) {
     e.preventDefault();
-
     const form = document.getElementById('formInsertMov');
+    if (!form) {
+        console.error("Formulario 'formInsertMov' no encontrado.");
+        return;
+    }
 
-    if(!patRegEx.test(form.patente.value)) {
+    const patenteInput = form.querySelector('[name="patente"]');
+    if (!patenteInput) {
+        console.error("Campo 'patente' no encontrado en el formulario.");
+        return;
+    }
+
+    if (!patRegEx.test(patenteInput.value)) {
         alert('Formatos de patente:\nABCD12\nABCD-12\nAB-CD-12');
         return;
     }
@@ -109,26 +100,25 @@ async function doInsertMov(e){
     form.btnSubmit.classList.add('disabled');
 
     const dateNow = new Date();
-
-    datos = {
+    let datos = {
         fecha: dateNow.toISOString().split('T')[0],
-        hora: `${dateNow.getHours()}:${dateNow.getMinutes()}:${dateNow.getSeconds()}`,
-        patente: form.patente.value,   // No se verifica si ya existe, se registra directamente
-        // empresa: form.empresa.value, // Comentado para no enviar empresa
+        hora: dateNow.toLocaleTimeString(),
+        patente: patenteInput.value,
         tipo: form.tipo.value
     };
 
-    // Aquí puedes enviar los datos sin preocuparte de la patente duplicada
     let ret = await insertMov(datos);
-    if(ret['error']){
+    if (ret['error']) {
         alert(ret['error']);
     } else {
         closeModal('movinsert');
+        refreshMov();
     }
+
     form.btnSubmit.disabled = false;
     form.btnSubmit.classList.remove('disabled');
-    refreshMov();
 }
+
 
 async function impMovimientos() {
     const ventanaImpr = window.open('', '_blank');
@@ -185,19 +175,17 @@ async function impMovimientos() {
 
 async function getMov(fecha = null) {
     let url = apiMovimientos;
-    if (fecha) {
-        url += `?fecha=${fecha}`; // Añadir el filtro de fecha a la URL
-    }
+    if (fecha) url += `?fecha=${fecha}`;
     
-    let ret = await fetch(url, {
-        method: 'GET',
-        mode: 'cors',
-        headers: {
-            'Authorization' : `Bearer ${getCookie('jwt')}`
-        }
-    })
-    .then(reply => reply.json())
-    .then(data => { return data; })
-    .catch(error => { console.log(error); });
-    return ret;
+    try {
+        let response = await fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            headers: { 'Authorization': `Bearer ${getCookie('jwt')}` }
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error obteniendo movimientos:', error);
+        return [];
+    }
 }

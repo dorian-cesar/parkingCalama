@@ -89,6 +89,38 @@ async function calcAndenes() {
 }
 
 
+async function filtrarDestinos() {
+    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
+    const lista = document.getElementById('destinoBuses');
+
+    if (tipoDest === '0') {
+        return; // Si no se ha seleccionado ningún tipo de destino, no hacemos nada
+    }
+
+    try {
+        const data = await andGetDestinos();
+        if (data) {
+            lista.textContent = '';  // Limpia la lista de destinos
+            let nullData = document.createElement('option');
+            nullData.value = 0;
+            nullData.textContent = 'Seleccione Destino';
+            lista.appendChild(nullData);
+
+            // Filtrar y mostrar los destinos según el tipo seleccionado
+            data.forEach(itm => {
+                if (itm['tipo'] === tipoDest) {
+                    let optData = document.createElement('option');
+                    optData.value = itm['iddest'];
+                    optData.textContent = `${itm['ciudad']} - $${itm['valor']}`;
+                    lista.appendChild(optData);
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error al filtrar destinos:', error);
+    }
+}
+
 // Función para listar empresas en el select
 function listarAndenesEmpresas() {
     andGetEmpresas()
@@ -205,9 +237,9 @@ async function pagarAnden(valorTot = valorTotGlobal) {
 
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
+    const empresaSelect = document.getElementById('empresaBuses'); // Captura la empresa seleccionada
     const date = new Date();
 
-    // Verifica si el input cumple con el formato de patente
     if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
         return;
@@ -224,65 +256,47 @@ async function pagarAnden(valorTot = valorTotGlobal) {
             if (data['fechasal'] === "0000-00-00") {
                 console.log("Patente válida, registrando el pago...");
 
-                // Registro del pago en la base de datos
+                const empresaSeleccionada = empresaSelect.value !== "0" ? empresaSelect.value : null;
+
+                if (!empresaSeleccionada || empresaSeleccionada === "0") {
+                    alert("Debe seleccionar una empresa antes de pagar.");
+                    return;
+                }
+
                 const datos = {
                     id: data['idmov'],
                     fecha: date.toISOString().split('T')[0],
                     hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
-                    valor: valorTot
+                    valor: valorTot,
+                    empresa: empresaSeleccionada  // Insertar el ID de la empresa seleccionada
                 };
 
-                await updateMov(datos);
-                refreshMov();
-                refreshPagos();
-
-                alert('Pago registrado correctamente.');
-
-                // Intentar generar la boleta
-                const detalleBoleta = `53-${valorTot}-1-dsa-ANDEN`;
-                console.log("Datos a enviar a la API:", {
-                    codigoEmpresa: "89",
-                    tipoDocumento: "39",
-                    total: valorTot.toString(),
-                    detalleBoleta: detalleBoleta
+                // Llamar a la API para actualizar el movimiento
+                const response = await fetch(baseURL + "/movimientos/api.php", {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getCookie('jwt')}`
+                    },
+                    body: JSON.stringify(datos)
                 });
 
-                try {
-                    const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            codigoEmpresa: "89",
-                            tipoDocumento: "39",
-                            total: valorTot.toString(),
-                            detalleBoleta: detalleBoleta
-                        })
-                    });
-
-                    if (!response.ok) {
-                        throw new Error(`Error HTTP: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    console.log("Respuesta del servidor:", result);
-
-                    if (result.respuesta === "OK" && result.rutaAcepta) {
-                        console.log("Boleta generada correctamente.");
-                        window.location.href = result.rutaAcepta;  // Redirigir a la URL del PDF
-                    } else {
-                        console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
-                        alert('Pago registrado, pero no se pudo generar la boleta.');
-                    }
-                } catch (error) {
-                    console.error('Error al generar la boleta:', error);
-                    alert('Pago registrado, pero ocurrió un error al intentar generar la boleta.');
+                if (!response.ok) {
+                    throw new Error(`Error HTTP: ${response.status}`);
                 }
 
-                // Limpiar el campo de entrada y el contenedor después de registrar el pago y generar la boleta
+                const result = await response.json();
+                if (result.msg) {
+                    alert('Pago registrado correctamente.');
+                    refreshMov(); // Refrescar la tabla de movimientos
+                    refreshPagos(); // Refrescar la tabla de pagos
+                } else {
+                    alert('Error al registrar el pago: ' + result.error);
+                }
+
+                // Limpiar el formulario
                 document.getElementById('andenQRPat').value = '';
-                cont.innerHTML = '';  // Limpia el contenedor de información
+                cont.innerHTML = '';  
 
             } else {
                 alert('Esta patente ya fue cobrada');
@@ -294,15 +308,4 @@ async function pagarAnden(valorTot = valorTotGlobal) {
         console.error('Error:', error);
         alert('Ocurrió un error al procesar la solicitud.');
     }
-}
-
-async function filtrarDestinos() {
-    const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
-    const lista = document.getElementById('destinoBuses');
-
-    if (tipoDest === '0') {
-        return; // Si no se ha seleccionado ningún tipo de destino, no hacemos nada
-    }
-
-    cargarDestinos(tipoDest, lista);
 }

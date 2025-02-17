@@ -306,4 +306,4 @@ async function pagarAnden(valorTot = valorTotGlobal) {
         console.error('Error:', error);
         alert('Ocurrió un error al procesar la solicitud.');
     }
-}
+}}

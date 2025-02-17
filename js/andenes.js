@@ -4,17 +4,17 @@ async function calcAndenes() {
     const input = document.getElementById('andenQRPat').value;
     const cont = document.getElementById('contAnden');
     const dest = document.getElementById('destinoBuses');
+    const empresaSelect = document.getElementById('empresaBuses'); // Selección de empresa
 
     if (!(dest.value > 0)) {
         alert('Seleccione Empresa y Destino');
         return;
     }
 
- /*   if (!patRegEx.test(input)) {
-        console.log('No es patente, leer QR');
+    if (!(empresaSelect.value > 0)) {  // Verificar que se haya seleccionado una empresa
+        alert('Seleccione una empresa');
         return;
     }
-        */
 
     try {
         const data = await getMovByPatente(input);
@@ -33,6 +33,7 @@ async function calcAndenes() {
                 let minutos = Math.ceil(diferencia / 60);
 
                 const destInfo = await getDestByID(dest.value);
+                const empresaInfo = await getEmpByID(empresaSelect.value); // Obtener información de la empresa
                 let valorBase = destInfo['valor'];
                 let bloques = 0;
 
@@ -58,10 +59,11 @@ async function calcAndenes() {
                 const iva = valorTotGlobal * configuracion.iva;
                 const valorConIVA = valorTotGlobal + iva;
 
-                const [elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat] =
-                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
+                const [elemPat, empresaPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat] =
+                    ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
+                empresaPat.textContent = `Empresa: ${empresaInfo['nombre']}`; // Mostrar tipo de empresa
                 fechaPat.textContent = `Fecha ingreso: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
@@ -69,7 +71,7 @@ async function calcAndenes() {
                 valPat.textContent = `Valor NETO: $${valorTotGlobal.toFixed(0)}`;
                 ivaPat.textContent = `IVA (${(configuracion.iva * 100).toFixed(0)}%): $${iva.toFixed(0)}`;
                 totalPat.textContent = `Total con IVA: $${valorConIVA.toFixed(0)}`;
-                cont.append(elemPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
+                cont.append(elemPat, empresaPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat, ivaPat, totalPat);
 
                 // Actualiza valorTotGlobal con el texto de totalPat
                 valorTotGlobal = parseFloat(totalPat.textContent.replace(/\D+/g, '')) || 0;
@@ -86,25 +88,37 @@ async function calcAndenes() {
     }
 }
 
+
+// Función para listar empresas en el select
 function listarAndenesEmpresas() {
     andGetEmpresas()
-    .then(data => {
-        if (data) {
-            const lista = document.getElementById('empresaBuses');
-            lista.textContent = '';
-            let nullData = document.createElement('option');
-            nullData.value = 0;
-            nullData.textContent = 'Seleccione Empresa';
-            lista.appendChild(nullData);
-            data.forEach(itm => {
-                let optData = document.createElement('option');
-                optData.value = itm['idemp'];
-                optData.textContent = itm['nombre'];
-                lista.appendChild(optData);
-            });
-        }
-    });
+        .then(data => {
+            if (data) {
+                const lista = document.getElementById('empresaBuses');
+                lista.innerHTML = ''; // Limpiar el select
+
+                // Agregar la opción por defecto
+                const nullData = document.createElement('option');
+                nullData.value = 0;
+                nullData.textContent = 'Seleccione Empresa';
+                lista.appendChild(nullData);
+
+                // Agregar las empresas al select
+                data.forEach(itm => {
+                    const optData = document.createElement('option');
+                    optData.value = itm['idemp'];
+                    optData.textContent = itm['nombre'];
+                    lista.appendChild(optData);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error al listar empresas:', error);
+        });
 }
+
+// Llamar a la función para listar empresas al cargar la página
+document.addEventListener('DOMContentLoaded', listarAndenesEmpresas);
 
 // Función auxiliar para cargar y filtrar destinos
 async function cargarDestinos(tipoDest, lista) {
@@ -132,7 +146,6 @@ async function cargarDestinos(tipoDest, lista) {
     }
 }
 
-
 // Función para listar andenes y destinos (también utiliza la función auxiliar)
 async function listarAndenesDestinos() {
     const tipoDest = document.getElementById('tipoDestino').value; // Obtener el tipo de destino seleccionado
@@ -149,24 +162,25 @@ async function listarAndenesDestinos() {
 // Agregar un evento para que se ejecute al cambiar el tipo de destino
 document.getElementById('tipoDestino').addEventListener('change', listarAndenesDestinos);
 
-
-// Agregar un evento para que se ejecute al cambiar el tipo de destino
-document.getElementById('tipoDestino').addEventListener('change', listarAndenesDestinos);
-
-
 // Obtiene la lista de empresas desde la API
 async function andGetEmpresas() {
-    if (getCookie('jwt')) {
-        let ret = await fetch(baseURL + "/empresas/get.php", {
-                method: 'POST',
-                mode: 'cors',
-                headers: {
-                    'Authorization': `Bearer ${getCookie('jwt')}`
-                }
-            })
-            .then(reply => reply.json())
-            .catch(error => console.log(error));
-        return ret;
+    try {
+        const response = await fetch(baseURL + "/empresas/api.php", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getCookie('jwt')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error al obtener empresas:', error);
+        return null;
     }
 }
 

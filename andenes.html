@@ -6,7 +6,10 @@
     <!-- Columna izquierda con formularios -->
     <div class="izq">
         <input type="text" class="entrada" id="andenQRPat" placeholder="Ingrese patente">
-        
+        <select id="empresaBuses" class="entrada">
+            <option value="0">Seleccione Empresa</option>
+        </select>
+              
         <!-- Select para elegir tipo de destino (Nacional o Internacional) -->
         <select id="tipoDestino" class="entrada" onchange="filtrarDestinos()">
             <option value="0">Seleccione tipo de destino</option>
@@ -39,3 +42,7 @@
     </div>
 </div>
 <script src="js/andenes.js"></script>
+<script>
+    // Llamar a la función para listar empresas al cargar la página
+    listarAndenesEmpresas();
+</script>

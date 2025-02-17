@@ -456,3 +456,29 @@ h3 {
   background-color: #2e0303;
   cursor: pointer;
 }
+.ctrlgrn {
+  background-color: #9c9c9c;
+  border: 1px solid #2b2a2a;
+  color: #333333;
+  padding: 5px 10px;
+  height: 40px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.ctrlgrn:hover {
+  background-color: #2e2e2e;
+}
+
+
+input, select {
+  height: 40px;
+  line-height: 40px;  /* Asegura que el texto se alinee verticalmente */
+  padding: 0 10px;  /* Ajusta el padding para asegurar que no se rompa el diseño */
+  font-size: 14px;  /* Asegura que el tamaño de la fuente sea consistente */
+  border-radius: 5px;  /* Redondea las esquinas */
+  border: 1px solid #2b2a2a;  /* Aplica un borde */
+  background-color: #ffffff;  /* Fondo blanco */
+  color: #333333;  /* Color de texto */
+  margin: 5px 0;  /* Añade espacio vertical entre los campos */
+}

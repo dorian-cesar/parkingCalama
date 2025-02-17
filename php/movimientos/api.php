@@ -132,6 +132,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 // Update (Pagado)
+// Update (Pagado)
 else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
     if($token->nivel < $LVLUSER){
         header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
@@ -148,9 +149,11 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $hora = $data['hora'];
         $valor = $data['valor'];
         $id = $data['id'];
+        $empresa = $data['empresa']; // Nuevo campo: empresa
 
-        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ?, estado = 'Pagado' WHERE idmov = ?");
-        $stmt->bind_param("ssii", $fecha, $hora, $valor, $id);
+        // Actualizar el movimiento incluyendo el campo empresa
+        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ?, empresa = ?, estado = 'Pagado' WHERE idmov = ?");
+        $stmt->bind_param("ssiii", $fecha, $hora, $valor, $empresa, $id);
 
         if($stmt->execute()) {
             echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente a Pagado']);
@@ -163,6 +166,4 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         echo json_encode(['error' => 'Error al decodificar JSON']);
     }
 }
-
-$conn->close();
 ?>

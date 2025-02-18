@@ -201,8 +201,8 @@ function listarEmpresasParking() {
                 // Agregar las empresas al select
                 data.forEach(itm => {
                     const optData = document.createElement('option');
-                    optData.value = itm['idemp'];
-                    optData.textContent = itm['nombre'];
+                    optData.value = itm['idemp'];  // Usar el ID de la empresa como valor
+                    optData.textContent = itm['nombre'];  // Mostrar el nombre de la empresa
                     lista.appendChild(optData);
                 });
             }
@@ -214,7 +214,6 @@ function listarEmpresasParking() {
 
 // Llamar a la función para listar empresas al cargar la página
 document.addEventListener('DOMContentLoaded', listarEmpresasParking);
-
 
 // Obtiene la lista de empresas desde la API
 async function andGetEmpresas() {
@@ -233,7 +232,10 @@ async function andGetEmpresas() {
         const data = await response.json();
         return data;
     } catch (error) {
+        console.log(data);
         console.error('Error al obtener empresas:', error);
         return null;
+        
     }
+    
 }

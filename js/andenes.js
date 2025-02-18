@@ -286,10 +286,8 @@ async function pagarAnden(valorTot = valorTotGlobal) {
                 };
 
                 // Imprimir boleta térmica
-                const ventanaImpr1 = window.open('', '_blank');
-                const ventanaImpr2 = window.open('', '_blank');
-                imprimirBoletaTermicaAndenes(datos, ventanaImpr1);
-                imprimirBoletaTermicaAndenes(datos, ventanaImpr2);
+                const ventanaImpr = window.open('', '_blank');
+                imprimirBoletaTermicaAndenes(datos, ventanaImpr);
 
                 // Llamar a la API para actualizar el movimiento
                 const response = await fetch(baseURL + "/movimientos/api.php", {
@@ -307,9 +305,11 @@ async function pagarAnden(valorTot = valorTotGlobal) {
 
                 const result = await response.json();
                 if (result.msg) {
-                    alert('Pago registrado correctamente.');
+                    // Mover la actualización del movimiento y la alerta aquí
+                    await updateMov(datos);
                     refreshMov(); // Refrescar la tabla de movimientos
                     refreshPagos(); // Refrescar la tabla de pagos
+                    alert('Pago registrado correctamente.');
                 } else {
                     alert('Error al registrar el pago: ' + result.error);
                 }
@@ -358,5 +358,8 @@ function imprimirBoletaTermicaAndenes(datos, ventanaImpr) {
         </html>
     `);
     ventanaImpr.document.close();
-    ventanaImpr.print();
+    setTimeout(() => {
+        ventanaImpr.focus();
+        ventanaImpr.print();
+    }, 1000);
 }

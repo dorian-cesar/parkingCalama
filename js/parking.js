@@ -90,10 +90,8 @@ async function registrarPago() {
 
     try {
         // Imprimir boleta térmica
-        const ventanaImpr1 = window.open('', '_blank');
-        const ventanaImpr2 = window.open('', '_blank');
-        imprimirBoletaTermicaParking(datos, ventanaImpr1);
-        imprimirBoletaTermicaParking(datos, ventanaImpr2);
+        const ventanaImpr = window.open('', '_blank');
+        imprimirBoletaTermicaParking(datos, ventanaImpr);
 
         const datosPago = {
             id: datos.id,
@@ -103,11 +101,6 @@ async function registrarPago() {
             valor: valorTot,
             empresa: datos.empresa  // Incluir la ID de la empresa seleccionada
         };
-
-        await updateMov(datosPago);
-        refreshMov();
-        refreshPagos();
-        alert('Pago registrado correctamente.');
 
         console.log("Datos a enviar a la API:", {
             codigoEmpresa: datos.empresa,  // Usar la ID de la empresa seleccionada
@@ -143,6 +136,11 @@ async function registrarPago() {
             console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
             alert('Pago registrado, pero no se pudo generar la boleta.');
         }
+
+        await updateMov(datosPago);
+        refreshMov();
+        refreshPagos();
+        alert('Pago registrado correctamente.');
 
         document.getElementById('parkingQRPat').value = '';
         document.getElementById('contParking').innerHTML = '';
@@ -181,7 +179,11 @@ function imprimirBoletaTermicaParking(datos, ventanaImpr) {
         </html>
     `);
     ventanaImpr.document.close();
-    ventanaImpr.print();
+    setTimeout(() => {
+        ventanaImpr.focus();
+        ventanaImpr.print();
+    }, 1000);
+    
 }
 
 async function getMovByPatente(patente){

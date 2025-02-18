@@ -1,12 +1,13 @@
 async function calcParking() {
     var input = document.getElementById('parkingQRPat').value;
     var cont = document.getElementById('contParking');
+    var empresaSelect = document.getElementById('empresaParking');
 
- /*   if (!patRegEx.test(input)) {
-        console.log('No es patente, leer QR');
+    if (!(empresaSelect.value > 0)) {
+        alert('Seleccione una empresa');
         return;
     }
-        */
+
     try {
         const data = await getMovByPatente(input);
         if (!data) {
@@ -44,7 +45,7 @@ async function calcParking() {
                 ['h1', 'h4', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
             elemPat.textContent = `Patente: ${data['patente']}`;
-            empPat.textContent = `Empresa: ${data['empresa']}`;
+            empPat.textContent = `Empresa: ${empresaSelect.options[empresaSelect.selectedIndex].text}`; // Mostrar el nombre de la empresa seleccionada
             fechaPat.textContent = `Fecha de Ingreso: ${data['fechaent']}`;
             horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
 
@@ -60,6 +61,7 @@ async function calcParking() {
                 fecha: `${fechaSalida.getFullYear()}-${(fechaSalida.getMonth() + 1).toString().padStart(2, '0')}-${fechaSalida.getDate().toString().padStart(2, '0')}`,
                 hora: horaSalida,
                 valor: valorTotal,
+                empresa: empresaSelect.value  // Guardar la ID de la empresa seleccionada
             };
 
         } else if (data['tipo'].toLowerCase() === 'anden') {
@@ -72,51 +74,45 @@ async function calcParking() {
     }
 }
 
-
 async function registrarPago() {
-    // Verificamos que los datos de estacionamiento estén disponibles
     if (!window.datosParking) {
         alert('Por favor, realiza la consulta del estacionamiento primero');
         return;
     }
 
-    // Obtenemos los datos del estacionamiento desde window.datosParking
     const datos = window.datosParking;
     const date = new Date();
-    const valorTot = datos.valor || 0;  // Usamos los datos de 'valor' desde window.datosParking
+    const valorTot = datos.valor || 0;
     const detalleBoleta = `53-${valorTot}-1-dsa-PARKING`;
 
     try {
-        // Registrar el pago en la base de datos
         const datosPago = {
-            id: datos.id,  // Usamos el ID desde window.datosParking
-            fecha: date.toISOString().split('T')[0],  // Fecha actual
-            hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,  // Hora actual
-            valor: valorTot  // El valor total del pago
+            id: datos.id,
+            fecha: date.toISOString().split('T')[0],
+            hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+            valor: valorTot,
+            empresa: datos.empresa  // Incluir la ID de la empresa seleccionada
         };
 
-        // Actualizar movimiento con los datos del pago
         await updateMov(datosPago);
         refreshMov();
         refreshPagos();
         alert('Pago registrado correctamente.');
 
-        // Intentamos generar la boleta
         console.log("Datos a enviar a la API:", {
-            codigoEmpresa: "89",
+            codigoEmpresa: datos.empresa,  // Usar la ID de la empresa seleccionada
             tipoDocumento: "39",
             total: valorTot.toString(),
             detalleBoleta: detalleBoleta
         });
 
-        // Llamada a la API para generar la boleta
         const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                codigoEmpresa: "89",
+                codigoEmpresa: datos.empresa,  // Usar la ID de la empresa seleccionada
                 tipoDocumento: "39",
                 total: valorTot.toString(),
                 detalleBoleta: detalleBoleta
@@ -130,19 +126,17 @@ async function registrarPago() {
         const result = await response.json();
         console.log("Respuesta del servidor:", result);
 
-        // Verificamos si la boleta se generó correctamente
         if (result.respuesta === "OK" && result.rutaAcepta) {
             console.log("Boleta generada correctamente.");
-            window.location.href = result.rutaAcepta;  // Redirigimos a la URL del PDF
+            window.location.href = result.rutaAcepta;
         } else {
             console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
             alert('Pago registrado, pero no se pudo generar la boleta.');
         }
 
-        // Limpiar los campos y contenedor después de registrar el pago
         document.getElementById('parkingQRPat').value = '';
         document.getElementById('contParking').innerHTML = '';
-        window.datosParking = null;  // Limpiar los datos guardados en window
+        window.datosParking = null;
 
     } catch (error) {
         console.error('Error al registrar el pago o generar la boleta:', error);
@@ -188,4 +182,58 @@ async function handleCalcParking(button) {
     setTimeout(() => {
         button.disabled = false;  // Habilitar el botón después de 1 segundo
     }, 1000);
+}
+
+// Función para listar empresas en el select de Parking
+function listarEmpresasParking() {
+    andGetEmpresas()
+        .then(data => {
+            if (data) {
+                const lista = document.getElementById('empresaParking');
+                lista.innerHTML = ''; // Limpiar el select
+
+                // Agregar la opción por defecto
+                const nullData = document.createElement('option');
+                nullData.value = 0;
+                nullData.textContent = 'Seleccione Empresa';
+                lista.appendChild(nullData);
+
+                // Agregar las empresas al select
+                data.forEach(itm => {
+                    const optData = document.createElement('option');
+                    optData.value = itm['idemp'];
+                    optData.textContent = itm['nombre'];
+                    lista.appendChild(optData);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error al listar empresas:', error);
+        });
+}
+
+// Llamar a la función para listar empresas al cargar la página
+document.addEventListener('DOMContentLoaded', listarEmpresasParking);
+
+
+// Obtiene la lista de empresas desde la API
+async function andGetEmpresas() {
+    try {
+        const response = await fetch(baseURL + "/empresas/api.php", {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${getCookie('jwt')}`
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error al obtener empresas:', error);
+        return null;
+    }
 }

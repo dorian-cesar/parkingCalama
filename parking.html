@@ -1,8 +1,12 @@
+<!-- filepath: /opt/lampp/htdocs/parkingCalama/parking.html -->
 <div class="caja1" id="pageParking">
   <h2>Parking</h2>
   <p>Ingrese su Patente o Scanee el Codigo QR de su Ticket</p>
   <div class="izq">
     <input type="text" class="entrada" id="parkingQRPat" placeholder="Ingrese patente">
+    <select id="empresaParking" class="entrada">
+      <option value="0">Seleccione Empresa</option>
+    </select>
     <button onclick="handleCalcParking(this)" class="btn" id="btnConsultar">Consultar</button>
   </div>
   <div class="derecha">
@@ -16,8 +20,6 @@
         <h3>Valor</h3>
       </div>
       <button onclick="registrarPago()" class="btn">Pagar</button>
-      <!-- <button onclick="impParking()" class="btn">Imprimir</button> -->
-      <!-- <a href="https://eboleta.sii.cl/" target="_blank"><button class="btn">Pagar SII</button></a> -->
     </div>
   </div>
 </div>

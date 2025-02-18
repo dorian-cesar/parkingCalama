@@ -201,8 +201,9 @@ function listarEmpresasParking() {
                 // Agregar las empresas al select
                 data.forEach(itm => {
                     const optData = document.createElement('option');
-                    optData.value = itm['idemp'];  // Usar el ID de la empresa como valor
-                    optData.textContent = itm['nombre'];  // Mostrar el nombre de la empresa
+
+                    optData.value = itm['idemp'];
+                    optData.textContent = itm['nombre'];
                     lista.appendChild(optData);
                 });
             }
@@ -239,3 +240,4 @@ async function andGetEmpresas() {
     }
     
 }
+

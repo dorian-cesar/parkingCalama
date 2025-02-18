@@ -10,8 +10,12 @@ var tableDest = $('#tabelDest').DataTable({
         { data: 'iddest'},
         { data: 'ciudad'},
         { data: 'valor'},
-        { data: 'tipo'},  // Agregar la columna tipo
-        { data: 'ctrl', className: 'no-sort'}
+        { data: 'tipo'},  // Asegúrate de que la columna tipo esté aquí
+        { data: null, defaultContent: '', className: 'no-sort', render: function (data, type, row) {
+            const btnUpd = `<button onclick="modalDestUpdate(${row['iddest']})" class="ctrl fa fa-pencil"></button>`;
+            const btnDel = `<button onclick="modalDestDelete(${row['iddest']})" class="ctrlred fa fa-trash-o"></button>`;
+            return btnUpd + btnDel;
+        }}
     ]
 });
 
@@ -75,14 +79,11 @@ async function refreshDest(){
             // Si existen destinos, limpiamos la tabla y regeneramos
             tableDest.clear();
             data.forEach(item => {
-                const btnUpd = `<button onclick="modalDestUpdate(${item['iddest']})" class="ctrl fa fa-pencil"></button>`;
-                const btnDel = `<button onclick="modalDestDelete(${item['iddest']})" class="ctrlred fa fa-trash-o"></button>`;
                 tableDest.rows.add([{
                     'iddest' : item['iddest'],
                     'ciudad' : item['ciudad'],
                     'valor' : item['valor'],
-                    'tipo' : item['tipo'],  // Agregar el tipo
-                    'ctrl' : btnUpd+btnDel
+                    'tipo' : item['tipo']  // Asegúrate de que el tipo esté aquí
                 }]);
             });
             tableDest.draw();

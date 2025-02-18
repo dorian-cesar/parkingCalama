@@ -9,9 +9,9 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Patente</th>
+                <th>Ciudad</th>  <!-- Cambiar 'Patente' a 'Ciudad' -->
                 <th>Valor</th>
-                <th>Tipo</th>  <!-- Agregar la columna tipo -->
+                <th>Tipo</th>  <!-- Asegúrate de que la columna tipo esté aquí -->
                 <th class="no-sort">Controles</th>
             </tr>
         </thead>
@@ -24,7 +24,7 @@
     <form onsubmit="doInsertDest(event)" method="POST" id="formInsertDest">
         <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
         <input required type="number" name="valor" class="entrada" placeholder="0">
-        <select required name="tipo" class="entrada">
+        <select required name="tipo" class="entrada" style="width: 97%; height: 40px; line-height: 40px; border: none; border-radius: 5px; margin: auto; margin-top: 20px; margin-left: 7%; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); text-align: left; padding-left: 30px;">
             <option value="" disabled selected>Seleccione Tipo</option>
             <option value="nacional">Nacional</option>
             <option value="internacional">Internacional</option>
@@ -40,7 +40,7 @@
         <input type="hidden" name="iddest">
         <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
         <input required type="number" name="valor" class="entrada" placeholder="0">
-        <select required name="tipo" class="entrada">
+        <select required name="tipo" class="entrada" style="width: 97%; height: 40px; line-height: 40px; border: none; border-radius: 5px; margin: auto; margin-top: 20px; margin-left: 7%; box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); text-align: left; padding-left: 30px;">
             <option value="" disabled selected>Seleccione Tipo</option>
             <option value="nacional">Nacional</option>
             <option value="internacional">Internacional</option>

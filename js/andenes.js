@@ -63,7 +63,8 @@ async function calcAndenes() {
                     ['h1', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
                 elemPat.textContent = `Patente: ${data['patente']}`;
-                empresaPat.textContent = `Empresa: ${empresaInfo['nombre']}`; // Mostrar tipo de empresa
+                const empresaNombre = empresaInfo['nombre'];
+                empresaPat.textContent = `Empresa: ${empresaNombre}`; // Mostrar tipo de empresa
                 fechaPat.textContent = `Fecha ingreso: ${data['fechaent']}`;
                 horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
                 horasalPat.textContent = `Hora salida: ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
@@ -75,6 +76,16 @@ async function calcAndenes() {
 
                 // Actualiza valorTotGlobal con el texto de totalPat
                 valorTotGlobal = parseFloat(totalPat.textContent.replace(/\D+/g, '')) || 0;
+
+                window.datosAnden = {
+                    id: data['idmov'],
+                    patente: data['patente'],
+                    fecha: date.toISOString().split('T')[0],
+                    hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
+                    valor: valorTotGlobal,
+                    empresa: empresaSelect.value,  // Guardar la ID de la empresa seleccionada
+                    empresaNombre: empresaNombre   // Guardar el nombre de la empresa seleccionada
+                };
 
             } else {
                 alert('Esta patente ya fue cobrada');
@@ -265,11 +276,17 @@ async function pagarAnden(valorTot = valorTotGlobal) {
 
                 const datos = {
                     id: data['idmov'],
+                    patente: data['patente'],
                     fecha: date.toISOString().split('T')[0],
                     hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
                     valor: valorTot,
-                    empresa: empresaSeleccionada  // Insertar el ID de la empresa seleccionada
+                    empresa: empresaSeleccionada,  // Insertar el ID de la empresa seleccionada
+                    empresaNombre: window.datosAnden.empresaNombre,  // Insertar el nombre de la empresa seleccionada
+                    destino: document.getElementById('destinoBuses').options[document.getElementById('destinoBuses').selectedIndex].text, // Obtener destino seleccionado
                 };
+
+                // Imprimir boleta térmica
+                imprimirBoletaTermicaAndenes(datos);
 
                 // Llamar a la API para actualizar el movimiento
                 const response = await fetch(baseURL + "/movimientos/api.php", {
@@ -306,6 +323,49 @@ async function pagarAnden(valorTot = valorTotGlobal) {
         }
     } catch (error) {
         console.error('Error:', error);
-            alert('Ocurrió un error al procesar la solicitud.');
-        }
+        alert('Ocurrió un error al procesar la solicitud.');
     }
+}
+
+function imprimirBoletaTermicaAndenes(datos) {
+    const { jsPDF } = window.jspdf;
+
+    const generateReceipt = (filename) => {
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'cm',
+            format: [10, 20]
+        });
+
+        // Add logo
+        doc.setFontSize(12);
+        doc.text('WIT.LA', 1, 1);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Boleta de Pago', 5, 3, { align: 'center' });
+        doc.text('(Andenes)', 5, 4, { align: 'center' }); // Adjusted position for spacing
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'normal');
+        doc.text('___________________________', 5, 5, { align: 'center' });
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Patente: ${datos.patente}`, 5, 6, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Empresa: ${datos.empresaNombre}`, 5, 7, { align: 'center' }); // Mostrar empresa seleccionada
+        doc.text(`Fecha: ${datos.fecha}`, 5, 8, { align: 'center' });
+        doc.text(`Hora: ${datos.hora}`, 5, 9, { align: 'center' });
+        doc.text(`Destino: ${datos.destino}`, 5, 10, { align: 'center' }); // Mostrar destino seleccionado
+        doc.text('___________________________', 5, 11, { align: 'center' });
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Valor Total: $${datos.valor}`, 5, 12, { align: 'center' }); // Mostrar valor total
+        doc.setFont('helvetica', 'normal');
+        doc.text('___________________________', 5, 13, { align: 'center' });
+        doc.text('Gracias por su visita', 5, 14, { align: 'center' });
+
+        doc.save(filename);
+    };
+
+    setTimeout(() => {
+        generateReceipt('boleta1.pdf');
+        generateReceipt('boleta2.pdf');
+    }, 1000); // Delay of 1 second
+}

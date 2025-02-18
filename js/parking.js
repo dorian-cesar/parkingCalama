@@ -45,7 +45,8 @@ async function calcParking() {
                 ['h1', 'h4', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
             elemPat.textContent = `Patente: ${data['patente']}`;
-            empPat.textContent = `Empresa: ${empresaSelect.options[empresaSelect.selectedIndex].text}`; // Mostrar el nombre de la empresa seleccionada
+            const empresaNombre = empresaSelect.options[empresaSelect.selectedIndex].text;
+            empPat.textContent = `Empresa: ${empresaNombre}`; // Mostrar el nombre de la empresa seleccionada
             fechaPat.textContent = `Fecha de Ingreso: ${data['fechaent']}`;
             horaentPat.textContent = `Hora Ingreso: ${data['horaent']}`;
 
@@ -58,10 +59,12 @@ async function calcParking() {
 
             window.datosParking = {
                 id: data['idmov'],
+                patente: data['patente'],
                 fecha: `${fechaSalida.getFullYear()}-${(fechaSalida.getMonth() + 1).toString().padStart(2, '0')}-${fechaSalida.getDate().toString().padStart(2, '0')}`,
                 hora: horaSalida,
                 valor: valorTotal,
-                empresa: empresaSelect.value  // Guardar la ID de la empresa seleccionada
+                empresa: empresaSelect.value,  // Guardar la ID de la empresa seleccionada
+                empresaNombre: empresaNombre   // Guardar el nombre de la empresa seleccionada
             };
 
         } else if (data['tipo'].toLowerCase() === 'anden') {
@@ -86,8 +89,12 @@ async function registrarPago() {
     const detalleBoleta = `53-${valorTot}-1-dsa-PARKING`;
 
     try {
+        // Imprimir boleta térmica
+        imprimirBoletaTermicaParking(datos);
+
         const datosPago = {
             id: datos.id,
+            patente: datos.patente,
             fecha: date.toISOString().split('T')[0],
             hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
             valor: valorTot,
@@ -144,6 +151,47 @@ async function registrarPago() {
     }
 }
 
+function imprimirBoletaTermicaParking(datos) {
+    const { jsPDF } = window.jspdf;
+
+    const generateReceipt = (filename) => {
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'cm',
+            format: [10, 20]
+        });
+
+        // Add logo
+        doc.setFontSize(12);
+        doc.text('WIT.LA', 1, 1);
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Boleta de Pago', 5, 3, { align: 'center' });
+        doc.text('(Parking)', 5, 4, { align: 'center' }); // Adjusted position for spacing
+        doc.setFontSize(18);
+        doc.setFont('helvetica', 'normal');
+        doc.text('___________________________', 5, 5, { align: 'center' });
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Patente: ${datos.patente}`, 5, 6, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.text(`Empresa: ${datos.empresaNombre}`, 5, 7, { align: 'center' }); // Mostrar empresa seleccionada
+        doc.text(`Fecha: ${datos.fecha}`, 5, 8, { align: 'center' });
+        doc.text(`Hora: ${datos.hora}`, 5, 9, { align: 'center' });
+        doc.text('___________________________', 5, 10, { align: 'center' });
+        doc.setFont('helvetica', 'bold');
+        doc.text(`Valor: $${datos.valor}`, 5, 11, { align: 'center' });
+        doc.setFont('helvetica', 'normal');
+        doc.text('___________________________', 5, 12, { align: 'center' });
+        doc.text('Gracias por su visita', 5, 13, { align: 'center' });
+
+        doc.save(filename);
+    };
+
+    setTimeout(() => {
+        generateReceipt('boleta1.pdf');
+        generateReceipt('boleta2.pdf');
+    }, 1000); // Delay of 1 second
+}
 
 async function getMovByPatente(patente){
     if(getCookie('jwt')){
@@ -201,7 +249,6 @@ function listarEmpresasParking() {
                 // Agregar las empresas al select
                 data.forEach(itm => {
                     const optData = document.createElement('option');
-
                     optData.value = itm['idemp'];
                     optData.textContent = itm['nombre'];
                     lista.appendChild(optData);
@@ -236,8 +283,6 @@ async function andGetEmpresas() {
         console.log(data);
         console.error('Error al obtener empresas:', error);
         return null;
-        
     }
-    
 }
 

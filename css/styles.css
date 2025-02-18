@@ -160,7 +160,7 @@ body {
   text-align: center;
 }
 
-.entrada {
+.entrada, .entrada2, .entrada3, select.entrada {
   width: 90%;
   height: 40px;
   line-height: 40px;
@@ -174,29 +174,15 @@ body {
   padding-left: 30px;
 }
 
-.entrada2 {
-  width: 97%;
+select[name="tipo"] {
+  width: 90%;
   height: 40px;
   line-height: 40px;
   border: none;
   border-radius: 5px;
   margin: auto;
-  margin-left: 7%;
   margin-top: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  text-align: left;
-  padding-left: 30px;
-}
-
-.entrada3 {
-  width: 98%;
-  height: 40px;
-  line-height: 40px;
-  border: none;
-  border-radius: 5px;
-  margin: auto;
   margin-left: 7%;
-  margin-top: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   text-align: left;
   padding-left: 30px;

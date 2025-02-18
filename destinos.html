@@ -11,6 +11,7 @@
                 <th>ID</th>
                 <th>Patente</th>
                 <th>Valor</th>
+                <th>Tipo</th>  <!-- Agregar la columna tipo -->
                 <th class="no-sort">Controles</th>
             </tr>
         </thead>
@@ -23,6 +24,11 @@
     <form onsubmit="doInsertDest(event)" method="POST" id="formInsertDest">
         <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
         <input required type="number" name="valor" class="entrada" placeholder="0">
+        <select required name="tipo" class="entrada">
+            <option value="" disabled selected>Seleccione Tipo</option>
+            <option value="nacional">Nacional</option>
+            <option value="internacional">Internacional</option>
+        </select>
         <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>
@@ -34,6 +40,11 @@
         <input type="hidden" name="iddest">
         <input required type="text" name="ciudad" class="entrada" placeholder="Ciudad">
         <input required type="number" name="valor" class="entrada" placeholder="0">
+        <select required name="tipo" class="entrada">
+            <option value="" disabled selected>Seleccione Tipo</option>
+            <option value="nacional">Nacional</option>
+            <option value="internacional">Internacional</option>
+        </select>
         <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>

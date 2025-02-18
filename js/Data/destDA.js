@@ -69,7 +69,7 @@ async function updateDest(datos) {
 }
 
 // Inserta un registro
-// Datos: ciudad, valor
+// Datos: ciudad, valor, tipo
 async function insertDest(datos) {
     let ret = await fetch(apiDestinos, {
         method: 'POST',

@@ -10,6 +10,7 @@ var tableDest = $('#tabelDest').DataTable({
         { data: 'iddest'},
         { data: 'ciudad'},
         { data: 'valor'},
+        { data: 'tipo'},  // Agregar la columna tipo
         { data: 'ctrl', className: 'no-sort'}
     ]
 });
@@ -21,6 +22,7 @@ async function modalDestInsert(){
     const form = document.getElementById('formInsertDest');
     form.ciudad.value = '';
     form.valor.value = '';
+    form.tipo.value = '';  // Agregar el tipo
 
     openModal('destinsert');
 }
@@ -37,6 +39,7 @@ async function modalDestUpdate(idIn){
         form.iddest.value = data['iddest'];
         form.ciudad.value = data['ciudad'];
         form.valor.value = data['valor'];
+        form.tipo.value = data['tipo'];  // Agregar el tipo
     }
 
     openModal('destupdate');
@@ -47,7 +50,7 @@ async function modalDestUpdate(idIn){
 async function modalDestDelete(idIn){
     let confirm = window.confirm('¿Eliminar el destino?');
     if(confirm){
-        let reply = await deleteDest(idIn);
+        let reply = await deleteDest({ id: idIn });  // Corregir el paso del ID
         if(reply['error']){
             alert(reply['error']);
         }
@@ -78,6 +81,7 @@ async function refreshDest(){
                     'iddest' : item['iddest'],
                     'ciudad' : item['ciudad'],
                     'valor' : item['valor'],
+                    'tipo' : item['tipo'],  // Agregar el tipo
                     'ctrl' : btnUpd+btnDel
                 }]);
             });
@@ -107,7 +111,7 @@ async function doInsertDest(e) {
     form.btnSubmit.classList.add('disabled');
 
     // Creamos un array con llaves y datos
-    datos = { ciudad: form.ciudad.value, valor: form.valor.value };
+    datos = { ciudad: form.ciudad.value, valor: form.valor.value, tipo: form.tipo.value };  // Agregar el tipo
 
     let ret = await insertDest(datos);
     if(ret['error']){
@@ -133,7 +137,7 @@ async function doUpdateDest(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
-    datos = { id: form.iddest.value, ciudad: form.ciudad.value, valor: form.valor.value };
+    datos = { id: form.iddest.value, ciudad: form.ciudad.value, valor: form.valor.value, tipo: form.tipo.value };  // Agregar el tipo
 
     let ret = await updateDest(datos);
     if(ret['error']){

@@ -90,7 +90,10 @@ async function registrarPago() {
 
     try {
         // Imprimir boleta térmica
-        imprimirBoletaTermicaParking(datos);
+        const ventanaImpr1 = window.open('', '_blank');
+        const ventanaImpr2 = window.open('', '_blank');
+        imprimirBoletaTermicaParking(datos, ventanaImpr1);
+        imprimirBoletaTermicaParking(datos, ventanaImpr2);
 
         const datosPago = {
             id: datos.id,
@@ -151,46 +154,34 @@ async function registrarPago() {
     }
 }
 
-function imprimirBoletaTermicaParking(datos) {
-    const { jsPDF } = window.jspdf;
-
-    const generateReceipt = (filename) => {
-        const doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'cm',
-            format: [10, 20]
-        });
-
-        // Add logo
-        doc.setFontSize(12);
-        doc.text('WIT.LA', 1, 1);
-        doc.setFontSize(24);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Boleta de Pago', 5, 3, { align: 'center' });
-        doc.text('(Parking)', 5, 4, { align: 'center' }); // Adjusted position for spacing
-        doc.setFontSize(18);
-        doc.setFont('helvetica', 'normal');
-        doc.text('___________________________', 5, 5, { align: 'center' });
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Patente: ${datos.patente}`, 5, 6, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Empresa: ${datos.empresaNombre}`, 5, 7, { align: 'center' }); // Mostrar empresa seleccionada
-        doc.text(`Fecha: ${datos.fecha}`, 5, 8, { align: 'center' });
-        doc.text(`Hora: ${datos.hora}`, 5, 9, { align: 'center' });
-        doc.text('___________________________', 5, 10, { align: 'center' });
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Valor: $${datos.valor}`, 5, 11, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.text('___________________________', 5, 12, { align: 'center' });
-        doc.text('Gracias por su visita', 5, 13, { align: 'center' });
-
-        doc.save(filename);
-    };
-
-    setTimeout(() => {
-        generateReceipt('boleta1.pdf');
-        generateReceipt('boleta2.pdf');
-    }, 1000); // Delay of 1 second
+function imprimirBoletaTermicaParking(datos, ventanaImpr) {
+    ventanaImpr.document.write(`
+        <html>
+        <head>
+            <title>Boleta de Pago</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; }
+                h1, h3 { margin: 0; }
+                .line { border-bottom: 1px solid #000; margin: 10px 0; }
+            </style>
+        </head>
+        <body>
+            <h1>WIT.LA</h1>
+            <h3>Boleta de Pago (Parking)</h3>
+            <div class="line"></div>
+            <h3>Patente: ${datos.patente}</h3>
+            <h3>Empresa: ${datos.empresaNombre}</h3>
+            <h3>Fecha: ${datos.fecha}</h3>
+            <h3>Hora: ${datos.hora}</h3>
+            <div class="line"></div>
+            <h3>Valor: $${datos.valor}</h3>
+            <div class="line"></div>
+            <h3>Gracias por su visita</h3>
+        </body>
+        </html>
+    `);
+    ventanaImpr.document.close();
+    ventanaImpr.print();
 }
 
 async function getMovByPatente(patente){

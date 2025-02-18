@@ -286,7 +286,10 @@ async function pagarAnden(valorTot = valorTotGlobal) {
                 };
 
                 // Imprimir boleta térmica
-                imprimirBoletaTermicaAndenes(datos);
+                const ventanaImpr1 = window.open('', '_blank');
+                const ventanaImpr2 = window.open('', '_blank');
+                imprimirBoletaTermicaAndenes(datos, ventanaImpr1);
+                imprimirBoletaTermicaAndenes(datos, ventanaImpr2);
 
                 // Llamar a la API para actualizar el movimiento
                 const response = await fetch(baseURL + "/movimientos/api.php", {
@@ -327,45 +330,33 @@ async function pagarAnden(valorTot = valorTotGlobal) {
     }
 }
 
-function imprimirBoletaTermicaAndenes(datos) {
-    const { jsPDF } = window.jspdf;
-
-    const generateReceipt = (filename) => {
-        const doc = new jsPDF({
-            orientation: 'portrait',
-            unit: 'cm',
-            format: [10, 20]
-        });
-
-        // Add logo
-        doc.setFontSize(12);
-        doc.text('WIT.LA', 1, 1);
-        doc.setFontSize(24);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Boleta de Pago', 5, 3, { align: 'center' });
-        doc.text('(Andenes)', 5, 4, { align: 'center' }); // Adjusted position for spacing
-        doc.setFontSize(18);
-        doc.setFont('helvetica', 'normal');
-        doc.text('___________________________', 5, 5, { align: 'center' });
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Patente: ${datos.patente}`, 5, 6, { align: 'center' });
-        doc.setFont('helvetica', 'normal');
-        doc.text(`Empresa: ${datos.empresaNombre}`, 5, 7, { align: 'center' }); // Mostrar empresa seleccionada
-        doc.text(`Fecha: ${datos.fecha}`, 5, 8, { align: 'center' });
-        doc.text(`Hora: ${datos.hora}`, 5, 9, { align: 'center' });
-        doc.text(`Destino: ${datos.destino}`, 5, 10, { align: 'center' }); // Mostrar destino seleccionado
-        doc.text('___________________________', 5, 11, { align: 'center' });
-        doc.setFont('helvetica', 'bold');
-        doc.text(`Valor Total: $${datos.valor}`, 5, 12, { align: 'center' }); // Mostrar valor total
-        doc.setFont('helvetica', 'normal');
-        doc.text('___________________________', 5, 13, { align: 'center' });
-        doc.text('Gracias por su visita', 5, 14, { align: 'center' });
-
-        doc.save(filename);
-    };
-
-    setTimeout(() => {
-        generateReceipt('boleta1.pdf');
-        generateReceipt('boleta2.pdf');
-    }, 1000); // Delay of 1 second
+function imprimirBoletaTermicaAndenes(datos, ventanaImpr) {
+    ventanaImpr.document.write(`
+        <html>
+        <head>
+            <title>Boleta de Pago</title>
+            <style>
+                body { font-family: Arial, sans-serif; text-align: center; }
+                h1, h3 { margin: 0; }
+                .line { border-bottom: 1px solid #000; margin: 10px 0; }
+            </style>
+        </head>
+        <body>
+            <h1>WIT.LA</h1>
+            <h3>Boleta de Pago (Andenes)</h3>
+            <div class="line"></div>
+            <h3>Patente: ${datos.patente}</h3>
+            <h3>Empresa: ${datos.empresaNombre}</h3>
+            <h3>Fecha: ${datos.fecha}</h3>
+            <h3>Hora: ${datos.hora}</h3>
+            <h3>Destino: ${datos.destino}</h3>
+            <div class="line"></div>
+            <h3>Valor Total: $${datos.valor}</h3>
+            <div class="line"></div>
+            <h3>Gracias por su visita</h3>
+        </body>
+        </html>
+    `);
+    ventanaImpr.document.close();
+    ventanaImpr.print();
 }

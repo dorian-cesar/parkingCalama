@@ -241,7 +241,9 @@ async function pagarAnden(valorTot = valorTotGlobal) {
     const date = new Date();
   
     if (!patRegEx.test(input)) {
-
+        console.log('No es patente, leer QR');
+        return;
+    }
 
     try {
         const data = await getMovByPatente(input);
@@ -304,6 +306,6 @@ async function pagarAnden(valorTot = valorTotGlobal) {
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('Ocurrió un error al procesar la solicitud.');
+            alert('Ocurrió un error al procesar la solicitud.');
+        }
     }
-}}

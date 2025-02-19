@@ -146,8 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $json_data = file_get_contents("php://input");
     $data = json_decode($json_data, true);
 
-    if ($data === null) {
-        sendError('Error al decodificar JSON');
+    if ($data === null || !isset($data["id"])) {
+        sendError('Error al decodificar JSON o ID no proporcionado');
     }
 
     $id = $data["id"];

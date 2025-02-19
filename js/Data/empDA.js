@@ -42,7 +42,7 @@ async function deleteEmp(idIn) {
             'Content-type' : 'application/json',
             'Authorization': `Bearer ${getCookie('jwt')}`
         },
-        body: JSON.stringify(idIn)
+        body: JSON.stringify({ id: idIn })
     })
     .then(reply => reply.json())
     .then(data => { return data; })

@@ -2,10 +2,10 @@
 //To-Do: Transformar a objeto
 $secretkey = "aqui no va a estar";
 
-$server = "ls-3c0c538286def4da7f8273aa5531e0b6eee0990c.cylsiewx0zgx.us-east-1.rds.amazonaws.com";
+$server = "ls-ac361eb6981fc8da3000dad63b382c39e5f1f3cd.cylsiewx0zgx.us-east-1.rds.amazonaws.com";
 $user = "dbmasteruser";
-$pass = "eF5D;6VzP$^7qDryBzDd,`+w(5e4*qI+";
-$db = "masgps";
+$pass = "CP7>2fobZp<7Kja!Efy3Q+~g:as2]rJD";
+$db = "parkingAndenes";
 
 $conn = new mysqli($server,$user,$pass,$db);
 

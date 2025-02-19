@@ -142,6 +142,9 @@ async function registrarPago() {
         refreshPagos();
         alert('Pago registrado correctamente.');
 
+        // Marcar la patente como pagada
+        await marcarPatenteComoPagada(datos.id);
+
         document.getElementById('parkingQRPat').value = '';
         document.getElementById('contParking').innerHTML = '';
         window.datosParking = null;
@@ -276,6 +279,32 @@ async function andGetEmpresas() {
         console.log(data);
         console.error('Error al obtener empresas:', error);
         return null;
+    }
+}
+
+async function marcarPatenteComoPagada(idMov) {
+    try {
+        const response = await fetch(baseURL + "/movimientos/marcarPagado.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getCookie('jwt')}`
+            },
+            body: JSON.stringify({ id: idMov })
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error HTTP: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Respuesta del servidor al marcar como pagado:", result);
+
+        if (result.respuesta !== "OK") {
+            console.warn(`Error al marcar como pagado: ${result.respuesta || "Respuesta desconocida"}`);
+        }
+    } catch (error) {
+        console.error('Error al marcar como pagado:', error);
     }
 }
 

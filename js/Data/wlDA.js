@@ -1,6 +1,7 @@
 /* Data Access */
 const apiWhitelist = baseURL+"/whitelist/api.php";
-const apiListaBlanca = baseURL+"/whitelist/listaBlanca.php";
+const apiInsertWL = baseURL+"/whitelist/InsertWL.php";
+const apiDeleteWL = baseURL+"/whitelist/deleteWL.php";
 
 // Obtiene todos los registros
 async function getWL() {
@@ -68,6 +69,24 @@ async function deleteWL(idIn) {
     return ret;
 }
 
+// Borra un registro en la app externa
+// Datos: patente
+async function deleteWLExternal(datos) {
+    let ret = await fetch(apiDeleteWL, {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+            'Content-type' : 'application/json',
+            'Authorization': `Bearer ${getCookie('jwt')}`
+        },
+        body: JSON.stringify(datos)
+    })
+    .then(reply => reply.json())
+    .then(data => { return data; })
+    .catch(error => { console.log(error); });
+    return ret;
+}
+
 // Actualiza un registro
 // Datos: id, patente, empresa
 async function updateWL(datos) {
@@ -89,7 +108,7 @@ async function updateWL(datos) {
 // Inserta un registro
 // Datos: patente, empresa
 async function insertWL(datos) {
-    let ret = await fetch(apiListaBlanca, {
+    let ret = await fetch(apiInsertWL, {
         method: 'POST',
         mode: 'cors',
         headers: {

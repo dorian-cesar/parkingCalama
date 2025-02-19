@@ -52,11 +52,22 @@ async function modalWLUpdate(idIn){
 async function modalWLDelete(idIn){
     let confirm = window.confirm('¿Eliminar el registro?');
     if(confirm){
-        let reply = await deleteWL(idIn);
-        if(reply['error']){
-            alert(reply['error']);
+        let data = await getWLByID(idIn);
+        if(data){
+            let reply = await deleteWLExternal({ patente: data['patente'] });
+            if(reply['error']){
+                alert(reply['error']);
+            } else {
+                alert('Usuario eliminado con éxito en la app externa.');
+                let dbReply = await deleteWL(idIn);
+                if(dbReply['error']){
+                    alert(dbReply['error']);
+                } else {
+                    alert('Usuario eliminado con éxito en la base de datos.');
+                }
+                refreshWL();
+            }
         }
-        refreshWL();
     }
 }
 

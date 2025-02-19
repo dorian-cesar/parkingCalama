@@ -10,6 +10,7 @@
             <tr>
                 <th>ID</th>
                 <th>Patente</th>
+                <th>Empresa</th>
                 <th class="no-sort">Controles</th>
             </tr>
         </thead>
@@ -22,6 +23,9 @@
     <h1>Ingresar a Lista Blanca</h1>
     <form onsubmit="doInsertWL(event)" method="post" id="formInsertWL">
         <input required type="text" name="patente" class="entrada" placeholder="ABCD12">
+        <select required name="empresa" class="entrada2">
+            <!-- Options will be populated dynamically -->
+        </select>
         <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>
@@ -32,6 +36,9 @@
     <form onsubmit="doUpdateWL(event)" method="post" id="formUpdateWL">
         <input type="hidden" name="idwl">
         <input required type="text" name="patente" class="entrada" placeholder="ABCD12">
+        <select required name="empresa" class="entrada2">
+            <!-- Options will be populated dynamically -->
+        </select>
         <button class="btn" name="btnSubmit"><i class="fa fa-floppy-o"></i> Guardar</button>
     </form>
 </div>

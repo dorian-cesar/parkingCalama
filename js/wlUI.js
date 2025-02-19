@@ -11,7 +11,8 @@ var tableWL = $('#tableWL').DataTable({
     columns: [
         { data: 'idwl'}, // Datos de la columna 1: ID de lista blanca
         { data: 'patente'}, // Datos de la columna 2: Patente
-        { data: 'ctrl', className: 'no-sort'} // Datos de la columna 3: Control, con clase 'no-sort'
+        { data: 'nombre'}, // Datos de la columna 3: Empresa (nombre)
+        { data: 'ctrl', className: 'no-sort'} // Datos de la columna 4: Control, con clase 'no-sort'
     ]
 });
 
@@ -21,6 +22,16 @@ async function modalWLInsert(){
     // Blanquear los inputs
     const form = document.getElementById('formInsertWL');
     form.patente.value = '';
+    form.empresa.innerHTML = ''; // Clear previous options
+
+    // Populate empresa select options
+    let empresas = await getEmpresas();
+    empresas.forEach(empresa => {
+        let option = document.createElement('option');
+        option.value = empresa.idemp;
+        option.text = empresa.nombre;
+        form.empresa.add(option);
+    });
 
     // Abrir Modal
     openModal('wlinsert');
@@ -64,12 +75,12 @@ async function refreshWL(){
         if(data){
             tableWL.clear();
             data.forEach(item => {
-                const btnUpd = `<button onclick="modalWLUpdate(${item['idwl']})" class="ctrl fa fa-pencil"></button>`;
                 const btnDel = `<button onclick="modalWLDelete(${item['idwl']})" class="ctrlred fa fa-trash-o"></button>`;
                 tableWL.rows.add([{
                     'idwl' : item['idwl'],
                     'patente' : item['patente'],
-                    'ctrl' : btnUpd+btnDel
+                    'nombre' : item['nombre'], // Ensure this matches the column definition
+                    'ctrl' : btnDel
                 }]);
             });
             tableWL.draw();
@@ -97,7 +108,7 @@ async function doInsertWL(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
-    datos = { patente: form.patente.value, empresa: 1 };
+    datos = { patente: form.patente.value, empresa: form.empresa.value };
 
     let ret = await insertWL(datos);
     if(ret['error']){
@@ -126,7 +137,7 @@ async function doUpdateWL(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
-    datos = { id: form.idwl.value, patente: form.patente.value, empresa: 1 };
+    datos = { id: form.idwl.value, patente: form.patente.value, empresa: form.empresa.value };
 
     let ret = await updateWL(datos);
     if(ret['error']){

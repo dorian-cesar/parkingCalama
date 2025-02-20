@@ -27,7 +27,6 @@
   <a href="#" onclick="nosotros()">Nosotros</a>
   <a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
   <a href="#" id="nbUsrbuses" onclick="buses()">Andenes</a>
-  
 </div>
 
 
@@ -44,12 +43,14 @@
   <!-- Submenús para opciones de configuración -->
   <a href="#" class="subside" style="display: none" id="sbSubEmpresas" onclick="empresas()"><i class="fa fa-chevron-right"></i><i class="fa fa-id-card fa-fw"></i> Empresas</a>
   <a href="#" class="subside" style="display: none" id="sbSubDestinos" onclick="destinos()"><i class="fa fa-chevron-right"></i><i class="fa fa-flag fa-fw"></i> Destinos</a>
+
   <!-- Enlaces para administradores -->
   <a href="#" class="mainside" id="sbAdmEnroll" onclick="enrolar()"><i class="fa fa-users fa-fw"></i> Usuarios</a>
   <a href="#" class="mainside" id="sbAdmWhitelist" onclick="listablanca()"><i class="fa fa-list fa-fw"></i> Listas Blancas</a>
-  <a href="#" class="mainside" id="sbAdmPagos" onclick="pagos()"><i class="fa fa-dollar fa-fw"></i> Pagos Diarios</a>
-  <a href="#" class="mainside" id="sbAdmMovements" onclick="entradaSalida()"><i class="fa fa-bus fa-fw"></i> Entradas y Salidas</a>
-  <a href="#" class="mainside" id="sbAdmMovements" onclick="SalidaManual()"><i class="fa fa-bus fa-fw"></i> Salida Manual</a>
+    <!-- Enlaces para usuarios -->
+    <a href="#" class="mainside" id="sbUsrPagos" onclick="pagos()"><i class="fa fa-dollar fa-fw"></i> Pagos Diarios</a>
+    <a href="#" class="mainside" id="sbUsrMovements" onclick="entradaSalida()"><i class="fa fa-bus fa-fw"></i> Entradas y Salidas</a>
+    <a href="#" class="mainside" id="sbUsrSalidaManual" onclick="SalidaManual()"><i class="fa fa-bus fa-fw"></i> Salida Manual</a>
   <!-- Enlace para cerrar sesión -->
   <a class="mainside logout-pos" href="#" id="sbUsrLogout" onclick="logOut()"><i class="fa fa-sign-out fa-fw"></i> Log Out</a>
 </div>

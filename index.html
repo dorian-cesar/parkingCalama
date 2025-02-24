@@ -145,9 +145,9 @@
             sideBarCtl.forEach(item => {
               item.style.display = 'block';
             });
-            // Ocultar botones "Baños" y "Custodias" para administradores
-            document.getElementById('nbUsrBanos').style.display = 'none';
-            document.getElementById('nbUsrCustodias').style.display = 'none';
+            // Mostrar botones "Baños" y "Custodias" para administradores
+            document.getElementById('nbUsrBanos').style.display = 'block';
+            document.getElementById('nbUsrCustodias').style.display = 'block';
           }
           // Mostrar el correo del usuario autenticado
           document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];

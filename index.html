@@ -27,8 +27,8 @@
   <a href="#" onclick="nosotros()">Nosotros</a>
   <a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
   <a href="#" id="nbUsrbuses" onclick="buses()">Andenes</a>
-  <a href="https://localhost/TerminalCalama/index.html" id="nbUsrBanos" style="display: none;">Baños</a>
-  <a href="https://localhost/TerminalCalama/custodia.html" id="nbUsrCustodias" style="display: none;">Custodias</a>
+  <a href="#" id="nbUsrBanos" style="display: none;" onclick="redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/index.html')">Baños</a>
+  <a href="#" id="nbUsrCustodias" style="display: none;" onclick="redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/custodia.html')">Custodias</a>
 </div>
 
 
@@ -135,6 +135,9 @@
             sideBarCtl.forEach(item => {
               item.style.display = 'block';
             });
+            // Mostrar botones "Baños" y "Custodias" para usuarios
+            document.getElementById('nbUsrBanos').style.display = 'block';
+            document.getElementById('nbUsrCustodias').style.display = 'block';
           }
           if (reply.data[0]['lvl'] >= 10) {
             sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
@@ -142,6 +145,9 @@
             sideBarCtl.forEach(item => {
               item.style.display = 'block';
             });
+            // Ocultar botones "Baños" y "Custodias" para administradores
+            document.getElementById('nbUsrBanos').style.display = 'none';
+            document.getElementById('nbUsrCustodias').style.display = 'none';
           }
           // Mostrar el correo del usuario autenticado
           document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];
@@ -206,6 +212,16 @@
       }
     }
     return "";
+  }
+
+  // Función para redirigir con JWT
+  function redirectWithJWT(url) {
+    const jwt = getCookie('jwt');
+    if (jwt) {
+      window.location.href = `${url}?token=${jwt}`;
+    } else {
+      window.location.href = url;
+    }
   }
 
   // Remove the function to show the "Baños" page and hide the container

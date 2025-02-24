@@ -27,6 +27,8 @@
   <a href="#" onclick="nosotros()">Nosotros</a>
   <a href="#" id="nbUsrParking" onclick="parking()">Parking</a>
   <a href="#" id="nbUsrbuses" onclick="buses()">Andenes</a>
+  <a href="https://localhost/TerminalCalama/index.html" id="nbUsrBanos" style="display: none;">Baños</a>
+  <a href="https://localhost/TerminalCalama/custodia.html" id="nbUsrCustodias" style="display: none;">Custodias</a>
 </div>
 
 
@@ -73,6 +75,7 @@
     <div id="contenedorWhitelist"></div>
     <div id="contenedorBuses"></div>
     <div id="contenedorSalidaManual"></div>
+    <div id="contenedorBanos" style="display: none;"></div>
 </div>
 
 <!-- Contenedor para modales -->
@@ -178,6 +181,7 @@
   $('#contenedorDestinos').load('destinos.html');
   $('#contenedorConfig').load('config.html');
   $('#contenedorEnrolar').load('enroll.html', dfd.resolve);
+  $('#contenedorBanos').load('baños.html', dfd.resolve);
 }).promise();
 
   // Cargar el archivo main.js cuando todos los elementos existan
@@ -202,6 +206,28 @@
       }
     }
     return "";
+  }
+
+  // Remove the function to show the "Baños" page and hide the container
+  // function banos() {
+  //   blankPage(); // Oculta todas las páginas
+  //   document.getElementById('contenedorBanos').style.display = 'block';
+  // }
+
+  // Remove the event listener for the "Baños" button
+  // document.getElementById('nbUsrBanos').addEventListener('click', function () {
+  //   sessionStorage.setItem('previousPage', window.location.href);
+  //   window.location.href = "https://andenes.terminal-calama.com/TerminalCalama/index.html";
+  // });
+
+  // Function to go back to the previous page
+  function goBack() {
+    const previousPage = sessionStorage.getItem('previousPage');
+    if (previousPage) {
+      window.location.href = previousPage;
+    } else {
+      window.location.href = "http://localhost/parkingCalama/#";
+    }
   }
 
   //$(document).ready(loadPage());

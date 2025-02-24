@@ -124,6 +124,11 @@ function destinos(){
   blankPage();// Oculta todas las páginas
   document.getElementById('pageDestinos').style.display = 'block';
 }
+// Muestra la página "Baños" y oculta las demás
+function banos() {
+  blankPage(); // Oculta todas las páginas
+  document.getElementById('contenedorBanos').style.display = 'block';
+}
 // Esta función se encarga de cambiar la visibilidad de ciertos elementos en la página
 function configuraciones(){
   // Verifica si el elemento con ID 'sbSubEmpresas' está actualmente oculto

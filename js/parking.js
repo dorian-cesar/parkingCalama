@@ -89,10 +89,7 @@ async function registrarPago() {
     const detalleBoleta = `53-${valorTot}-1-dsa-PARKING`;
 
     try {
-        // Imprimir boleta térmica
-        const ventanaImpr = window.open('', '_blank');
-        imprimirBoletaTermicaParking(datos, ventanaImpr);
-
+        // Datos de pago a enviar a la API
         const datosPago = {
             id: datos.id,
             patente: datos.patente,
@@ -102,13 +99,28 @@ async function registrarPago() {
             empresa: datos.empresa  // Incluir la ID de la empresa seleccionada
         };
 
-        console.log("Datos a enviar a la API:", {
+        /*console.log("Datos a enviar a la API:", {
             codigoEmpresa: datos.empresa,  // Usar la ID de la empresa seleccionada
             tipoDocumento: "39",
             total: valorTot.toString(),
             detalleBoleta: detalleBoleta
-        });
+        });*/
 
+        // Llamada a la API para registrar el movimiento del pago
+        await updateMov(datosPago);
+        refreshMov();
+        refreshPagos();
+        alert('Pago registrado correctamente.');
+
+        // Marcar la patente como pagada
+        await marcarPatenteComoPagada(datos.id);
+
+        // Ahora, imprimir la boleta térmica después de registrar el pago
+        const ventanaImpr = window.open('', '_blank');
+        imprimirBoletaTermicaParking(datos, ventanaImpr);
+
+        // Se ha comentado el envío a la API para generar la boleta, ya no se realiza
+        /*
         const response = await fetch(baseURL + "/boletas/generarBoleta.php", {
             method: 'POST',
             headers: {
@@ -136,15 +148,9 @@ async function registrarPago() {
             console.warn(`Error al generar la boleta: ${result.respuesta || "Respuesta desconocida"}`);
             alert('Pago registrado, pero no se pudo generar la boleta.');
         }
+        */
 
-        await updateMov(datosPago);
-        refreshMov();
-        refreshPagos();
-        alert('Pago registrado correctamente.');
-
-        // Marcar la patente como pagada
-        await marcarPatenteComoPagada(datos.id);
-
+        // Limpiar formulario
         document.getElementById('parkingQRPat').value = '';
         document.getElementById('contParking').innerHTML = '';
         window.datosParking = null;
@@ -154,6 +160,8 @@ async function registrarPago() {
         alert('Ocurrió un error al registrar el pago o generar la boleta.');
     }
 }
+
+
 
 function imprimirBoletaTermicaParking(datos, ventanaImpr) {
     ventanaImpr.document.write(`
@@ -182,11 +190,20 @@ function imprimirBoletaTermicaParking(datos, ventanaImpr) {
         </html>
     `);
     ventanaImpr.document.close();
+
     setTimeout(() => {
         ventanaImpr.focus();
         ventanaImpr.print();
+
+        // Cierre ajustable de la ventana de impresión
+        setTimeout(() => {
+            try {
+                ventanaImpr.close();
+            } catch (e) {
+                console.error("No se pudo cerrar la ventana:", e);
+            }
+        }, 1000); // Ajusta el tiempo según el navegador
     }, 1000);
-    
 }
 
 async function getMovByPatente(patente){

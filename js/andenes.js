@@ -285,11 +285,7 @@ async function pagarAnden(valorTot = valorTotGlobal) {
                     destino: document.getElementById('destinoBuses').options[document.getElementById('destinoBuses').selectedIndex].text, // Obtener destino seleccionado
                 };
 
-                // Imprimir boleta térmica
-                const ventanaImpr = window.open('', '_blank');
-                imprimirBoletaTermicaAndenes(datos, ventanaImpr);
-
-                // Llamar a la API para actualizar el movimiento
+                // Llamar a la API para actualizar el movimiento antes de imprimir la boleta
                 const response = await fetch(baseURL + "/movimientos/api.php", {
                     method: 'PUT',
                     headers: {
@@ -310,6 +306,11 @@ async function pagarAnden(valorTot = valorTotGlobal) {
                     refreshMov(); // Refrescar la tabla de movimientos
                     refreshPagos(); // Refrescar la tabla de pagos
                     alert('Pago registrado correctamente.');
+
+                    // Imprimir boleta térmica solo después de registrar el pago
+                    const ventanaImpr = window.open('', '_blank');
+                    imprimirBoletaTermicaAndenes(datos, ventanaImpr);
+                    
                 } else {
                     alert('Error al registrar el pago: ' + result.error);
                 }
@@ -358,8 +359,18 @@ function imprimirBoletaTermicaAndenes(datos, ventanaImpr) {
         </html>
     `);
     ventanaImpr.document.close();
+
     setTimeout(() => {
         ventanaImpr.focus();
         ventanaImpr.print();
-    }, 1000);
+
+        // Intentar cerrar la ventana después de un tiempo más largo (ajustable)
+        setTimeout(() => {
+            try {
+                ventanaImpr.close(); // Intenta cerrar la ventana
+            } catch (e) {
+                console.error("No se pudo cerrar la ventana:", e);
+            }
+        }, 1000); // Ajuste del tiempo, puede cambiarse según el comportamiento del navegador
+    }, 1000); // Ajuste del tiempo antes de empezar a imprimir
 }

@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         $id = $_GET['id'];
 
         // Prepara y ejecuta una consulta SQL para obtener el registro por ID
-        $stmt = $conn->prepare("SELECT iduser, mail, nivel FROM userParking WHERE iduser = ?");
+        $stmt = $conn->prepare("SELECT iduser, mail, nivel, seccion FROM userParking WHERE iduser = ?");
         $stmt->bind_param("i",$id);
 
         try{
@@ -50,8 +50,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     // Si no hay datos JSON, devolver todos los registros
     else {
         // Prepara y ejecuta una consulta SQL para obtener todos los registros
-        $stmt = $conn->prepare("SELECT u.iduser, u.mail, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm ORDER BY iduser");
-        
+        $stmt = $conn->prepare("SELECT u.iduser, u.mail, u.seccion, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm ORDER BY iduser");       
         try{
             $stmt->execute();
             $result = $stmt->get_result();
@@ -84,9 +83,9 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
         // Obtener datos desde JSON
         $mail = $data["mail"];
         $lvl = $data["lvl"];
+        $seccion = $data["seccion"];
         $pass = password_hash($data["pass"], PASSWORD_DEFAULT); // Hashear la contraseña
-
-                // Prepara y ejecuta una consulta SQL para verificar si ya existe una ciudad en la tabla
+                
         $chck = $conn->prepare("SELECT mail FROM userParking WHERE mail = ?");
         $chck->bind_param("s",$mail);
         $chck->execute();
@@ -94,8 +93,8 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
 
         // Verifica si no existe ya una ciudad con el mismo nombre en la tabla
         if($result->num_rows == 0){
-            $stmt = $conn->prepare("INSERT INTO userParking (mail, pass, nivel) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $mail,$pass, $lvl);
+            $stmt = $conn->prepare("INSERT INTO userParking (mail, pass, nivel, seccion) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssis", $mail, $pass, $lvl, $seccion);
     
             // Ejecuta la consulta SQL para insertar los datos
             if($stmt->execute()){
@@ -132,6 +131,7 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         $id = $data["id"]; // ID del usuario
         $mail = $data["mail"]; // Correo electrónico
         $lvl = $data["lvl"]; // Nivel
+        $seccion = $data["seccion"];
         $passOld = $data['passOld']; // Contraseña antigua
         $passHash = password_hash($data["pass"], PASSWORD_DEFAULT); // Hash de la nueva contraseña
 
@@ -162,8 +162,8 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         }
 
         if($accountExists == true ){
-            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, pass = ?, nivel = ? WHERE iduser = ?");
-            $stmt->bind_param("ssii", $mail,$passHash, $lvl, $id);
+            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, pass = ?, nivel = ?, seccion = ? WHERE iduser = ?");
+            $stmt->bind_param("ssisi", $mail, $passHash, $lvl, $seccion, $id);
 
             try{
                 if($stmt->execute()){

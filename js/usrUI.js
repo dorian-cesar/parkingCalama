@@ -1,18 +1,18 @@
-//Funciones relacionadas al modulo de Usrresas dentro de la configuracion (CRUD completo)
+//Funciones relacionadas al modulo de Usuarios dentro de la configuración (CRUD completo)
 // Elementos
 var tableUser = $('#tableUsr').DataTable({
-    // Configuración inicial de la tabla DataTable
-    order: [[0, 'desc']], // Ordenar por la primera columna (ID) de forma descendente al cargar
-    language: { url: "esCLDT.json" }, // Configuración del idioma
-    columnDefs : [ {
-        targets: 'no-sort', // Clases CSS de columnas que no se pueden ordenar
-        orderable: false, // No permitir ordenar estas columnas
+    order: [[0, 'desc']], 
+    language: { url: "esCLDT.json" }, 
+    columnDefs: [{
+        targets: 'no-sort', 
+        orderable: false, 
     }],
     columns: [
-        { data: 'iduser'}, // Columna de ID de usuario
-        { data: 'mail'}, // Columna de correo electrónico
-        { data: 'nivel'}, // Columna de nivel de usuario
-        { data: 'ctrl', className: 'no-sort'} // Columna de controles con clases de estilo
+        { data: 'iduser' }, 
+        { data: 'mail' }, 
+        { data: 'nivel' }, 
+        { data: 'seccion' }, // Nueva columna para secciones
+        { data: 'ctrl', className: 'no-sort' } 
     ]
 });
 
@@ -34,6 +34,9 @@ async function modalUsrInsert(){
             form.nivel.appendChild(optIn);
         });
     }
+
+    // Limpiar checkboxes
+    document.querySelectorAll('#formInsertUsr input[type="checkbox"]').forEach(cb => cb.checked = false);
 
     openModal('usrinsert');
 }
@@ -61,6 +64,16 @@ async function modalUsrUpdate(idIn){
         form.nivel.value = data['nivel'];
         form.pass.value = '';
         form.oldpass.value = '';
+
+        // Limpiar checkboxes antes de marcarlos
+        document.querySelectorAll('#formUpdateUsr input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+        // Marcar checkboxes según las secciones asignadas
+        let secciones = data['seccion'] ? data['seccion'].split(',') : [];
+        secciones.forEach(sec => {
+            let checkbox = document.querySelector(`#formUpdateUsr input[name="${sec.trim()}"]`);
+            if (checkbox) checkbox.checked = true;
+        });
     }
 
     openModal('usrupdate');
@@ -96,6 +109,7 @@ async function refreshUsr() {
                     'iduser' : item['iduser'],
                     'mail' : item['mail'],
                     'nivel' : item['descriptor'],
+                    'seccion' : item['seccion'] || 'Ninguna', // Mostrar secciones o "Ninguna"
                     'ctrl' : btnUpd+btnDel
                 }]);
             });
@@ -117,7 +131,18 @@ async function doInsertUsr(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
-    datos = { mail: form.mail.value, pass: form.pass.value, lvl: form.nivel.value };
+    // Obtener secciones seleccionadas
+    let secciones = [];
+    document.querySelectorAll('#formInsertUsr input[type="checkbox"]:checked').forEach(cb => {
+        secciones.push(cb.name);
+    });
+
+    datos = { 
+        mail: form.mail.value, 
+        pass: form.pass.value, 
+        lvl: form.nivel.value, 
+        seccion: secciones.join(',') // Convertir array en string separado por comas
+    };
 
     let ret = await insertUsr(datos);
     if(ret['error']){
@@ -139,7 +164,20 @@ async function doUpdateUsr(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
-    datos = { id: form.idusr.value, pass: form.pass.value, passOld: form.oldpass.value, mail: form.mail.value, lvl: form.nivel.value };
+    // Obtener secciones seleccionadas
+    let secciones = [];
+    document.querySelectorAll('#formUpdateUsr input[type="checkbox"]:checked').forEach(cb => {
+        secciones.push(cb.name);
+    });
+
+    datos = { 
+        id: form.idusr.value, 
+        pass: form.pass.value, 
+        passOld: form.oldpass.value, 
+        mail: form.mail.value, 
+        lvl: form.nivel.value, 
+        seccion: secciones.join(',')
+    };
 
     let ret = await updateUsr(datos);
     if(ret['error']){

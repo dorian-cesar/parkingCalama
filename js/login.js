@@ -18,40 +18,63 @@ const apiLogin = baseURL + "/login/api.php";
 // Obtiene un Token JWT el cual se guarda en una cookie
 // Función para realizar el login
 function doLogin(email, pass) {
-    // Objeto con los datos a enviar al servidor
-    const datos = {
-        mail: email,
-        pass: pass,
-    };
+    const datos = { mail: email, pass: pass };
 
-    // Realizar solicitud POST al backend para validar credenciales
     axios.post(apiLogin, datos)
         .then(function (response) {
-            // Validar si la respuesta indica un error
-            if (response.data === 'Error') {
-                // Mostrar mensaje de error
-                alert('Error: Credenciales incorrectas. Por favor, intente de nuevo.');
+            const data = response.data;
+
+            if (data.error) {
+                alert('Error: ' + data.error);
             } else {
                 // Guardar el token JWT en una cookie
-                console.log(response.data);
-                //document.cookie = `jwt=${response.data};path=/; samesite=lax; `;
-                document.cookie = `jwt=${response.data};path=/; samesite=None; secure; `;
-                
+                document.cookie = `jwt=${data.token};path=/; samesite=None; secure;`;
+
+                // Almacenar los datos del usuario en localStorage
+                localStorage.setItem('userData', JSON.stringify(data.user));
+
+                // Ocultar las secciones no asignadas del navbar
+                hideUnassignedSections(data.user.secciones);
+
                 // Recargar la página
                 location.reload();
             }
         })
         .catch(function (error) {
-            // Manejar errores en la solicitud
             console.error(error);
             alert('Ocurrió un error al intentar iniciar sesión. Inténtelo más tarde.');
         });
 }
+function hideUnassignedSections(userSections) {
+    const allSections = {
+        'parking': 'nbUsrParking',
+        'andenes': 'nbUsrbuses',
+        'banos': 'nbUsrBanos',
+        'custodias': 'nbUsrCustodias'
+    };
+
+    // Iterar sobre todas las secciones y ocultar/mostrar según los permisos
+    for (const [section, id] of Object.entries(allSections)) {
+        const navElement = document.getElementById(id);
+        if (navElement) {
+            if (userSections.includes(section)) {
+                navElement.style.display = 'inline-block'; // Mostrar si está asignado
+            } else {
+                navElement.style.display = 'none'; // Ocultar si no está asignado
+            }
+        }
+    }
+}
 
 // Elimina el token JWT
-function logOut() {
-    document.cookie = 'jwt=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/; samesite=lax';
-    initUI();
+function doLogout() {
+    // Eliminar la cookie del token
+    document.cookie = 'jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; samesite=None; secure;';
+    
+    // Eliminar los datos del usuario del localStorage
+    localStorage.removeItem('userData');
+
+    // Recargar la página
     location.reload();
 }
 

@@ -38,7 +38,7 @@ function closeModal(modal){
 
 // Inicializa la pagina en vista general dependiendo del estado de la sesión
 if(getCookie('jwt')){
-  parking(); // Si hay una cookie de sesión, muestra la página de parking
+  nosotros(); // Si hay una cookie de sesión, muestra la página de parking
 } else {
   nosotros();// Si no hay una cookie de sesión, muestra la página de nosotros
 }
@@ -73,11 +73,14 @@ function privilegios(){
   document.getElementById('pagePrivilegios').style.display = 'block';
 }
 
-
 // Muestra la página "Parking" y oculta las demás
-function parking(){
-  blankPage();// Oculta todas las páginas
-  document.getElementById('pageParking').style.display = 'block';
+function parking() {
+  if (isSectionAllowed('parking')) {
+      blankPage(); // Oculta todas las páginas
+      document.getElementById('pageParking').style.display = 'block';
+  } else {
+      alert('No tienes permiso para acceder a esta sección.');
+  }
 }
 // Muestra la página "Contacto" y oculta las demás
 function contacto(){
@@ -109,10 +112,14 @@ function listablanca(){
   document.getElementById('pageWhitelist').style.display = 'block';
 }
 // Muestra la página "Buses" y oculta las demás
-function buses(){
-  blankPage();// Oculta todas las páginas
-  //listarAndenesEmpresas();
-  document.getElementById('pageBuses').style.display = 'block';
+
+function buses() {
+  if (isSectionAllowed('andenes')) {
+      blankPage(); // Oculta todas las páginas
+      document.getElementById('pageBuses').style.display = 'block';
+  } else {
+      alert('No tienes permiso para acceder a esta sección.');
+  }
 }
 // Muestra la página "Empresas" y oculta las demás
 function empresas(){
@@ -126,8 +133,21 @@ function destinos(){
 }
 // Muestra la página "Baños" y oculta las demás
 function banos() {
-  blankPage(); // Oculta todas las páginas
-  document.getElementById('contenedorBanos').style.display = 'block';
+  if (isSectionAllowed('banos')) {
+      // Redirige al usuario a la URL externa con el token JWT
+      redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/');
+  } else {
+      alert('No tienes permiso para acceder a esta sección.');
+  }
+}
+
+function custodia() {
+  if (isSectionAllowed('custodia')) {
+      // Redirige al usuario a la URL externa con el token JWT
+      redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/custodia.html');
+  } else {
+      alert('No tienes permiso para acceder a esta sección.');
+  }
 }
 // Esta función se encarga de cambiar la visibilidad de ciertos elementos en la página
 function configuraciones(){
@@ -142,5 +162,31 @@ function configuraciones(){
     // Se ocultan ambos elementos cambiando su estilo display a 'none'
     document.getElementById('sbSubEmpresas').style.display = 'none';
     document.getElementById('sbSubDestinos').style.display = 'none';
+  }
+}
+
+function redirectWithJWT(url) {
+  const jwt = getCookie('jwt'); // Obtiene el token JWT de las cookies
+  if (jwt) {
+      // Si hay un token JWT, redirige con el token como parámetro de consulta
+      window.location.href = `${url}?token=${jwt}`;
+  } else {
+      // Si no hay un token JWT, redirige sin él
+      window.location.href = url;
+  }
+}
+
+function isSectionAllowed(section) {
+  const userData = localStorage.getItem('userData');
+  if (!userData) return false;
+  const user = JSON.parse(userData);
+  return user.secciones.includes(section);
+}
+
+function navigateToSection(section) {
+  if (isSectionAllowed(section)) {
+      window.location.href = `/${section}`;
+  } else {
+      alert('No tienes permiso para acceder a esta sección.');
   }
 }

@@ -132,38 +132,16 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         $mail = $data["mail"]; // Correo electrónico
         $lvl = $data["lvl"]; // Nivel
         $seccion = $data["seccion"];
-        $passOld = $data['passOld']; // Contraseña antigua
-        $passHash = password_hash($data["pass"], PASSWORD_DEFAULT); // Hash de la nueva contraseña
 
         // Prepara y ejecuta una consulta SQL para verificar si existe un registro con el ID dado
-        $chck = $conn->prepare("SELECT mail, pass FROM userParking WHERE mail = ?");
-        $chck->bind_param("s",$mail);
+        $chck = $conn->prepare("SELECT iduser FROM userParking WHERE iduser = ?");
+        $chck->bind_param("i",$id);
         $chck->execute();
         $result = $chck->get_result();
 
-        $accountExists = false;
-
-        if($chck->execute()){
-            $result = $chck->get_result(); // Obtener el resultado de la consulta
-
-            if($result->num_rows > 0){
-                $retrn = $result->fetch_Assoc(); // Obtener los datos del usuario como un array asociativo
-
-                // Verificar si la contraseña antigua proporcionada coincide con la almacenada en la base de datos
-                if(password_verify($passOld,$retrn['pass'])){
-                    $accountExists = true; // La cuenta existe si la contraseña coincide
-                } else {
-                    echo json_encode(['error' => 'Contraseña incorrecta']);
-                    exit;
-                }
-            } else {
-                echo json_encode(['error' => 'ID no existe!']);
-            }
-        }
-
-        if($accountExists == true ){
-            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, pass = ?, nivel = ?, seccion = ? WHERE iduser = ?");
-            $stmt->bind_param("ssisi", $mail, $passHash, $lvl, $seccion, $id);
+        if($result->num_rows > 0){
+            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, nivel = ?, seccion = ? WHERE iduser = ?");
+            $stmt->bind_param("sisi", $mail, $lvl, $seccion, $id);
 
             try{
                 if($stmt->execute()){
@@ -174,6 +152,8 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
             } catch(mysqli_sql_exception $e) {
                 echo json_encode(['error' => mysqli_errno($conn)]);
             }
+        } else {
+            echo json_encode(['error' => 'ID no existe!']);
         }
     } else {
         echo json_encode(['error' => 'Error al decodificar JSON']);

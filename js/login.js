@@ -31,10 +31,8 @@ function doLogin(email, pass) {
                 document.cookie = `jwt=${data.token};path=/; samesite=None; secure;`;
 
                 // Almacenar los datos del usuario en localStorage
-                localStorage.setItem('userData', JSON.stringify(data.user));
-
-                // Ocultar las secciones no asignadas del navbar
-                hideUnassignedSections(data.user.secciones);
+                localStorage.setItem('userData', JSON.stringify(data.user));              
+                
 
                 // Recargar la página
                 location.reload();
@@ -45,27 +43,6 @@ function doLogin(email, pass) {
             alert('Ocurrió un error al intentar iniciar sesión. Inténtelo más tarde.');
         });
 }
-function hideUnassignedSections(userSections) {
-    const allSections = {
-        'parking': 'nbUsrParking',
-        'andenes': 'nbUsrbuses',
-        'banos': 'nbUsrBanos',
-        'custodias': 'nbUsrCustodias'
-    };
-
-    // Iterar sobre todas las secciones y ocultar/mostrar según los permisos
-    for (const [section, id] of Object.entries(allSections)) {
-        const navElement = document.getElementById(id);
-        if (navElement) {
-            if (userSections.includes(section)) {
-                navElement.style.display = 'inline-block'; // Mostrar si está asignado
-            } else {
-                navElement.style.display = 'none'; // Ocultar si no está asignado
-            }
-        }
-    }
-}
-
 // Elimina el token JWT
 function logOut() {
     // Eliminar la cookie del token

@@ -142,7 +142,7 @@ function banos() {
 }
 
 function custodia() {
-  if (isSectionAllowed('custodia')) {
+  if (isSectionAllowed('custodias')) {
       // Redirige al usuario a la URL externa con el token JWT
       redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/custodia.html');
   } else {

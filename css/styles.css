@@ -149,6 +149,7 @@ body {
 .mdl-content {
   display: none;
   position: fixed;
+  width: 30%;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
@@ -161,18 +162,33 @@ body {
 }
 
 .entrada, .entrada2, .entrada3, select.entrada {
-  width: 90%;
+  width: 80%;
   height: 40px;
   line-height: 40px;
   border: none;
   border-radius: 5px;
   margin: auto;
   margin-top: 20px;
-  margin-left: 7%;
+  margin-left: 9%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   text-align: left;
   padding-left: 30px;
 }
+
+.entrada2{
+  width: 88%;
+  height: 40px;
+  line-height: 40px;
+  border: none;
+  border-radius: 5px;
+  margin: auto;
+  margin-top: 20px;
+  margin-left: 9%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  text-align: left;
+  padding-left: 30px;
+}
+
 
 select[name="tipo"] {
   width: 90%;
@@ -442,6 +458,7 @@ h3 {
   background-color: #2e0303;
   cursor: pointer;
 }
+
 .ctrlgrn {
   background-color: #9c9c9c;
   border: 1px solid #2b2a2a;
@@ -456,7 +473,6 @@ h3 {
   background-color: #2e2e2e;
 }
 
-
 input, select {
   height: 40px;
   line-height: 40px;  /* Asegura que el texto se alinee verticalmente */
@@ -467,4 +483,83 @@ input, select {
   background-color: #ffffff;  /* Fondo blanco */
   color: #333333;  /* Color de texto */
   margin: 5px 0;  /* Añade espacio vertical entre los campos */
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+input[type="checkbox"] + label {
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  line-height: 20px;
+  display: inline-block;
+  color: #333;
+}
+
+input[type="checkbox"] + label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #333;
+  border-radius: 5px;
+  background: #fff;
+}
+
+input[type="checkbox"]:checked + label:before {
+  content: '\2713';
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #333;
+  color: #fff;
+  font-size: 16px;
+}
+
+.checkbox-btn {
+  display: inline-block;
+  margin: 10px;
+  width: 30%; /* Adjust width to be the same size */
+}
+
+.checkbox-btn input[type="checkbox"] {
+  display: none;
+}
+
+.checkbox-btn span {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 2px solid #333;
+  border-radius: 5px;
+  background: #fff;
+  color: #333;
+  cursor: pointer;
+  text-align: center;
+  width: 60%;
+}
+
+.checkbox-btn input[type="checkbox"]:checked + span {
+  background-color: #333;
+  color: #fff;
+}
+
+.checkbox-container {
+  text-align: center;
+  margin-top: 20px;
+  margin-left: 7%; /* Align with other inputs */
+}
+
+.center-text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.center-text {
+  margin: 0;
 }

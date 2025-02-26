@@ -22,6 +22,10 @@ async function modalUsrInsert(){
     const form = document.getElementById('formInsertUsr');
     form.mail.value = '';
     form.pass.value = '';
+    form.banos.checked = false;
+    form.custodias.checked = false;
+    form.parking.checked = false;
+    form.andenes.checked = false;
 
     let permisos = await getPerm();
 
@@ -65,6 +69,7 @@ async function modalUsrUpdate(idIn){
         form.pass.value = '';
         form.oldpass.value = '';
 
+
         // Limpiar checkboxes antes de marcarlos
         document.querySelectorAll('#formUpdateUsr input[type="checkbox"]').forEach(cb => cb.checked = false);
 
@@ -74,6 +79,12 @@ async function modalUsrUpdate(idIn){
             let checkbox = document.querySelector(`#formUpdateUsr input[name="${sec.trim()}"]`);
             if (checkbox) checkbox.checked = true;
         });
+
+        form.banos.checked = data['banos'];
+        form.custodias.checked = data['custodias'];
+        form.parking.checked = data['parking'];
+        form.andenes.checked = data['andenes'];
+
     }
 
     openModal('usrupdate');
@@ -105,11 +116,18 @@ async function refreshUsr() {
             data.forEach(item => {
                 const btnUpd = `<button onclick="modalUsrUpdate(${item['iduser']})" class="ctrl fa fa-pencil"></button>`;
                 const btnDel = `<button onclick="modalUsrDelete(${item['iduser']})" class="ctrlred fa fa-trash-o"></button>`;
+                const secciones = [
+                    item['banos'] ? 'Baños' : '',
+                    item['custodias'] ? 'Custodias' : '',
+                    item['parking'] ? 'Parking' : '',
+                    item['andenes'] ? 'Andenes' : ''
+                ].filter(Boolean).join(', ');
                 tableUser.rows.add([{
                     'iduser' : item['iduser'],
                     'mail' : item['mail'],
                     'nivel' : item['descriptor'],
                     'seccion' : item['seccion'] || 'Ninguna', // Mostrar secciones o "Ninguna"
+
                     'ctrl' : btnUpd+btnDel
                 }]);
             });
@@ -142,6 +160,7 @@ async function doInsertUsr(e) {
         pass: form.pass.value, 
         lvl: form.nivel.value, 
         seccion: secciones.join(',') // Convertir array en string separado por comas
+
     };
 
     let ret = await insertUsr(datos);
@@ -164,6 +183,7 @@ async function doUpdateUsr(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
+
     // Obtener secciones seleccionadas
     let secciones = [];
     document.querySelectorAll('#formUpdateUsr input[type="checkbox"]:checked').forEach(cb => {
@@ -177,6 +197,7 @@ async function doUpdateUsr(e) {
         mail: form.mail.value, 
         lvl: form.nivel.value, 
         seccion: secciones.join(',')
+
     };
 
     let ret = await updateUsr(datos);

@@ -67,13 +67,13 @@ function hideUnassignedSections(userSections) {
 }
 
 // Elimina el token JWT
-function doLogout() {
+function logOut() {
     // Eliminar la cookie del token
     document.cookie = 'jwt=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; samesite=None; secure;';
     
     // Eliminar los datos del usuario del localStorage
     localStorage.removeItem('userData');
-
+    initUI();
     // Recargar la página
     location.reload();
 }

@@ -4,6 +4,10 @@ body {
   padding: 0;
 }
 
+/* Prioridad para ocultar secciones del navbar */
+#navbar a.hidden {
+  display: none !important;
+}
 #navbar {
   overflow: hidden;
   background-color: #333;

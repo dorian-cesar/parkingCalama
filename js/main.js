@@ -42,6 +42,7 @@ if(getCookie('jwt')){
 } else {
   nosotros();// Si no hay una cookie de sesión, muestra la página de nosotros
 }
+configurarNavbar(); //aqui se confira el navbar
 
 // Oculta el elemento de pantalla de carga
 document.getElementById('loadingscreen').style.display = 'none';
@@ -189,4 +190,43 @@ function navigateToSection(section) {
   } else {
       alert('No tienes permiso para acceder a esta sección.');
   }
+}
+
+// aqui se configura el navbar para ocultar y mostrar las secciones permitidas
+function configurarNavbar() {
+  const userData = localStorage.getItem('userData');
+  if (!userData) return;
+
+  const user = JSON.parse(userData);
+  const seccionesPermitidas = user.secciones || [];
+
+  // Mapeo de IDs del navbar a las secciones correspondientes
+  const navbarMapping = {
+    nbUsrParking: 'parking',
+    nbUsrbuses: 'andenes',
+    nbUsrBanos: 'banos',
+    nbUsrCustodias: 'custodias'
+  };
+
+  // Iteramos sobre el mapeo y mostramos/ocultamos elementos
+  for (const [id, seccion] of Object.entries(navbarMapping)) {
+    const elemento = document.getElementById(id);
+    if (elemento) {
+      console.log(`Elemento ${id} encontrado. Sección: ${seccion}`);
+      if (seccionesPermitidas.includes(seccion)) {
+        console.log(`Mostrando ${id}`);
+        elemento.classList.remove('hidden');
+      } else {
+        console.log(`Ocultando ${id}`);
+        elemento.classList.add('hidden');
+      }
+      console.log(`Clases actuales de ${id}:`, elemento.classList);
+    } else {
+      console.error(`Elemento con ID ${id} no encontrado.`);
+    }
+  }
+
+  // Asegurarse de que "Nosotros" y "Contacto" siempre estén visibles
+  document.querySelector('#navbar a[onclick="nosotros()"]').classList.remove('hidden');
+  document.querySelector('#navbar a[onclick="contacto()"]').classList.remove('hidden');
 }

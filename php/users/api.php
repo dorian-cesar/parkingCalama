@@ -59,7 +59,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     }

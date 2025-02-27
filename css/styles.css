@@ -161,6 +161,18 @@ body {
   text-align: center;
 }
 
+.mdl-content .center-text-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.mdl-content .center-text {
+  margin: 0;
+  text-align: center;
+}
+
 .entrada, .entrada2, .entrada3, select.entrada {
   width: 80%;
   height: 40px;

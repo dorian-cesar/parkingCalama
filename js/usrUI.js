@@ -31,6 +31,12 @@ async function modalUsrInsert(){
 
     if(permisos){
         form.nivel.textContent = '';
+        var defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Seleccione un rol';
+        form.nivel.appendChild(defaultOption);
+        form.nivel.value = ''; // Set default option as selected
+
         permisos.forEach(item => {
             var optIn = document.createElement('option');
             optIn.value = item['idperm'];
@@ -38,6 +44,30 @@ async function modalUsrInsert(){
             form.nivel.appendChild(optIn);
         });
     }
+
+    // Hide checkbox container by default
+    const checkboxContainer = document.querySelector('#formInsertUsr .checkbox-container');
+    const messageContainer = document.querySelector('#formInsertUsr .center-text-container p');
+    checkboxContainer.style.display = 'none';
+    messageContainer.textContent = '';
+
+    // Add event listener to show/hide checkbox container based on selected level
+    form.nivel.addEventListener('change', function() {
+        if (form.nivel.value == '1') { // Usuario
+            checkboxContainer.style.display = 'block';
+            messageContainer.textContent = 'Tendra acceso a secciones:';
+        } else if (form.nivel.value == '2') { // Administrador
+            checkboxContainer.style.display = 'none';
+            form.banos.checked = true;
+            form.custodias.checked = true;
+            form.parking.checked = true;
+            form.andenes.checked = true;
+            messageContainer.textContent = 'Se otorgara Acceso total';
+        } else {
+            checkboxContainer.style.display = 'none';
+            messageContainer.textContent = '';
+        }
+    });
 
     // Limpiar checkboxes
     document.querySelectorAll('#formInsertUsr input[type="checkbox"]').forEach(cb => cb.checked = false);
@@ -52,6 +82,12 @@ async function modalUsrUpdate(idIn){
 
     if(permisos){
         form.nivel.textContent = '';
+        var defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Seleccione un rol';
+        form.nivel.appendChild(defaultOption);
+        form.nivel.value = ''; // Set default option as selected
+
         permisos.forEach(item => {
             var optIn = document.createElement('option');
             optIn.value = item['idperm'];
@@ -69,6 +105,41 @@ async function modalUsrUpdate(idIn){
         form.pass.value = '';
         form.oldpass.value = '';
 
+        // Hide checkbox container by default
+        const checkboxContainer = document.querySelector('#formUpdateUsr .checkbox-container');
+        checkboxContainer.style.display = 'none';
+
+        // Check if the level is already set to 'Administrador' (nivel 2)
+        if (form.nivel.value == '2') { // Administrador
+            checkboxContainer.style.display = 'none';
+            form.banos.checked = true;
+            form.custodias.checked = true;
+            form.parking.checked = true;
+            form.andenes.checked = true;
+        } else if (form.nivel.value == '1') { // Usuario
+            checkboxContainer.style.display = 'block';
+            // Marcar checkboxes según las secciones asignadas
+            let secciones = data['seccion'] ? data['seccion'].split(',') : [];
+            secciones.forEach(sec => {
+                let checkbox = document.querySelector(`#formUpdateUsr input[name="${sec.trim()}"]`);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
+        // Add event listener to show/hide checkbox container based on selected level
+        form.nivel.addEventListener('change', function() {
+            if (form.nivel.value == '1') { // Usuario
+                checkboxContainer.style.display = 'block';
+            } else if (form.nivel.value == '2') { // Administrador
+                checkboxContainer.style.display = 'none';
+                form.banos.checked = true;
+                form.custodias.checked = true;
+                form.parking.checked = true;
+                form.andenes.checked = true;
+            } else {
+                checkboxContainer.style.display = 'none';
+            }
+        });
 
         // Limpiar checkboxes antes de marcarlos
         document.querySelectorAll('#formUpdateUsr input[type="checkbox"]').forEach(cb => cb.checked = false);
@@ -84,7 +155,6 @@ async function modalUsrUpdate(idIn){
         form.custodias.checked = data['custodias'];
         form.parking.checked = data['parking'];
         form.andenes.checked = data['andenes'];
-
     }
 
     openModal('usrupdate');
@@ -183,12 +253,16 @@ async function doUpdateUsr(e) {
     form.btnSubmit.disabled = true;
     form.btnSubmit.classList.add('disabled');
 
-
     // Obtener secciones seleccionadas
     let secciones = [];
     document.querySelectorAll('#formUpdateUsr input[type="checkbox"]:checked').forEach(cb => {
         secciones.push(cb.name);
     });
+
+    // Check if the level is 'Administrador' (nivel 2) and maintain selected sections
+    if (form.nivel.value == '2') {
+        secciones = ['banos', 'custodias', 'parking', 'andenes'];
+    }
 
     datos = { 
         id: form.idusr.value, 
@@ -196,7 +270,7 @@ async function doUpdateUsr(e) {
         passOld: form.oldpass.value, 
         mail: form.mail.value, 
         lvl: form.nivel.value, 
-        seccion: secciones.join(',')
+        seccion: secciones.join(',') // Convertir array en string separado por comas
 
     };
 

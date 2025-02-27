@@ -1,3 +1,11 @@
+/* Ocultar secciones que no son "Contáctenos" y "Nosotros" */
+.nav-parking,
+.nav-buses,
+.nav-banos,
+.nav-custodia {
+  display: none !important;
+}
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;

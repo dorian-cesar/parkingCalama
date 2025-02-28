@@ -16,6 +16,7 @@
                 <th>ID</th>
                 <th>Correo</th>
                 <th>Nivel</th>
+                <th>Secciones</th>
                 <th class="no-sort">Controles</th>
             </tr>
         </thead>
@@ -30,6 +31,15 @@
             <input required name="pass" type="password" class="entrada" placeholder="Contraseña">
             <select required name="nivel" class="entrada2">
             </select>
+            <div class="center-text-container">
+                <p class="center-text">Tendra acceso a secciones:</p>
+            </div>
+            <div class="checkbox-container">
+                <label class="checkbox-btn"><input type="checkbox" id="chkBanos" name="banos"><span>Baños</span></label>
+                <label class="checkbox-btn"><input type="checkbox" id="chkCustodias" name="custodias"><span>Custodias</span></label>
+                <label class="checkbox-btn"><input type="checkbox" id="chkParking" name="parking"><span>Parking</span></label>
+                <label class="checkbox-btn"><input type="checkbox" id="chkAndenes" name="andenes"><span>Andenes</span></label>
+            </div>
             <button id="formUsrInsert" name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
         </form>
     </div>
@@ -41,10 +51,16 @@
         <form onsubmit="doUpdateUsr(event)" method="POST" id="formUpdateUsr">
             <input type="hidden" name="idusr">
             <input required name="mail" type="email" class="entrada" placeholder="Correo">
-            <input required name="oldpass" type="password" class="entrada" placeholder="Contraseña Antigua">
-            <input required name="pass" type="password" class="entrada" placeholder="Contraseña">
-            <select required name="nivel" name="nivel" class="entrada2">
+            <input name="oldpass" type="password" class="entrada" placeholder="Contraseña Antigua">
+            <input name="pass" type="password" class="entrada" placeholder="Contraseña">
+            <select required name="nivel" class="entrada2">
             </select>
+            <div class="checkbox-container">
+                <label class="checkbox-btn"><input type="checkbox" id="chkBanosUpd" name="banos"><span>Baños</span></label>
+                <label class="checkbox-btn"><input type="checkbox" id="chkCustodiasUpd" name="custodias"><span>Custodias</span></label>
+                <label class="checkbox-btn"><input type="checkbox" id="chkParkingUpd" name="parking"><span>Parking</span></label>
+                <label class="checkbox-btn"><input type="checkbox" id="chkAndenesUpd" name="andenes"><span>Andenes</span></label>
+            </div>
             <button name="btnSubmit" class="btn"><i class="fa fa-floppy-o"></i> Guardar</button>
         </form>
     </div>

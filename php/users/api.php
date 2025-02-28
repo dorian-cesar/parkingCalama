@@ -32,7 +32,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         $id = $_GET['id'];
 
         // Prepara y ejecuta una consulta SQL para obtener el registro por ID
-        $stmt = $conn->prepare("SELECT iduser, mail, nivel FROM userParking WHERE iduser = ?");
+        $stmt = $conn->prepare("SELECT iduser, mail, nivel, seccion FROM userParking WHERE iduser = ?");
         $stmt->bind_param("i",$id);
 
         try{
@@ -50,8 +50,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     // Si no hay datos JSON, devolver todos los registros
     else {
         // Prepara y ejecuta una consulta SQL para obtener todos los registros
-        $stmt = $conn->prepare("SELECT u.iduser, u.mail, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm ORDER BY iduser");
-        
+        $stmt = $conn->prepare("SELECT u.iduser, u.mail, u.seccion, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm ORDER BY iduser");       
         try{
             $stmt->execute();
             $result = $stmt->get_result();
@@ -60,7 +59,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             echo json_encode($datos);
         } catch (mysqli_sql_exception $e) {
             echo json_encode(['error' => mysqli_errno($conn)]);
-        } catch (Excepttion $e) {
+        } catch (Exception $e) {
             echo json_encode(['error' => $e]);
         }
     }
@@ -84,9 +83,9 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
         // Obtener datos desde JSON
         $mail = $data["mail"];
         $lvl = $data["lvl"];
+        $seccion = $data["seccion"];
         $pass = password_hash($data["pass"], PASSWORD_DEFAULT); // Hashear la contraseña
-
-                // Prepara y ejecuta una consulta SQL para verificar si ya existe una ciudad en la tabla
+                
         $chck = $conn->prepare("SELECT mail FROM userParking WHERE mail = ?");
         $chck->bind_param("s",$mail);
         $chck->execute();
@@ -94,8 +93,8 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
 
         // Verifica si no existe ya una ciudad con el mismo nombre en la tabla
         if($result->num_rows == 0){
-            $stmt = $conn->prepare("INSERT INTO userParking (mail, pass, nivel) VALUES (?, ?, ?)");
-            $stmt->bind_param("ssi", $mail,$pass, $lvl);
+            $stmt = $conn->prepare("INSERT INTO userParking (mail, pass, nivel, seccion) VALUES (?, ?, ?, ?)");
+            $stmt->bind_param("ssis", $mail, $pass, $lvl, $seccion);
     
             // Ejecuta la consulta SQL para insertar los datos
             if($stmt->execute()){
@@ -132,38 +131,17 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         $id = $data["id"]; // ID del usuario
         $mail = $data["mail"]; // Correo electrónico
         $lvl = $data["lvl"]; // Nivel
-        $passOld = $data['passOld']; // Contraseña antigua
-        $passHash = password_hash($data["pass"], PASSWORD_DEFAULT); // Hash de la nueva contraseña
+        $seccion = $data["seccion"];
 
         // Prepara y ejecuta una consulta SQL para verificar si existe un registro con el ID dado
-        $chck = $conn->prepare("SELECT mail, pass FROM userParking WHERE mail = ?");
-        $chck->bind_param("s",$mail);
+        $chck = $conn->prepare("SELECT iduser FROM userParking WHERE iduser = ?");
+        $chck->bind_param("i",$id);
         $chck->execute();
         $result = $chck->get_result();
 
-        $accountExists = false;
-
-        if($chck->execute()){
-            $result = $chck->get_result(); // Obtener el resultado de la consulta
-
-            if($result->num_rows > 0){
-                $retrn = $result->fetch_Assoc(); // Obtener los datos del usuario como un array asociativo
-
-                // Verificar si la contraseña antigua proporcionada coincide con la almacenada en la base de datos
-                if(password_verify($passOld,$retrn['pass'])){
-                    $accountExists = true; // La cuenta existe si la contraseña coincide
-                } else {
-                    echo json_encode(['error' => 'Contraseña incorrecta']);
-                    exit;
-                }
-            } else {
-                echo json_encode(['error' => 'ID no existe!']);
-            }
-        }
-
-        if($accountExists == true ){
-            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, pass = ?, nivel = ? WHERE iduser = ?");
-            $stmt->bind_param("ssii", $mail,$passHash, $lvl, $id);
+        if($result->num_rows > 0){
+            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, nivel = ?, seccion = ? WHERE iduser = ?");
+            $stmt->bind_param("sisi", $mail, $lvl, $seccion, $id);
 
             try{
                 if($stmt->execute()){
@@ -174,6 +152,8 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
             } catch(mysqli_sql_exception $e) {
                 echo json_encode(['error' => mysqli_errno($conn)]);
             }
+        } else {
+            echo json_encode(['error' => 'ID no existe!']);
         }
     } else {
         echo json_encode(['error' => 'Error al decodificar JSON']);

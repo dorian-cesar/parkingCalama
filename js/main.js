@@ -150,6 +150,13 @@ function custodia() {
       alert('No tienes permiso para acceder a esta sección.');
   }
 }
+
+// Muestra la página "Monitoreo" y oculta las demás
+function monitoreo() {
+  // Redirige al usuario a la URL externa con el token JWT
+  redirectWithJWT('https://monitoreo-calama.netlify.app/');
+}
+
 // Esta función se encarga de cambiar la visibilidad de ciertos elementos en la página
 function configuraciones(){
   // Verifica si el elemento con ID 'sbSubEmpresas' está actualmente oculto
@@ -224,6 +231,11 @@ function configurarNavbar() {
     } else {
       console.error(`Elemento con ID ${id} no encontrado.`);
     }
+  }
+
+  // Mostrar el botón "Monitoreo" solo para administradores
+  if (user.lvl >= 10) {
+    document.getElementById('nbAdmMonitoreo').classList.remove('hidden');
   }
 
   // Asegurarse de que "Nosotros" y "Contacto" siempre estén visibles

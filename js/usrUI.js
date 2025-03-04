@@ -103,7 +103,6 @@ async function modalUsrUpdate(idIn){
         form.mail.value = data['mail'];
         form.nivel.value = data['nivel'];
         form.pass.value = '';
-        form.oldpass.value = '';
 
         // Hide checkbox container by default
         const checkboxContainer = document.querySelector('#formUpdateUsr .checkbox-container');
@@ -150,11 +149,6 @@ async function modalUsrUpdate(idIn){
             let checkbox = document.querySelector(`#formUpdateUsr input[name="${sec.trim()}"]`);
             if (checkbox) checkbox.checked = true;
         });
-
-        form.banos.checked = data['banos'];
-        form.custodias.checked = data['custodias'];
-        form.parking.checked = data['parking'];
-        form.andenes.checked = data['andenes'];
     }
 
     openModal('usrupdate');
@@ -266,8 +260,7 @@ async function doUpdateUsr(e) {
 
     datos = { 
         id: form.idusr.value, 
-        pass: form.pass.value, 
-        passOld: form.oldpass.value, 
+        pass: form.pass.value, // Update the password
         mail: form.mail.value, 
         lvl: form.nivel.value, 
         seccion: secciones.join(',') // Convertir array en string separado por comas

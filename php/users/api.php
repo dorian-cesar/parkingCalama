@@ -132,6 +132,7 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         $mail = $data["mail"]; // Correo electrónico
         $lvl = $data["lvl"]; // Nivel
         $seccion = $data["seccion"];
+        $pass = $data["pass"]; // Nueva contraseña
 
         // Prepara y ejecuta una consulta SQL para verificar si existe un registro con el ID dado
         $chck = $conn->prepare("SELECT iduser FROM userParking WHERE iduser = ?");
@@ -140,8 +141,14 @@ else if($_SERVER['REQUEST_METHOD'] == "PUT"){
         $result = $chck->get_result();
 
         if($result->num_rows > 0){
-            $stmt = $conn->prepare("UPDATE userParking SET mail = ?, nivel = ?, seccion = ? WHERE iduser = ?");
-            $stmt->bind_param("sisi", $mail, $lvl, $seccion, $id);
+            if (!empty($pass)) {
+                $pass = password_hash($pass, PASSWORD_DEFAULT); // Hashear la nueva contraseña
+                $stmt = $conn->prepare("UPDATE userParking SET mail = ?, nivel = ?, seccion = ?, pass = ? WHERE iduser = ?");
+                $stmt->bind_param("sissi", $mail, $lvl, $seccion, $pass, $id);
+            } else {
+                $stmt = $conn->prepare("UPDATE userParking SET mail = ?, nivel = ?, seccion = ? WHERE iduser = ?");
+                $stmt->bind_param("sisi", $mail, $lvl, $seccion, $id);
+            }
 
             try{
                 if($stmt->execute()){

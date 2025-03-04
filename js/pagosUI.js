@@ -32,9 +32,6 @@ async function refreshPagos() {
         refreshBtn.classList.add('fa-hourglass');
         refreshBtn.classList.add('disabled');
 
-        // Obtener la configuración desde valores.js
-        const iva = configuracion.iva || 0.19; 
-
         let data = await getMov();
 
         if (data) {
@@ -48,17 +45,13 @@ async function refreshPagos() {
                     var minutos = Math.ceil(differencia / 60);
                     if (item['tipo'] === 'Anden') { minutos = Math.ceil((differencia / 60) / 25) * 25; }
 
-                    // Calcular el valor con IVA
-                    const valorBase = item['valor'];
-                    const valorConIVA = valorBase * (1 + iva);
-
                     tablePagos.rows.add([{
                         'idmov': item['idmov'],
                         'fecha': item['fechasal'],
                         'tiempo': minutos + ' min.',
                         'patente': item['patente'],
                         'tipo': item['tipo'],
-                        'valor': '$' + valorConIVA.toFixed(0), 
+                        'valor': '$' + item['valor'].toFixed(0), // Use the value directly from the data
                     }]);
                 }
             });

@@ -372,5 +372,10 @@ function imprimirBoletaTermicaAndenes(datos, ventanaImpr) {
                 console.error("No se pudo cerrar la ventana:", e);
             }
         }, 1000); // Ajuste del tiempo, puede cambiarse según el comportamiento del navegador
-    }, 1000); // Ajuste del tiempo antes de empezar a imprimir
+    }, 1000);
+
+    // Add event listener to close the window after printing or canceling
+    ventanaImpr.onafterprint = () => {
+        ventanaImpr.close();
+    };
 }

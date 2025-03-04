@@ -40,7 +40,7 @@ async function calcParking() {
             if (ret !== null) {
                 valorTotal = 0;
             }
-
+//
             const [elemPat, empPat, fechaPat, horaentPat, horasalPat, tiempPat, valPat] =
                 ['h1', 'h4', 'h3', 'h3', 'h3', 'h3', 'h3'].map(tag => document.createElement(tag));
 
@@ -204,6 +204,11 @@ function imprimirBoletaTermicaParking(datos, ventanaImpr) {
             }
         }, 1000); // Ajusta el tiempo según el navegador
     }, 1000);
+
+    // Add event listener to close the window after printing or canceling
+    ventanaImpr.onafterprint = () => {
+        ventanaImpr.close();
+    };
 }
 
 async function getMovByPatente(patente){

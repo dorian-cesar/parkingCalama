@@ -32,9 +32,14 @@ body {
 #navbar #logo {
   position: absolute;
   margin-left: 300px;
+  margin-top: 5px; /* Move the logo a few pixels down */
   font-size: 25px;
   color: #ddd;
   line-height: 50px;
+}
+
+#navbar #logo img {
+  width: 120px; /* Increase the size of the logo */
 }
 
 #sidebar {

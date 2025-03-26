@@ -148,6 +148,13 @@
             document.getElementById('nbUsrBanos').style.display = 'block';
             document.getElementById('nbUsrCustodias').style.display = 'block';
           }
+          if (reply.data[0]['lvl'] == 15) {
+            sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=sbAdm],[id^=nbUsr],[id^=nbAdm]');
+
+            sideBarCtl.forEach(item => {
+              item.style.display = 'block';
+            });
+          }
           // Mostrar el correo del usuario autenticado
           document.getElementById('sbUsrMail').textContent = ' ' + reply.data[0]['user'];
       })

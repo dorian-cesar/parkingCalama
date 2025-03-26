@@ -50,7 +50,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     // Si no hay datos JSON, devolver todos los registros
     else {
         // Prepara y ejecuta una consulta SQL para obtener todos los registros
-        $stmt = $conn->prepare("SELECT u.iduser, u.mail, u.seccion, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm ORDER BY iduser");       
+        $stmt = $conn->prepare("SELECT u.iduser, u.mail, u.seccion, n.descriptor FROM userParking AS u JOIN permParking AS n ON u.nivel = n.idperm WHERE u.nivel != 15 ORDER BY iduser");       
         try{
             $stmt->execute();
             $result = $stmt->get_result();

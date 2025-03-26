@@ -11,7 +11,10 @@ async function getPerm() {
         }
     })
     .then(reply => reply.json())
-    .then(data => { return data; })
+    .then(data => { 
+        // Filtrar los roles de superusuario
+        return data.filter(perm => perm.idperm != 15); 
+    })
     .catch(error => { console.log(error); });
     return ret;
 }

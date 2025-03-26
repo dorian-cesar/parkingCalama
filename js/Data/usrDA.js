@@ -11,7 +11,10 @@ async function getUsr() {
         }
     })
     .then(reply => reply.json())
-    .then(data => { return data; })
+    .then(data => { 
+        // Filtrar los roles de superusuario
+        return data.filter(user => user.nivel != 3); 
+    })
     .catch(error => { console.log(error); });
     return ret;
 }

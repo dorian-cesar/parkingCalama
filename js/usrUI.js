@@ -38,10 +38,12 @@ async function modalUsrInsert(){
         form.nivel.value = ''; // Set default option as selected
 
         permisos.forEach(item => {
-            var optIn = document.createElement('option');
-            optIn.value = item['idperm'];
-            optIn.textContent = item['descriptor'];
-            form.nivel.appendChild(optIn);
+            if (item['idperm'] != 3) { // Exclude superusuario
+                var optIn = document.createElement('option');
+                optIn.value = item['idperm'];
+                optIn.textContent = item['descriptor'];
+                form.nivel.appendChild(optIn);
+            }
         });
     }
 
@@ -78,27 +80,34 @@ async function modalUsrInsert(){
 async function modalUsrUpdate(idIn){
     const form = document.getElementById('formUpdateUsr');
 
-    let permisos = await getPerm();
-
-    if(permisos){
-        form.nivel.textContent = '';
-        var defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Seleccione un rol';
-        form.nivel.appendChild(defaultOption);
-        form.nivel.value = ''; // Set default option as selected
-
-        permisos.forEach(item => {
-            var optIn = document.createElement('option');
-            optIn.value = item['idperm'];
-            optIn.textContent = item['descriptor'];
-            form.nivel.appendChild(optIn);
-        });
-    }
-
     let data = await getUsrByID(idIn);
 
     if(data){
+        if (data['nivel'] == 3) { // Check if the user is a superusuario
+            alert("No es posible editar al Superusuario");
+            return;
+        }
+
+        let permisos = await getPerm();
+
+        if(permisos){
+            form.nivel.textContent = '';
+            var defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = 'Seleccione un rol';
+            form.nivel.appendChild(defaultOption);
+            form.nivel.value = ''; // Set default option as selected
+
+            permisos.forEach(item => {
+                if (item['idperm'] != 3) { // Exclude superusuario
+                    var optIn = document.createElement('option');
+                    optIn.value = item['idperm'];
+                    optIn.textContent = item['descriptor'];
+                    form.nivel.appendChild(optIn);
+                }
+            });
+        }
+
         form.idusr.value = data['iduser'];
         form.mail.value = data['mail'];
         form.nivel.value = data['nivel'];
@@ -155,6 +164,13 @@ async function modalUsrUpdate(idIn){
 }
 
 async function modalUsrDelete(idIn){
+    let data = await getUsrByID(idIn);
+
+    if(data && data['nivel'] == 15) { // Check if the user is a superusuario
+        alert("No es posible eliminar al Superusuario");
+        return;
+    }
+
     let confirm = window.confirm('¿Eliminar el usuario?');
     if(confirm){
         let reply = await deleteUsr(idIn);
@@ -178,22 +194,23 @@ async function refreshUsr() {
         if(data){
             tableUser.clear();
             data.forEach(item => {
-                const btnUpd = `<button onclick="modalUsrUpdate(${item['iduser']})" class="ctrl fa fa-pencil"></button>`;
-                const btnDel = `<button onclick="modalUsrDelete(${item['iduser']})" class="ctrlred fa fa-trash-o"></button>`;
-                const secciones = [
-                    item['banos'] ? 'Baños' : '',
-                    item['custodias'] ? 'Custodias' : '',
-                    item['parking'] ? 'Parking' : '',
-                    item['andenes'] ? 'Andenes' : ''
-                ].filter(Boolean).join(', ');
-                tableUser.rows.add([{
-                    'iduser' : item['iduser'],
-                    'mail' : item['mail'],
-                    'nivel' : item['descriptor'],
-                    'seccion' : item['seccion'] || 'Ninguna', // Mostrar secciones o "Ninguna"
-
-                    'ctrl' : btnUpd+btnDel
-                }]);
+                if (item['descriptor'] == "Usuario" || item['descriptor'] == "Administrador") { // Only include Usuario and Administrador
+                    const btnUpd = `<button onclick="modalUsrUpdate(${item['iduser']})" class="ctrl fa fa-pencil"></button>`;
+                    const btnDel = `<button onclick="modalUsrDelete(${item['iduser']})" class="ctrlred fa fa-trash-o"></button>`;
+                    const secciones = [
+                        item['banos'] ? 'Baños' : '',
+                        item['custodias'] ? 'Custodias' : '',
+                        item['parking'] ? 'Parking' : '',
+                        item['andenes'] ? 'Andenes' : ''
+                    ].filter(Boolean).join(', ');
+                    tableUser.rows.add([{
+                        'iduser' : item['iduser'],
+                        'mail' : item['mail'],
+                        'nivel' : item['descriptor'],
+                        'seccion' : item['seccion'] || 'Ninguna', // Mostrar secciones o "Ninguna"
+                        'ctrl' : btnUpd+btnDel
+                    }]);
+                }
             });
             tableUser.draw();
         }

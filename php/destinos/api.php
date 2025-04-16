@@ -109,7 +109,7 @@ else if($_SERVER['REQUEST_METHOD'] == "POST"){
                 echo json_encode(['error' => $conn->error]);
             }
         } else {
-            echo json_encode(['error' => 'Ya existe registro!']);
+            echo json_encode(['error' => 'Ya existe ese registro!']);
         }
     } else {
         echo json_encode(['error' => 'Error al decodificar JSON']);

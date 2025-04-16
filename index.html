@@ -21,7 +21,8 @@
 <div id="navbar">
   <div id="logo">
     <img src="wit.png" alt="Logo" style="width: 100px;">
-  </div>  
+  </div>
+  <a href="#" id="nbUsrCaja" onclick="caja()">Caja</a>   
   <a href="#" id="nbAdmMonitoreo" onclick="monitoreo()">Monitoreo</a>
   <a href="#" onclick="contacto()">Contáctenos</a>
   <a href="#" onclick="nosotros()">Nosotros</a>
@@ -137,6 +138,7 @@
             // Mostrar botones "Baños" y "Custodias" para usuarios
             document.getElementById('nbUsrBanos').style.display = 'block';
             document.getElementById('nbUsrCustodias').style.display = 'block';
+            document.getElementById('nbUsrCaja').style.display = 'block';
           }
           if (reply.data[0]['lvl'] >= 10) {
             sideBarCtl = document.querySelectorAll('[id^=sbAdm],[id^=nbAdm]');
@@ -147,6 +149,7 @@
             // Mostrar botones "Baños" y "Custodias" para administradores
             document.getElementById('nbUsrBanos').style.display = 'block';
             document.getElementById('nbUsrCustodias').style.display = 'block';
+            document.getElementById('nbUsrCaja').style.display = 'block';
           }
           if (reply.data[0]['lvl'] == 15) {
             sideBarCtl = document.querySelectorAll('[id^=sbUsr],[id^=sbAdm],[id^=nbUsr],[id^=nbAdm]');

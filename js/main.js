@@ -151,6 +151,15 @@ function custodia() {
   }
 }
 
+function caja() {
+  if (isSectionAllowed('caja')) {
+      // Redirige al usuario a la URL externa con el token JWT
+      redirectWithJWT('https://andenes.terminal-calama.com/caja-calama/caja.html');
+  } else {
+      alert('No tienes permiso para acceder a esta sección.');
+  }
+}
+
 // Muestra la página "Monitoreo" y oculta las demás
 function monitoreo() {
   // Redirige al usuario a la URL externa con el token JWT
@@ -212,7 +221,9 @@ function configurarNavbar() {
     nbUsrParking: 'parking',
     nbUsrbuses: 'andenes',
     nbUsrBanos: 'banos',
-    nbUsrCustodias: 'custodias'
+    nbUsrCustodias: 'custodias',
+    nbUsrCaja: 'caja',
+    
   };
 
   // Iteramos sobre el mapeo y mostramos/ocultamos elementos

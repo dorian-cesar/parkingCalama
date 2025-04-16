@@ -26,6 +26,7 @@ async function modalUsrInsert(){
     form.custodias.checked = false;
     form.parking.checked = false;
     form.andenes.checked = false;
+    form.caja.checked = false; 
 
     let permisos = await getPerm();
 
@@ -64,6 +65,7 @@ async function modalUsrInsert(){
             form.custodias.checked = true;
             form.parking.checked = true;
             form.andenes.checked = true;
+            form.caja.checked = true;
             messageContainer.textContent = 'Se otorgara Acceso total';
         } else {
             checkboxContainer.style.display = 'none';
@@ -124,6 +126,7 @@ async function modalUsrUpdate(idIn){
             form.custodias.checked = true;
             form.parking.checked = true;
             form.andenes.checked = true;
+            form.caja.checked = true;
         } else if (form.nivel.value == '1') { // Usuario
             checkboxContainer.style.display = 'block';
             // Marcar checkboxes según las secciones asignadas
@@ -144,6 +147,7 @@ async function modalUsrUpdate(idIn){
                 form.custodias.checked = true;
                 form.parking.checked = true;
                 form.andenes.checked = true;
+                form.caja.checked = true;
             } else {
                 checkboxContainer.style.display = 'none';
             }
@@ -201,7 +205,8 @@ async function refreshUsr() {
                         item['banos'] ? 'Baños' : '',
                         item['custodias'] ? 'Custodias' : '',
                         item['parking'] ? 'Parking' : '',
-                        item['andenes'] ? 'Andenes' : ''
+                        item['andenes'] ? 'Andenes' : '',
+                        item['caja'] ? 'Caja' : ''
                     ].filter(Boolean).join(', ');
                     tableUser.rows.add([{
                         'iduser' : item['iduser'],
@@ -272,7 +277,7 @@ async function doUpdateUsr(e) {
 
     // Check if the level is 'Administrador' (nivel 2) and maintain selected sections
     if (form.nivel.value == '2') {
-        secciones = ['banos', 'custodias', 'parking', 'andenes'];
+        secciones = ['banos', 'custodias', 'parking', 'andenes', 'caja'];
     }
 
     datos = { 

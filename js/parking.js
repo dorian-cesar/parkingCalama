@@ -83,6 +83,13 @@ async function registrarPago() {
         return;
     }
 
+    // Validación de id_caja en localStorage
+    const id_caja = localStorage.getItem('id_caja');
+    if (!id_caja) {
+        alert('Por favor, primero debe abrir la caja antes de realizar un pago.');
+        return; // Detiene la ejecución si no hay id_caja
+    }
+    
     const datos = window.datosParking;
     const date = new Date();
     const valorTot = datos.valor || 0;

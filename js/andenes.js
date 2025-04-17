@@ -250,7 +250,14 @@ async function pagarAnden(valorTot = valorTotGlobal) {
     const cont = document.getElementById('contAnden');
     const empresaSelect = document.getElementById('empresaBuses'); // Captura la empresa seleccionada
     const date = new Date();
-  
+    
+    // Validación de id_caja en localStorage
+    const id_caja = localStorage.getItem('id_caja');
+    if (!id_caja) {
+        alert('Por favor, primero debe abrir la caja antes de realizar un pago.');
+        return; // Detiene la ejecución si no hay id_caja
+    }
+
     if (!patRegEx.test(input)) {
         console.log('No es patente, leer QR');
         return;

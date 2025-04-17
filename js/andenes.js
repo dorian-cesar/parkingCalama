@@ -290,6 +290,7 @@ async function pagarAnden(valorTot = valorTotGlobal) {
                     empresa: empresaSeleccionada,  // Insertar el ID de la empresa seleccionada
                     empresaNombre: window.datosAnden.empresaNombre,  // Insertar el nombre de la empresa seleccionada
                     destino: document.getElementById('destinoBuses').options[document.getElementById('destinoBuses').selectedIndex].text, // Obtener destino seleccionado
+                    id_caja: id_caja,
                 };
 
                 // Llamar a la API para actualizar el movimiento antes de imprimir la boleta

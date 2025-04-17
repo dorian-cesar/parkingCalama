@@ -111,7 +111,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fecha = $data['fecha'];
         $hora = $data['hora'];
         $patente = str_replace('-','',$data['patente']);
-        //$empresa = $data['empresa']; // Se ha comentado la parte de la empresa
+        //$empresa = $data['empresa'];
         $tipo = $data['tipo'];
 
         // Aquí insertamos la patente correctamente en la base de datos sin necesidad de verificar si ya existe
@@ -132,7 +132,6 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
 // Update (Pagado)
-// Update (Pagado)
 else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
     if($token->nivel < $LVLUSER){
         header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
@@ -149,11 +148,12 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $hora = $data['hora'];
         $valor = $data['valor'];
         $id = $data['id'];
-        $empresa = $data['empresa']; // Nuevo campo: empresa
+        //$empresa = $data['empresa'];
+        $id_caja = isset($data["id_caja"]) ? $data["id_caja"] : null; 
 
         // Actualizar el movimiento incluyendo el campo empresa
-        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ?, empresa = ?, estado = 'Pagado' WHERE idmov = ?");
-        $stmt->bind_param("ssiii", $fecha, $hora, $valor, $empresa, $id);
+        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ?, empresa = ?, estado = 'Pagado', id_caja = ? WHERE idmov = ?");
+        $stmt->bind_param("ssiiii", $fecha, $hora, $valor, $empresa, $id_caja, $id);
 
         if($stmt->execute()) {
             echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente a Pagado']);

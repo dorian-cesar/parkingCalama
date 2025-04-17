@@ -89,7 +89,7 @@ async function registrarPago() {
         alert('Por favor, primero debe abrir la caja antes de realizar un pago.');
         return; // Detiene la ejecución si no hay id_caja
     }
-    
+
     const datos = window.datosParking;
     const date = new Date();
     const valorTot = datos.valor || 0;
@@ -103,7 +103,8 @@ async function registrarPago() {
             fecha: date.toISOString().split('T')[0],
             hora: `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`,
             valor: valorTot,
-            empresa: datos.empresa  // Incluir la ID de la empresa seleccionada
+            empresa: datos.empresa,
+            id_caja: id_caja,  
         };
 
         /*console.log("Datos a enviar a la API:", {

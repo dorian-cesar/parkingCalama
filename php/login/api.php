@@ -72,7 +72,7 @@ try {
         $tokenId    = base64_encode(random_bytes(16)); // ID único del token
         $issuedAt   = new DateTimeImmutable(); // Fecha y hora de emisión del token
         $expire     = $issuedAt->modify('+1 day')->getTimestamp(); // Fecha y hora de expiración del token (1 día)
-        $serverName = "wit.la"; // Nombre del servidor
+        $serverName = "localhost"; // Nombre del servidor
         $logon      = TRUE; // Indicador de inicio de sesión válido
         $user       = $retrn['mail']; // Correo electrónico del usuario
         $nivel      = $retrn['nivel']; // Nivel de acceso del usuario

@@ -1,14 +1,35 @@
-//Documento para control de vistas 
+// ===============================
+// 🌎 CONFIGURACIÓN DE ENTORNO
+// ===============================
+const ENV = "dev"; // Cambia a "prod" para producción
+
+const CONFIG = {
+  dev: {
+    BASE_URL: "http://localhost/parkingCalama/php/",
+    BANOS_URL: "http://localhost/TerminalCalama/",
+    CUSTODIA_URL: "http://localhost/TerminalCalama/custodia.html",
+    CAJA_URL: "http://localhost/caja-calama/caja.html",
+    MONITOREO_URL: "http://localhost:5173/", // Ejemplo de entorno local
+  },
+  prod: {
+    BASE_URL: "https://andenes.terminal-calama.com/php/",
+    BANOS_URL: "https://andenes.terminal-calama.com/TerminalCalama/",
+    CUSTODIA_URL: "https://andenes.terminal-calama.com/TerminalCalama/custodia.html",
+    CAJA_URL: "https://andenes.terminal-calama.com/caja-calama/caja.html",
+    MONITOREO_URL: "https://monitoreo-calama.netlify.app/",
+  },
+};
+
+const ENV_CONFIG = CONFIG[ENV];
+
+// ===============================
+// 📄 CONTROL DE VISTAS
+// ===============================
 
 // Desactiva todas las paginas cuyo ID comienza con "page"
 function blankPage() {
-  // Selecciona todos los elementos cuyo ID comienza con "page"
   var paginas = document.querySelectorAll('[id^=page]');
-
-  // Itera sobre cada página y las oculta cambiando su estilo de visualización a "none"
-  paginas.forEach(page => {
-    page.style.display = 'none';
-  });
+  paginas.forEach(page => (page.style.display = 'none'));
 }
 
 // Iniciar Tablas
@@ -21,175 +42,152 @@ refreshPagos();
 listarAndenesDestinos();
 
 // Abre el modal especificado
-// modal: nombre del modal
-function openModal(modal){
-  // Muestra el overlay y el modal correspondiente cambiando su estilo de visualización a "block"
-  document.getElementById(modal+'-overlay').style.display = 'block';
-  document.getElementById(modal+'-modal').style.display = 'block';
+function openModal(modal) {
+  document.getElementById(modal + '-overlay').style.display = 'block';
+  document.getElementById(modal + '-modal').style.display = 'block';
 }
 
 // Cierra el modal especificado
-// modal: nombre del modal
-function closeModal(modal){
-  // Oculta el overlay y el modal correspondiente cambiando su estilo de visualización a "none"
-  document.getElementById(modal+'-overlay').style.display = 'none';
-  document.getElementById(modal+'-modal').style.display = 'none';
+function closeModal(modal) {
+  document.getElementById(modal + '-overlay').style.display = 'none';
+  document.getElementById(modal + '-modal').style.display = 'none';
 }
 
-// Inicializa la pagina en vista general dependiendo del estado de la sesión
-if(getCookie('jwt')){
-  nosotros(); // Si hay una cookie de sesión, muestra la página de parking
+// Inicializa la página según sesión
+if (getCookie('jwt')) {
+  nosotros();
 } else {
-  nosotros();// Si no hay una cookie de sesión, muestra la página de nosotros
+  nosotros();
 }
-configurarNavbar(); //aqui se confira el navbar
+configurarNavbar();
 
-// Oculta el elemento de pantalla de carga
 document.getElementById('loadingscreen').style.display = 'none';
-
-// Oculta el elemento de pantalla de carga
 document.getElementById('loadingscreencontacto').style.display = 'none';
 
-//Abre el modal de inicio de sesión
 function openLoginModal() {
   document.getElementById('login-modal').style.display = 'block';
   document.getElementById('modal-overlay').style.display = 'block';
 }
 
-// Cierra el modal de inicio de sesión
 function closeLoginModal() {
   document.getElementById('login-modal').style.display = 'none';
   document.getElementById('modal-overlay').style.display = 'none';
 }
 
-// Muestra la página "Nosotros" y oculta las demás
-function nosotros(){
-  blankPage();// Oculta todas las páginas
+function nosotros() {
+  blankPage();
   document.getElementById('pageNosotros').style.display = 'block';
-
 }
 
-function privilegios(){
-  blankPage(); // Oculta todas las páginas
+function privilegios() {
+  blankPage();
   document.getElementById('pagePrivilegios').style.display = 'block';
 }
 
-// Muestra la página "Parking" y oculta las demás
 function parking() {
   if (isSectionAllowed('parking')) {
-      blankPage(); // Oculta todas las páginas
-      document.getElementById('pageParking').style.display = 'block';
+    blankPage();
+    document.getElementById('pageParking').style.display = 'block';
   } else {
-      alert('No tienes permiso para acceder a esta sección.');
+    alert('No tienes permiso para acceder a esta sección.');
   }
 }
-// Muestra la página "Contacto" y oculta las demás
-function contacto(){
-  blankPage();// Oculta todas las páginas
+
+function contacto() {
+  blankPage();
   document.getElementById('pageContacto').style.display = 'block';
 }
-// Muestra la página "Movimientos" y oculta las demás
-function entradaSalida(){
-  blankPage();// Oculta todas las páginas
+
+function entradaSalida() {
+  blankPage();
   document.getElementById('pageMovimientos').style.display = 'block';
 }
-function SalidaManual(){
-  blankPage();// Oculta todas las páginas
+
+function SalidaManual() {
+  blankPage();
   document.getElementById('pageSalidaManual').style.display = 'block';
 }
-// Muestra la página "Pagos" y oculta las demás
-function pagos(){
-  blankPage();// Oculta todas las páginas
+
+function pagos() {
+  blankPage();
   document.getElementById('pagePagos').style.display = 'block';
 }
-// Muestra la página "Enrolar" y oculta las demás
-function enrolar(){
-  blankPage();// Oculta todas las páginas
+
+function enrolar() {
+  blankPage();
   document.getElementById('pageEnrolar').style.display = 'block';
 }
-// Muestra la página "Whitelist" y oculta las demás
-function listablanca(){
-  blankPage();// Oculta todas las páginas
+
+function listablanca() {
+  blankPage();
   document.getElementById('pageWhitelist').style.display = 'block';
 }
-// Muestra la página "Buses" y oculta las demás
 
 function buses() {
   if (isSectionAllowed('andenes')) {
-      blankPage(); // Oculta todas las páginas
-      document.getElementById('pageBuses').style.display = 'block';
+    blankPage();
+    document.getElementById('pageBuses').style.display = 'block';
   } else {
-      alert('No tienes permiso para acceder a esta sección.');
+    alert('No tienes permiso para acceder a esta sección.');
   }
 }
-// Muestra la página "Empresas" y oculta las demás
-function empresas(){
-  blankPage();// Oculta todas las páginas
+
+function empresas() {
+  blankPage();
   document.getElementById('pageEmpresas').style.display = 'block';
 }
-// Muestra la página "destinos" y oculta las demás
-function destinos(){
-  blankPage();// Oculta todas las páginas
+
+function destinos() {
+  blankPage();
   document.getElementById('pageDestinos').style.display = 'block';
 }
-// Muestra la página "Baños" y oculta las demás
+
 function banos() {
   if (isSectionAllowed('banos')) {
-      // Redirige al usuario a la URL externa con el token JWT
-      redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/');
+    redirectWithJWT(ENV_CONFIG.BANOS_URL);
   } else {
-      alert('No tienes permiso para acceder a esta sección.');
+    alert('No tienes permiso para acceder a esta sección.');
   }
 }
 
 function custodia() {
   if (isSectionAllowed('custodias')) {
-      // Redirige al usuario a la URL externa con el token JWT
-      redirectWithJWT('https://andenes.terminal-calama.com/TerminalCalama/custodia.html');
+    redirectWithJWT(ENV_CONFIG.CUSTODIA_URL);
   } else {
-      alert('No tienes permiso para acceder a esta sección.');
+    alert('No tienes permiso para acceder a esta sección.');
   }
 }
 
 function caja() {
   if (isSectionAllowed('caja')) {
-      // Redirige al usuario a la URL externa con el token JWT
-      redirectWithJWT('https://andenes.terminal-calama.com/caja-calama/caja.html');
+    redirectWithJWT(ENV_CONFIG.CAJA_URL);
   } else {
-      alert('No tienes permiso para acceder a esta sección.');
+    alert('No tienes permiso para acceder a esta sección.');
   }
 }
 
-// Muestra la página "Monitoreo" y oculta las demás
 function monitoreo() {
-  // Redirige al usuario a la URL externa con el token JWT
-  redirectWithJWT('https://monitoreo-calama.netlify.app/');
+  redirectWithJWT(ENV_CONFIG.MONITOREO_URL);
 }
 
-// Esta función se encarga de cambiar la visibilidad de ciertos elementos en la página
-function configuraciones(){
-  // Verifica si el elemento con ID 'sbSubEmpresas' está actualmente oculto
-  if(document.getElementById('sbSubEmpresas').style.display == 'none'){
-    // Si está oculto, se muestra cambiando su estilo display a 'block'
-    document.getElementById('sbSubEmpresas').style.display = 'block';
-    // También se muestra otro elemento con ID 'sbSubDestinos' cambiando su estilo display a 'block'
-    document.getElementById('sbSubDestinos').style.display = 'block';
-  } else {
-    // Si el elemento 'sbSubEmpresas' no está oculto, se ejecuta este bloque
-    // Se ocultan ambos elementos cambiando su estilo display a 'none'
-    document.getElementById('sbSubEmpresas').style.display = 'none';
-    document.getElementById('sbSubDestinos').style.display = 'none';
-  }
+// ===============================
+// 🧭 UTILIDADES
+// ===============================
+
+function configuraciones() {
+  const emp = document.getElementById('sbSubEmpresas');
+  const dest = document.getElementById('sbSubDestinos');
+  const mostrar = emp.style.display === 'none';
+  emp.style.display = mostrar ? 'block' : 'none';
+  dest.style.display = mostrar ? 'block' : 'none';
 }
 
 function redirectWithJWT(url) {
-  const jwt = getCookie('jwt'); // Obtiene el token JWT de las cookies
+  const jwt = getCookie('jwt');
   if (jwt) {
-      // Si hay un token JWT, redirige con el token como parámetro de consulta
-      window.location.href = `${url}?token=${jwt}`;
+    window.location.href = `${url}?token=${jwt}`;
   } else {
-      // Si no hay un token JWT, redirige sin él
-      window.location.href = url;
+    window.location.href = url;
   }
 }
 
@@ -202,13 +200,12 @@ function isSectionAllowed(section) {
 
 function navigateToSection(section) {
   if (isSectionAllowed(section)) {
-      window.location.href = `/${section}`;
+    window.location.href = `/${section}`;
   } else {
-      alert('No tienes permiso para acceder a esta sección.');
+    alert('No tienes permiso para acceder a esta sección.');
   }
 }
 
-// aqui se configura el navbar para ocultar y mostrar las secciones permitidas
 function configurarNavbar() {
   const userData = localStorage.getItem('userData');
   if (!userData) return;
@@ -216,40 +213,28 @@ function configurarNavbar() {
   const user = JSON.parse(userData);
   const seccionesPermitidas = user.secciones || [];
 
-  // Mapeo de IDs del navbar a las secciones correspondientes
   const navbarMapping = {
     nbUsrParking: 'parking',
     nbUsrbuses: 'andenes',
     nbUsrBanos: 'banos',
     nbUsrCustodias: 'custodias',
     nbUsrCaja: 'caja',
-    
   };
 
-  // Iteramos sobre el mapeo y mostramos/ocultamos elementos
   for (const [id, seccion] of Object.entries(navbarMapping)) {
     const elemento = document.getElementById(id);
-    if (elemento) {
-      console.log(`Elemento ${id} encontrado. Sección: ${seccion}`);
-      if (seccionesPermitidas.includes(seccion)) {
-        console.log(`Mostrando ${id}`);
-        elemento.classList.remove('hidden');
-      } else {
-        console.log(`Ocultando ${id}`);
-        elemento.classList.add('hidden');
-      }
-      console.log(`Clases actuales de ${id}:`, elemento.classList);
+    if (!elemento) continue;
+    if (seccionesPermitidas.includes(seccion)) {
+      elemento.classList.remove('hidden');
     } else {
-      console.error(`Elemento con ID ${id} no encontrado.`);
+      elemento.classList.add('hidden');
     }
   }
 
-  // Mostrar el botón "Monitoreo" solo para administradores
   if (user.lvl >= 10) {
     document.getElementById('nbAdmMonitoreo').classList.remove('hidden');
   }
 
-  // Asegurarse de que "Nosotros" y "Contacto" siempre estén visibles
   document.querySelector('#navbar a[onclick="nosotros()"]').classList.remove('hidden');
   document.querySelector('#navbar a[onclick="contacto()"]').classList.remove('hidden');
 }

@@ -111,7 +111,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'POST') {
         $fecha = $data['fecha'];
         $hora = $data['hora'];
         $patente = str_replace('-','',$data['patente']);
-        //$empresa = $data['empresa'];
+        $empresa = $data['empresa'];
         $tipo = $data['tipo'];
 
         // Aquí insertamos la patente correctamente en la base de datos sin necesidad de verificar si ya existe
@@ -148,12 +148,15 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $hora = $data['hora'];
         $valor = $data['valor'];
         $id = $data['id'];
-        //$empresa = $data['empresa'];
+        $empresa = $data['empresa'];
         $id_caja = isset($data["id_caja"]) ? $data["id_caja"] : null; 
+        $medio_pago = isset($data["medio_pago"]) ? $data["medio_pago"] : null;
 
         // Actualizar el movimiento incluyendo el campo empresa
-        $stmt = $conn->prepare("UPDATE movParking SET fechasal = ?, horasal = ?, valor = ?, empresa = ?, estado = 'Pagado', id_caja = ? WHERE idmov = ?");
-        $stmt->bind_param("ssiiii", $fecha, $hora, $valor, $empresa, $id_caja, $id);
+        $stmt = $conn->prepare("UPDATE movParking 
+            SET fechasal = ?, horasal = ?, valor = ?, empresa = ?, estado = 'Pagado', id_caja = ? , medio_pago = ? WHERE idmov = ?");
+
+        $stmt->bind_param("ssiiii", $fecha, $hora, $valor, $empresa, $id_caja, $id, $medio_pago);
 
         if($stmt->execute()) {
             echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente a Pagado']);

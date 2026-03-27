@@ -168,7 +168,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
         // tipos: s s i i s i i i
         $stmt->bind_param(
-            "ssiisiii",
+            "ssiisisi",
             $fecha,
             $hora,
             $valor,

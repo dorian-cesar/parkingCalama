@@ -149,14 +149,35 @@ else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $valor = $data['valor'];
         $id = $data['id'];
         $empresa = $data['empresa'];
+        $patente = isset($data['patente']) ? str_replace('-', '', $data['patente']) : null;
+
         $id_caja = isset($data["id_caja"]) ? $data["id_caja"] : null; 
         $medio_pago = isset($data["medio_pago"]) ? $data["medio_pago"] : null;
 
-        // Actualizar el movimiento incluyendo el campo empresa
+        // Actualizar el movimiento incluyendo patente
         $stmt = $conn->prepare("UPDATE movParking 
-            SET fechasal = ?, horasal = ?, valor = ?, empresa = ?, estado = 'Pagado', id_caja = ? , medio_pago = ? WHERE idmov = ?");
+            SET fechasal = ?, 
+                horasal = ?, 
+                valor = ?, 
+                empresa = ?, 
+                patente = ?, 
+                estado = 'Pagado', 
+                id_caja = ?, 
+                medio_pago = ? 
+            WHERE idmov = ?");
 
-        $stmt->bind_param("ssiiii", $fecha, $hora, $valor, $empresa, $id_caja, $id, $medio_pago);
+        // tipos: s s i i s i i i
+        $stmt->bind_param(
+            "ssiisiii",
+            $fecha,
+            $hora,
+            $valor,
+            $empresa,
+            $patente,
+            $id_caja,
+            $medio_pago,
+            $id
+        );
 
         if($stmt->execute()) {
             echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente a Pagado']);

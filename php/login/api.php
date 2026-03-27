@@ -1,193 +1,111 @@
 <?php
-// Declaración estricta de tipos para garantizar la coherencia en el tipo de datos
-declare(strict_types=1);
+// Valida credenciales y genera token JWT
+header("Access-Control-Allow-Origin: http://localhost"); // Permitir solicitudes desde cualquier origen
+header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST y OPTIONS
+header("Access-Control-Allow-Credentials: true");
+use Firebase\JWT\JWT; // Importar la clase JWT desde la biblioteca Firebase
 
-// Establece los encabezados CORS para permitir solicitudes desde cualquier origen y métodos POST
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
-
-// Verifica si la solicitud es OPTIONS (solicitud de pre-vuelo)
 if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
-    // El navegador está realizando una solicitud de pre-vuelo OPTIONS, se establecen los encabezados permitidos
-    header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    // El navegador está realizando una solicitud de pre-vuelo OPTIONS
+    header('Access-Control-Allow-Headers: Content-Type');
+    header("Access-Control-Allow-Credentials: true");
     header('Access-Control-Max-Age: 86400'); // Cache preflight request for 1 day
     header("HTTP/1.1 200 OK");
     exit;
 }
 
-// Incluye el archivo de configuración de la base de datos
-include("../conf.php");
+try {
+    require_once('../../vendor/autoload.php'); // Incluir la biblioteca autoload de Composer
+    include("../conf.php"); // Incluir archivo de configuración de base de datos
 
-include('../auth.php');
+    $validCred = false; // Inicializar variable para indicar si las credenciales son válidas
+    $retrn = []; // Inicializar array para almacenar resultados
 
-// GET
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($token->nivel < $LVLUSER) {
-        header('HTTP/1.1 401 Unauthorized');
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $json_data = file_get_contents("php://input"); // Obtener datos JSON de la solicitud POST
+        $data = json_decode($json_data, true); // Decodificar los datos JSON
+
+        if ($data !== null) {
+            $mail = $data["mail"]; // Obtener el correo electrónico del usuario
+            $pass = $data["pass"]; // Obtener la contraseña del usuario
+
+            // Preparar y ejecutar la consulta SQL para obtener el usuario por su correo electrónico
+            $stmt = $conn->prepare("
+                SELECT 
+                    u.iduser, 
+                    u.mail, 
+                    u.pass, 
+                    p.nivel,
+                    u.seccion AS secciones
+                FROM 
+                    userParking AS u 
+                JOIN 
+                    permParking AS p ON u.nivel = p.idperm
+                WHERE 
+                    u.mail LIKE ?
+            ");
+            $stmt->bind_param("s", $mail);
+
+            if ($stmt->execute()) {
+                $result = $stmt->get_result(); // Obtener el resultado de la consulta
+
+                if ($result->num_rows > 0) {
+                    $retrn = $result->fetch_assoc(); // Obtener los datos del usuario como un array asociativo
+
+                    // Convertir las secciones asignadas en un array
+                    $secciones = isset($retrn['secciones']) ? explode(',', $retrn['secciones']) : [];
+                    $retrn['secciones'] = $secciones;
+
+                    // Verificar si la contraseña proporcionada coincide con la almacenada en la base de datos
+                    if (password_verify($pass, $retrn['pass'])) {
+                        $validCred = true; // Las credenciales son válidas si la contraseña coincide
+                    } else {
+                        $validCred = false; // Las credenciales no son válidas si la contraseña no coincide
+                    }
+                }
+            }
+        }
     }
 
+    if ($validCred == true) {
+        // Generar token JWT si las credenciales son válidas
+        $tokenId    = base64_encode(random_bytes(16)); // ID único del token
+        $issuedAt   = new DateTimeImmutable(); // Fecha y hora de emisión del token
+        $expire     = $issuedAt->modify('+1 day')->getTimestamp(); // Fecha y hora de expiración del token (1 día)
+        $serverName = "wit.la"; // Nombre del servidor
+        $logon      = TRUE; // Indicador de inicio de sesión válido
+        $user       = $retrn['mail']; // Correo electrónico del usuario
+        $nivel      = $retrn['nivel']; // Nivel de acceso del usuario
 
-    try {
-        if (isset($_GET['patente'])) {
-            // Filtrar por patente
-            $patente = str_replace('-', '', $_GET['patente']);
-            $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.valor, m.estado 
-                                    FROM movParking AS m 
-                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
-                                    WHERE m.patente = ? 
-                                    ORDER BY m.idmov DESC");
-            $stmt->bind_param("s", $patente);
-        
-        } else if (isset($_GET['id'])) {
-            // Filtrar por idmov
-            $id = $_GET['id'];
-            $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.valor, m.estado 
-                                    FROM movParking AS m 
-                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
-                                    WHERE m.idmov = ? 
-                                    ORDER BY m.idmov");
-            $stmt->bind_param("i", $id);
+        // Datos a codificar en el token JWT
+        $data = [
+            'iat'  => $issuedAt->getTimestamp(),
+            'jti'  => $tokenId,
+            'iss'  => $serverName,
+            'nbf'  => $issuedAt->getTimestamp(),
+            'exp'  => $expire,
+            'logon' => $logon,
+            'user' => $user,
+            'nivel' => $nivel,
+        ];
 
-        } else if (isset($_GET['fecha'])) {
-            // Filtrar por fecha de entrada
-            $fecha = $_GET['fecha'];
-            $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.estado, m.valor 
-                                    FROM movParking AS m 
-                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
-                                    WHERE DATE(m.fechaent) = ? 
-                                    ORDER BY m.idmov");
-            $stmt->bind_param("s", $fecha);
+        // Datos del usuario a devolver junto con el token
+        $response = [
+            'token' => JWT::encode($data, $secretkey, 'HS256'),
+            'user' => [
+                'iduser' => $retrn['iduser'],
+                'mail' => $retrn['mail'],
+                'nivel' => $retrn['nivel'],
+                'secciones' => $retrn['secciones'], // Secciones asignadas
+            ],
+        ];
 
-        } else {
-            // Obtener todos los movimientos
-            $stmt = $conn->prepare("SELECT m.idmov, m.fechaent, m.horaent, m.fechasal, m.horasal, m.patente, 
-
-                                    IFNULL(e.nombre, 'No especifica') AS empresa, m.tipo, m.estado, m.valor 
-                                    FROM movParking AS m 
-                                    LEFT JOIN empParking AS e ON m.empresa = e.idemp 
-                                    ORDER BY m.idmov");
-
-        }
-
-        // Ejecutar la consulta
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        // Determinar el formato de salida en función de la consulta
-        if (isset($_GET['patente']) || isset($_GET['id'])) {
-            $datos = $result->fetch_assoc(); // Un solo registro
-        } else {
-            $datos = $result->fetch_all(MYSQLI_ASSOC); // Varios registros
-        }
-
-        echo json_encode($datos);
-        
-    } catch (mysqli_sql_exception $e) {
-        echo json_encode(['error' => $e->getMessage()]);
-    } catch (Exception $e) {
-        echo json_encode(['error' => $e->getMessage()]);
-    }
-}
-
-
-
-else if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
-
-    $json_data = file_get_contents("php://input");
-
-    $data = json_decode($json_data, true);
-
-    if ($data !== null) {
-        $fecha = $data['fecha'];
-        $hora = $data['hora'];
-        $patente = str_replace('-','',$data['patente']);
-        $empresa = $data['empresa'];
-        $tipo = $data['tipo'];
-
-        // Aquí insertamos la patente correctamente en la base de datos sin necesidad de verificar si ya existe
-        $stmt = $conn->prepare("INSERT INTO movParking (fechaent, horaent, patente, empresa, tipo, fechasal, horasal) VALUES (?,?,?,?,?,'0','0')");
-        $stmt->bind_param("sssis", $fecha, $hora, $patente, $empresa, $tipo); // La variable $empresa está comentada
-
-        if($stmt->execute()){
-            $id = $conn->insert_id;
-            echo json_encode(['id' => $id, 'msg' => 'Insertado correctamente']);
-        } else {
-            echo json_encode(['error' => $conn->error]);
-        }
-
+        header("Content-Type: application/json"); // Establecer el tipo de contenido como JSON
+        echo json_encode($response); // Devolver la respuesta en formato JSON
     } else {
-        echo json_encode(['error' => 'Error al decodificar JSON']);
+        echo json_encode(['error' => 'Credenciales incorrectas']); // Devolver mensaje de error en formato JSON
     }
-}
-
-
-// Update (Pagado)
-else if($_SERVER['REQUEST_METHOD'] == 'PUT') {
-    if($token->nivel < $LVLUSER){
-        header('HTTP/1.1 401 Unauthorized'); // Devolver un código de error de autorización si el token no es válido
-        echo json_encode(['error' => 'Autoridad insuficiente']);
-        exit;
-    }
-
-    $json_data = file_get_contents("php://input");
-
-    $data = json_decode($json_data, true);
-
-    if ($data !== null) {
-        $fecha = $data['fecha'];
-        $hora = $data['hora'];
-        $valor = $data['valor'];
-        $id = $data['id'];
-        $empresa = $data['empresa'];
-        $patente = isset($data['patente']) ? str_replace('-', '', $data['patente']) : null;
-
-        $id_caja = isset($data["id_caja"]) ? $data["id_caja"] : null; 
-        $medio_pago = isset($data["medio_pago"]) ? $data["medio_pago"] : null;
-
-        // Actualizar el movimiento incluyendo patente
-        $stmt = $conn->prepare("UPDATE movParking 
-            SET fechasal = ?, 
-                horasal = ?, 
-                valor = ?, 
-                empresa = ?, 
-                patente = ?, 
-                estado = 'Pagado', 
-                id_caja = ?, 
-                medio_pago = ? 
-            WHERE idmov = ?");
-
-        // tipos: s s i i s i i i
-        $stmt->bind_param(
-            "ssiisiii",
-            $fecha,
-            $hora,
-            $valor,
-            $empresa,
-            $patente,
-            $id_caja,
-            $medio_pago,
-            $id
-        );
-
-        if($stmt->execute()) {
-            echo json_encode(['id' => $id, 'msg' => 'Actualizado correctamente a Pagado']);
-        } else {
-            echo json_encode(['error' => 'Error al actualizar']);
-        }
-
-        $stmt->close();
-    } else {
-        echo json_encode(['error' => 'Error al decodificar JSON']);
-    }
+} catch (Exception $e) {
+    echo json_encode(['error' => $e->getMessage()]); // Manejar errores generales
 }
 ?>

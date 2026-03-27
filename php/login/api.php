@@ -1,5 +1,24 @@
 <?php
-// Valida credenciales y genera token JWT
+
+// 1. Obtener el origen de la solicitud actual
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+
+// 2. Configurar los encabezados CORS
+// Al devolver el $origin exacto, el navegador permite el uso de credenciales
+header("Access-Control-Allow-Origin: $origin"); 
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+
+// 3. Importante: Informar a los sistemas de caché que el origen varía
+header("Vary: Origin");
+
+// 4. Manejar la solicitud 'preflight' (OPTIONS)
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+    http_response_code(204); // Sin contenido
+    exit;
+}
+/* Valida credenciales y genera token JWT
 header("Access-Control-Allow-Origin: * "); // Permitir solicitudes desde cualquier origen
 header("Access-Control-Allow-Methods: POST, OPTIONS"); // Permitir solicitudes POST y OPTIONS
 header("Access-Control-Allow-Credentials: true");
@@ -12,7 +31,13 @@ if ($_SERVER["REQUEST_METHOD"] == "OPTIONS") {
     header('Access-Control-Max-Age: 86400'); // Cache preflight request for 1 day
     header("HTTP/1.1 200 OK");
     exit;
-}
+
+
+}*/
+
+
+
+
 
 try {
     require_once('../../vendor/autoload.php'); // Incluir la biblioteca autoload de Composer
